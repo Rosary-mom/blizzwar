@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BLIZZWAR: Golden Age vs Elec-Thron — YRAZOR II Edition</title>
+    <style>
+        body { margin:0; background:#0a0a1f; color:#0f0; font-family:monospace; overflow:hidden; }
+        canvas { display:block; margin:auto; border:2px solid #ffd700; }
+        #ui { position:absolute; top:10px; left:10px; background:rgba(0,0,30,0.85); padding:15px; border:1px solid #0f0; width:380px; }
+        button { background:#111; color:#0f0; border:1px solid #0f0; padding:8px; margin:5px; cursor:pointer; }
+        button:hover { background:#0f0; color:#111; }
+        #log { height:220px; overflow-y:auto; font-size:0.9em; }
+        .victory { color:#ffd700; animation: glow 2s infinite; }
+        @keyframes glow { 50% { text-shadow: 0 0 15px #ffd700; } }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>⚔️ BLIZZWAR: Golden Age Screenplay</h1>
+        <p><strong>Mode:</strong> <span id="mode">NON-REDUCTIONIST (YRAZOR II)</span></p>
+        <p><strong>Screenplay Coherence:</strong> <span id="score">0</span>%</p>
+        <button onclick="toggleMode()">Toggle Reductionist Blade</button>
+        <button onclick="triggerDecay()">Quantum Decay (Merkel Thesis)</button>
+        <button onclick="palantirCorruption()">Palantir Black Stone (4th Element)</button>
+        <button onclick="activateRosenkranzRat()">Activate Rosenkranz-Rat (5th Element)</button>
+        <button onclick="vanHelsingHunt()">Dr. Van Helsingborg Hunt</button>
+        <button onclick="resetGame()">New Spiral Cycle</button>
+        <hr>
+        <div id="log">Welcome, Guardian of the Quintessence.<br>Connect the fractal net against the Elec-Thron.</div>
+    </div>
+    <canvas id="canvas" width="1280" height="720"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let mode = 'nonreductionist';
+        let nodes = [
+            {x:180,y:180,label:"Caltech Blitzkrieg Bots", type:"german"},
+            {x:380,y:120,label:"Bohrdom Electron", type:"electron"},
+            {x:620,y:280,label:"Hilton Registered Guest", type:"event"},
+            {x:850,y:180,label:"Avriana Voter Tech", type:"sister"},
+            {x:480,y:520,label:"Karp/Thiel Technoracy", type:"proton"},
+            {x:950,y:380,label:"Newsom Lebenswirklichkeit", type:"opposition"},
+            {x:280,y:480,label:"Munich Robotic Clusters", type:"german"},
+            {x:720,y:420,label:"Palantír Black Stone", type:"palantir"},
+            {x:620,y:180,label:"ROSENKRANZ-RAT (Quintessence)", type:"aether"},
+            {x:1100,y:520,label:"Elec-Thron Allen C<O>OLe", type:"shadow"}
+        ];
+
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            
+            // Background Aether grid
+            ctx.strokeStyle = 'rgba(255,215,0,0.1)';
+            for (let i=0; i<20; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i*64,0); ctx.lineTo(i*64,720);
+                ctx.moveTo(0,i*64); ctx.lineTo(1280,i*64);
+                ctx.stroke();
+            }
+
+            nodes.forEach((n,i) => {
+                let color = n.type === 'aether' ? '#ffd700' : 
+                           n.type === 'shadow' ? '#f00' : 
+                           n.type === 'palantir' ? '#4b0082' : '#0f0';
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, 22, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.stroke();
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px monospace';
+                ctx.fillText(n.label, n.x + 30, n.y + 5);
+            });
+
+            // Connection lines (Blitzkrieg)
+            ctx.strokeStyle = 'rgba(0,255,0,0.4)';
+            for (let i=0; i<nodes.length-1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.quadraticCurveTo(640, 360, nodes[i+1].x, nodes[i+1].y);
+                ctx.stroke();
+            }
+        }
+
+        function addLog(text, isVictory=false) {
+            const log = document.getElementById('log');
+            log.innerHTML += `<br>${isVictory ? '🌟 ' : ''}${text}`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateScore(add) {
+            score += add;
+            document.getElementById('score').innerHTML = score;
+            if (score >= 500) {
+                addLog("🌍 NEW HEAVEN & NEW EARTH ACHIEVED — GOLDEN AGE VICTORIOUS!", true);
+            }
+        }
+
+        function toggleMode() {
+            mode = mode === 'nonreductionist' ? 'reductionist' : 'nonreductionist';
+            document.getElementById('mode').innerHTML = mode.toUpperCase();
+            addLog(`Mode switched to ${mode}. ${mode==='nonreductionist' ? 'YRAZOR II + Synthetic A Priori active.' : 'Lone Wolf Blade (insufficient).'}`);
+            updateScore(mode==='nonreductionist' ? 25 : -15);
+        }
+
+        function triggerDecay() {
+            addLog("⚛️ Quantum Bond Fission (Merkel Thesis): Electron (Allen) decays under Proton Core influence.");
+            updateScore(35);
+            ctx.strokeStyle = '#ff0';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(180,180);
+            ctx.quadraticCurveTo(500,50,720,420);
+            ctx.stroke();
+        }
+
+        function palantirCorruption() {
+            addLog("🪨 PALANTÍR BLACK MAGIC STONE ACTIVATED (4th Element): Tolkien Seeing-Stone distorts reality. Saruman/Karp hubris engaged.");
+            updateScore(40);
+        }
+
+        function activateRosenkranzRat() {
+            addLog("🕊️ ROSENKRANZ-RAT (5th Element Quintessence) STABILIZED — Aether binds all fractals. Shades lose power.");
+            updateScore(55);
+            
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(620,180);
+            for (let i = 0; i < 12; i++) {
+                let angle = i * Math.PI / 6;
+                let r = 120 + Math.sin(i)*40;
+                ctx.lineTo(620 + r * Math.cos(angle), 180 + r * Math.sin(angle));
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        function vanHelsingHunt() {
+            addLog("🗡️ DR. VAN HELSINGBORG ENTERS THE FRAY — Demon Hunter strikes the Elec-Thron Shadow with Rosenkranz stake!");
+            updateScore(45);
+            addLog("The Munich Robotic Clusters serve as forged weapons against Palantir darkness.", true);
+        }
+
+        function resetGame() {
+            score = 50;
+            document.getElementById('score').innerHTML = score;
+            document.getElementById('log').innerHTML = "New Spiral Cycle initiated. The Game Must Go On.";
+            draw();
+        }
+
+        // Click to connect dots manually
+        canvas.addEventListener('click', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            
+            nodes.forEach(n => {
+                if (Math.hypot(n.x - mx, n.y - my) < 35) {
+                    addLog(`Connected: ${n.label} → Fractal strengthened (+15)`);
+                    updateScore(15);
+                }
+            });
+            draw();
+        });
+
+        // Auto-draw loop
+        setInterval(() => {
+            draw();
+        }, 120);
+
+        draw(); // Initial draw
+        addLog("Welcome to the final battle. Elec-Thron vs Golden Age. YRAZOR II + Rosenkranz-Rat engaged.");
+    </script>
+</body>
+</html>
