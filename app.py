@@ -4,31 +4,31 @@ from openai import OpenAI
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-load_dotenv()  # Load .env file for API key
+load_dotenv()  # Load .env file
 
 app = Flask(__name__)
-CORS(app)  # Allow cross-origin for frontend
+CORS(app)
 
-# Initialize xAI client (OpenAI-compatible)
+# ✅ CORRECT WAY
 client = OpenAI(
-    api_key=os.getenv(xai-OJMhw0CTRAASkT6YemtAIo9QzNUYqmoDdlxq2aAF2D5761nG6jtrCij33Lkvk4g7dOPTlcq6ZHuYhFrw),  # Add your key to .env as XAI_API_KEY=your_key_here
+    api_key=os.getenv("XAI_API_KEY"),   # ← This is correct
     base_url="https://api.x.ai/v1"
 )
 
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
-    user_message = data.get('message')
-    model = data.get('model', 'grok-beta')  # Default to a public model; change to 'grok-4' or 'grok-4-beta' if subscribed
+    user_message = data.get('message', '')
+    model = data.get('model', 'grok-beta')
 
     try:
         response = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "You are a helpful assistant for COP30 scenarios and rosary-related queries."},  # Customize prompt
+                {"role": "system", "content": "You are a helpful assistant for COP30 scenarios and rosary-related queries."},
                 {"role": "user", "content": user_message}
             ],
-            max_tokens=500,  # Adjust as needed
+            max_tokens=600,
             temperature=0.7
         )
         return jsonify({'response': response.choices[0].message.content})
@@ -36,4 +36,4 @@ def chat():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Run on localhost:5000
+    app.run(debug=True, port=5000)
