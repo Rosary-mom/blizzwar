@@ -13,13 +13,12 @@ client = OpenAI(
 
 @app.route("/", methods=["POST"])
 def chat():
-    data = request.json
+    data = request.get_json()
     user_message = data.get("message", "")
-    model = data.get("model", "grok-beta")
-
+    
     try:
         response = client.chat.completions.create(
-            model=model,
+            model="grok-beta",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant for COP30 scenarios and rosary-related queries."},
                 {"role": "user", "content": user_message}
