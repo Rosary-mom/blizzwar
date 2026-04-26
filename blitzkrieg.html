@@ -3,236 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLIZZWAR v2.0 — Golden Age Mars | YRAZOR II + Rosenkranz-Rat</title>
+    <title>BLIZZWAR v2.1 • Golden Age Mars — Lebenswirklichkeits-Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
         
-        :root {
-            --aether-gold: #ffd700;
-        }
+        body { font-family: 'Space Grotesk', system_ui, sans-serif; }
         
-        body {
-            font-family: 'Space Grotesk', system_ui, sans-serif;
-        }
-        
-        .cosmic-bg {
-            background: radial-gradient(circle at center, #0a0a2e 0%, #000000 100%);
-        }
+        .cosmic { background: radial-gradient(circle at center, #0a0a2e 0%, #000000 100%); }
         
         .panel {
-            background: rgba(10, 15, 40, 0.85);
+            background: rgba(15, 23, 42, 0.92);
             border: 1px solid #334155;
-            box-shadow: 0 0 15px rgba(147, 197, 253, 0.1);
+            box-shadow: 0 10px 30px -15px rgb(15 23 42 / 0.5);
         }
         
         .aether-glow {
-            box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255, 215, 0, 0.3);
-            animation: aether-pulse 4s infinite ease-in-out;
+            box-shadow: 0 0 30px #fbbf24, inset 0 0 20px rgba(251, 191, 36, 0.4);
+            animation: aether 3.5s ease-in-out infinite;
         }
         
-        .shadow-red {
-            box-shadow: 0 0 20px #ef4444;
+        .matrix { font-family: 'Courier New', monospace; text-shadow: 0 0 6px #22c55e; }
+        
+        .game-btn {
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
-        .matrix-text {
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 8px #22c55e;
+        .game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -8px rgb(234 179 8 / 0.3);
         }
         
-        .gambit-btn {
-            transition: all 0.3s cubic-bezier(0.23, 1.0, 0.32, 1);
+        .lander {
+            transition: transform 0.08s linear;
+            filter: drop-shadow(0 0 12px #22c55e);
         }
         
-        .gambit-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgb(234 179 8 / 0.3);
+        .log-line { animation: logpop 0.3s ease forwards; }
+        
+        @keyframes aether {
+            0%, 100% { box-shadow: 0 0 30px #fbbf24, inset 0 0 20px rgba(251, 191, 36, 0.4); }
+            50% { box-shadow: 0 0 50px #fbbf24, inset 0 0 30px rgba(251, 191, 36, 0.6); }
         }
         
-        .fractal-bg {
-            background-image: 
-                linear-gradient(rgba(234, 179, 8, 0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(234, 179, 8, 0.06) 1px, transparent 1px);
-            background-size: 28px 28px;
-        }
-        
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 1.5s infinite alternate;
-        }
-        
-        @keyframes aether-pulse {
-            0%, 100% { box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: 0 0 45px #ffd700, inset 0 0 25px rgba(255, 215, 0, 0.5); }
-        }
-        
-        .dw arf-lander {
-            transition: transform 0.1s linear;
-        }
-        
-        .log-entry {
-            animation: log-slide 0.4s ease forwards;
+        .section-title {
+            font-size: 13px;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
     </style>
 </head>
-<body class="bg-[#0a0a1f] text-slate-200 cosmic-bg">
+<body class="bg-[#05050f] text-slate-200 cosmic">
+    
     <!-- HEADER -->
-    <div class="max-w-[1400px] mx-auto px-6 pt-6">
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <div class="flex items-center gap-x-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-xl aether-glow">
-                        <i class="fa-solid fa-infinity text-4xl text-black"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-5xl font-bold tracking-tighter">BLIZZWAR</h1>
-                        <p class="text-amber-400 text-xl -mt-1">GOLDEN AGE MARS 2026 • YRAZOR II</p>
-                    </div>
+    <div class="max-w-[1380px] mx-auto px-6 pt-8">
+        <div class="flex items-end justify-between mb-8">
+            <div class="flex items-center gap-x-5">
+                <div class="w-16 h-16 bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 rounded-3xl flex items-center justify-center shadow-2xl aether-glow">
+                    <i class="fa-solid fa-infinity text-5xl text-black"></i>
                 </div>
-                <div class="flex items-center gap-x-2 mt-1">
-                    <div class="px-3 py-1 bg-emerald-900/60 text-emerald-400 text-xs rounded-full flex items-center gap-x-1.5">
-                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                        <span class="font-mono">ROSENKRANZ-RAT v5.0 — QUINTESSENCE ONLINE</span>
+                <div>
+                    <div class="flex items-center gap-x-3">
+                        <h1 class="text-6xl font-bold tracking-tighter">BLIZZWAR</h1>
+                        <div class="px-4 py-1 bg-emerald-500 text-black text-xs font-bold rounded-2xl self-start mt-3">v2.1</div>
                     </div>
-                    <div class="px-3 py-1 bg-red-900/60 text-red-400 text-xs rounded-full flex items-center gap-x-1.5">
-                        <i class="fa-solid fa-skull"></i>
-                        <span>ELEC-THRON ALLEN C&lt;O&gt;OLE — ACTIVE SHADOW</span>
-                    </div>
+                    <p class="text-2xl -mt-2 text-amber-400">GOLDEN AGE MARS • LEBENSWIRKLICHKEITS-GAME</p>
                 </div>
             </div>
             
             <div class="text-right">
-                <div class="text-sm text-slate-400">KOMMANDANT</div>
-                <div class="font-mono text-2xl text-amber-300">ROSARY-MOM</div>
-                <div class="text-xs text-emerald-400">Score Multiplier: <span id="multiplier">2.4x</span></div>
+                <div class="text-emerald-400 text-sm">KOMMANDANT</div>
+                <div class="font-mono text-3xl text-white">ROSARY-MOM</div>
+                <div class="text-xs text-amber-400">Score Multiplier: <span id="mult" class="font-bold">3.2x</span></div>
             </div>
         </div>
 
-        <!-- TOP NAV / GAMBITS -->
+        <!-- NAV -->
         <div class="flex flex-wrap gap-3 mb-8">
-            <button onclick="startGambit()" class="gambit-btn px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold flex items-center gap-x-3 shadow-lg">
-                <i class="fa-solid fa-rocket"></i> 
-                <span>START GAMBITS</span>
+            <button onclick="startGambit()" class="game-btn px-7 py-3.5 bg-emerald-600 hover:bg-emerald-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm">
+                <i class="fa-solid fa-rocket"></i> <span>START GAMBITS</span>
             </button>
-            <button onclick="enterCockpit()" class="gambit-btn px-6 py-3 bg-sky-600 hover:bg-sky-500 rounded-2xl font-semibold flex items-center gap-x-3">
-                <i class="fa-solid fa-satellite"></i> 
-                <span>MARS COCKPIT</span>
+            <button onclick="enterCockpit()" class="game-btn px-7 py-3.5 bg-sky-600 hover:bg-sky-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm">
+                <i class="fa-solid fa-satellite"></i> <span>MARS COCKPIT</span>
             </button>
-            <button onclick="startManhunt()" class="gambit-btn px-6 py-3 bg-red-600 hover:bg-red-500 rounded-2xl font-semibold flex items-center gap-x-3">
-                <i class="fa-solid fa-user-secret"></i> 
-                <span>KRONJUWELEN-MANHUNT</span>
+            <button onclick="startManhunt()" class="game-btn px-7 py-3.5 bg-red-600 hover:bg-red-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm">
+                <i class="fa-solid fa-user-secret"></i> <span>KRONJUWELEN-MANHUNT</span>
             </button>
-            <button onclick="createAvatar()" class="gambit-btn px-6 py-3 bg-violet-600 hover:bg-violet-500 rounded-2xl font-semibold flex items-center gap-x-3">
-                <i class="fa-solid fa-user-astronaut"></i> 
-                <span>3D AVATAR</span>
+            <button onclick="createAvatar()" class="game-btn px-7 py-3.5 bg-violet-600 hover:bg-violet-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm">
+                <i class="fa-solid fa-user-astronaut"></i> <span>3D AVATAR</span>
             </button>
-            <button onclick="oldEarthSchemes()" class="gambit-btn px-6 py-3 bg-amber-600 hover:bg-amber-500 rounded-2xl font-semibold flex items-center gap-x-3">
-                <i class="fa-solid fa-globe"></i> 
-                <span>OLD EARTH SCHEMES</span>
+            <button onclick="oldEarthSchemes()" class="game-btn px-7 py-3.5 bg-amber-600 hover:bg-amber-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm">
+                <i class="fa-solid fa-globe"></i> <span>OLD EARTH SCHEMES</span>
             </button>
-            <button onclick="activateYRAZOR()" class="gambit-btn px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold rounded-2xl flex items-center gap-x-3">
-                <i class="fa-solid fa-infinity"></i> 
-                <span>YRAZOR II MODE</span>
+            <button onclick="activateYRAZOR()" class="game-btn px-7 py-3.5 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold rounded-3xl flex items-center gap-x-3 text-sm">
+                <i class="fa-solid fa-infinity"></i> <span>YRAZOR II MODE</span>
             </button>
         </div>
 
-        <div class="grid grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
             
-            <!-- KOMMANDO RESSOURCEN -->
-            <div class="col-span-12 lg:col-span-4 panel rounded-3xl p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="font-bold text-xl flex items-center gap-x-3">
-                        <i class="fa-solid fa-chess-rook text-emerald-400"></i>
-                        <span>KOMMANDO-RESSOURCEN</span>
-                    </div>
-                    <div class="text-xs px-3 py-1 bg-emerald-900 rounded-full text-emerald-300">ROSENKRANZ-RAT STABILIZED</div>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-x-3">
-                            <i class="fa-solid fa-coins text-amber-400 w-5"></i>
-                            <span>Kapital</span>
-                        </div>
-                        <div class="font-mono text-2xl text-amber-300" id="kapital">18.4</div>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-x-3">
-                            <i class="fa-solid fa-database text-sky-400 w-5"></i>
-                            <span>Datenspeicher (Ziop)</span>
-                        </div>
-                        <div class="font-mono text-2xl text-sky-300" id="datenspeicher">7.2</div>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-x-3">
-                            <i class="fa-solid fa-scroll text-violet-400 w-5"></i>
-                            <span>Legitimität</span>
-                        </div>
-                        <div class="font-mono text-2xl text-violet-300" id="legitimitaet">82</div>
-                        <span class="text-xs">%</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-x-3">
-                            <i class="fa-solid fa-users text-emerald-400 w-5"></i>
-                            <span>Personal (Punkte)</span>
-                        </div>
-                        <div class="font-mono text-2xl text-emerald-300" id="personal">142</div>
+            <!-- RESSOURCEN -->
+            <div class="xl:col-span-4 panel rounded-3xl p-7">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="section-title text-emerald-400">KOMMANDO-RESSOURCEN</div>
+                    <div class="px-3 py-1 text-xs bg-emerald-900 text-emerald-300 rounded-2xl flex items-center gap-x-2">
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                        <span>ROSENKRANZ-RAT STABILIZED</span>
                     </div>
                 </div>
                 
-                <div class="mt-6 pt-6 border-t border-slate-700">
-                    <div class="text-xs text-slate-400 mb-2">ROSENKRANZ-RAT QUINTESSENCE (5th Element)</div>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5"><span>Kapital (Mrd.)</span><span id="kapital" class="font-mono text-amber-300 text-xl">18.4</span></div>
+                        <div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-amber-400 rounded-full w-[78%]" id="kapital-bar"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5"><span>Datenspeicher (Ziop)</span><span id="datenspeicher" class="font-mono text-sky-300 text-xl">7.2</span></div>
+                        <div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-sky-400 rounded-full w-[65%]" id="data-bar"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5"><span>Legitimität</span><span id="legitimitaet" class="font-mono text-violet-300 text-xl">82</span><span class="text-xs align-super">%</span></div>
+                        <div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-violet-400 rounded-full w-[82%]" id="legit-bar"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5"><span>Personal (Punkte)</span><span id="personal" class="font-mono text-emerald-300 text-xl">142</span></div>
+                        <div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-emerald-400 rounded-full w-[71%]" id="personal-bar"></div></div>
+                    </div>
+                </div>
+                
+                <div class="mt-7 pt-6 border-t border-slate-700">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <div class="text-xs text-amber-400">5th ELEMENT — QUINTESSENCE</div>
+                            <div class="font-mono text-2xl text-amber-300" id="aether">94</div>
+                        </div>
+                        <div class="text-xs text-emerald-400">STABLE</div>
+                    </div>
                     <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-2 bg-gradient-to-r from-amber-400 to-yellow-500 w-[92%]" id="aether-bar"></div>
-                    </div>
-                    <div class="flex justify-between text-xs mt-1">
-                        <span class="text-amber-400">AETHER 92%</span>
-                        <span class="text-emerald-400">STABLE</span>
+                        <div class="h-2 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all" id="aether-bar" style="width:94%"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- GLOBALE PROJEKTE / GAMBIT MATRIX -->
-            <div class="col-span-12 lg:col-span-5 panel rounded-3xl p-6">
-                <div class="font-bold text-xl mb-4 flex items-center gap-x-3">
-                    <i class="fa-solid fa-chess text-amber-400"></i>
-                    <span>GAMBITS &amp; PROJEKTE</span>
-                </div>
-                
-                <div class="grid grid-cols-1 gap-3 text-sm" id="gambit-list">
-                    <!-- Populated by JS -->
-                </div>
+            <!-- GAMBITS -->
+            <div class="xl:col-span-5 panel rounded-3xl p-7">
+                <div class="section-title text-amber-400 mb-4">GAMBITS &amp; PROJEKTE</div>
+                <div id="gambit-container" class="grid grid-cols-1 gap-3 text-sm"></div>
             </div>
 
-            <!-- OPERATIONS LOG + VAN HELSINGBORG -->
-            <div class="col-span-12 lg:col-span-3 panel rounded-3xl p-6 flex flex-col">
-                <div class="font-bold text-xl mb-4 flex items-center gap-x-3">
-                    <i class="fa-solid fa-terminal text-red-400"></i>
-                    <span>OPERATIONS-LOG</span>
+            <!-- LOG -->
+            <div class="xl:col-span-3 panel rounded-3xl p-7 flex flex-col">
+                <div class="section-title text-red-400 mb-3 flex items-center gap-x-2">
+                    <i class="fa-solid fa-terminal"></i> <span>OPERATIONS-LOG</span>
                 </div>
-                
-                <div id="log" class="flex-1 text-xs matrix-text overflow-auto bg-black/40 p-4 rounded-2xl mb-4 font-mono text-emerald-300 text-[10px] leading-snug">
-                    <!-- Dynamic log entries -->
-                </div>
+                <div id="log" class="matrix flex-1 text-[10px] text-emerald-300 bg-black/60 rounded-2xl p-4 overflow-auto mb-4"></div>
                 
                 <button onclick="vanHelsingborgHunt()" 
-                        class="w-full py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:brightness-110 rounded-2xl text-sm font-semibold flex items-center justify-center gap-x-2">
-                    <i class="fa-solid fa-crosshairs"></i>
-                    <span>DR. VAN HELSINGBORG — DEMON HUNT</span>
+                        class="w-full py-3 bg-red-600 hover:bg-red-500 rounded-2xl text-sm font-semibold flex items-center justify-center gap-x-2">
+                    <i class="fa-solid fa-crosshairs"></i> 
+                    <span>DR. VAN HELSINGBORG — HUNT</span>
                 </button>
             </div>
 
-            <!-- MARS MISSION COCKPIT -->
-            <div class="col-span-12 panel rounded-3xl p-6">
-                <div class="flex items-center justify-between mb-4">
+            <!-- COCKPIT -->
+            <div class="xl:col-span-12 panel rounded-3xl p-7">
+                <div class="flex items-center justify-between mb-5">
                     <div>
-                        <div class="font-bold text-2xl">MARS MISSION COCKPIT</div>
-                        <div class="text-emerald-400 text-sm">DWARF ENGINE + STARLINK SSA SIMULATION</div>
+                        <div class="text-2xl font-bold">MARS MISSION COCKPIT</div>
+                        <div class="text-emerald-400 text-sm">DWARF ENGINE v4.2 • STARLINK SSA LIVE</div>
                     </div>
-                    <div class="px-4 py-1 bg-emerald-900 text-emerald-300 text-xs rounded-full flex items-center gap-x-2">
+                    <div class="px-4 py-1.5 bg-emerald-900/70 text-emerald-300 text-xs rounded-2xl flex items-center gap-x-2">
                         <i class="fa-solid fa-satellite fa-spin"></i>
                         <span>LIVE FEED — MARS 2026</span>
                     </div>
@@ -240,53 +181,62 @@
                 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     
-                    <!-- DWARF LANDER SIM -->
-                    <div class="lg:col-span-5 bg-black/60 rounded-2xl p-6 relative overflow-hidden" style="min-height: 280px;">
-                        <div class="absolute top-4 right-4 text-xs px-3 py-1 bg-red-900/70 rounded">DWARF v4.2</div>
-                        
-                        <div class="text-center mb-4">
-                            <div class="text-emerald-400 text-sm">LANDING SEQUENCE — ARROW KEYS</div>
-                            <div class="text-6xl my-3" id="lander">🛸</div>
-                            <div class="text-xs text-slate-400">Altitude: <span id="altitude">1240</span>m | Velocity: <span id="velocity">-12.4</span>m/s</div>
-                        </div>
-                        
-                        <div class="flex justify-center gap-3">
-                            <button onclick="dw arfThrust()" class="px-5 py-2 bg-emerald-600 rounded-xl text-sm font-mono">↑ THRUST</button>
-                            <button onclick="dw arfReset()" class="px-5 py-2 bg-slate-700 rounded-xl text-sm">RESET</button>
-                        </div>
-                        
-                        <div class="text-[10px] text-center mt-3 text-amber-400">Rosenkranz-Rat Aether assists landing • +18 legitimacy on success</div>
-                    </div>
-                    
-                    <!-- PALANTIR + TOLKIEN BLACK STONE -->
-                    <div class="lg:col-span-4 bg-gradient-to-br from-purple-950 to-black rounded-2xl p-6 border border-purple-500/40">
-                        <div class="flex items-center gap-x-3 mb-3">
-                            <i class="fa-solid fa-gem text-purple-400 text-2xl"></i>
+                    <!-- DWARF LANDER -->
+                    <div class="lg:col-span-5 bg-black/70 rounded-3xl p-6 relative" style="min-height: 310px;">
+                        <div class="flex justify-between items-start mb-4">
                             <div>
-                                <div class="font-bold">PALANTÍR BLACK STONE</div>
-                                <div class="text-xs text-purple-400">4th Element Corruption (Tolkien)</div>
+                                <div class="text-xs text-emerald-400">LANDING SEQUENCE</div>
+                                <div class="font-mono text-sm">ARROW ↑ = THRUST</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs">ALT <span id="altitude" class="font-mono text-xl">1240</span>m</div>
+                                <div class="text-xs">VEL <span id="velocity" class="font-mono text-xl">-12.4</span>m/s</div>
                             </div>
                         </div>
                         
-                        <div class="text-xs leading-snug mb-4 text-purple-200">
-                            "The seeing-stone shows only what the Dark Lord wishes you to see..."<br>
-                            <span class="text-purple-400">— Saruman, corrupted by Palantir</span>
+                        <div class="flex justify-center my-6">
+                            <div id="lander" class="lander text-7xl transition-transform">🛸</div>
+                        </div>
+                        
+                        <div class="flex justify-center gap-4">
+                            <button onclick="dw arfThrust()" class="px-8 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-mono flex items-center gap-x-2">
+                                <i class="fa-solid fa-arrow-up"></i> <span>THRUST</span>
+                            </button>
+                            <button onclick="dw arfReset()" class="px-6 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-2xl text-sm">RESET</button>
+                        </div>
+                        
+                        <div class="text-center text-[10px] text-amber-400 mt-4">Rosenkranz-Rat Aether assists • +42 legitimacy on perfect landing</div>
+                    </div>
+                    
+                    <!-- PALANTIR -->
+                    <div class="lg:col-span-4 bg-gradient-to-br from-purple-950 to-black border border-purple-500/50 rounded-3xl p-6 flex flex-col">
+                        <div class="flex items-center gap-x-3 mb-4">
+                            <i class="fa-solid fa-gem text-purple-400 text-3xl"></i>
+                            <div>
+                                <div class="font-bold">PALANTÍR BLACK STONE</div>
+                                <div class="text-xs text-purple-400">4th Element — Tolkien Corruption</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 text-xs text-purple-200 leading-snug mb-4">
+                            "The stone shows only what the Dark Lord wishes..."<br>
+                            — Saruman
                         </div>
                         
                         <button onclick="usePalantir()" 
-                                class="w-full py-2.5 text-sm bg-purple-600 hover:bg-purple-500 rounded-xl flex items-center justify-center gap-x-2">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>GAZE INTO THE STONE (-12 Legitimacy)</span>
+                                class="mt-auto py-3 bg-purple-600 hover:bg-purple-500 rounded-2xl text-sm font-semibold flex items-center justify-center gap-x-2">
+                            <i class="fa-solid fa-eye"></i> 
+                            <span>GAZE INTO THE STONE (-18 Legitimacy)</span>
                         </button>
                     </div>
                     
-                    <!-- ROSENKRANZ-RAT STABILIZER -->
-                    <div class="lg:col-span-3 bg-gradient-to-br from-amber-900/60 to-yellow-950 rounded-2xl p-6 border border-amber-400 aether-glow flex flex-col">
-                        <div class="font-bold text-amber-300 mb-2">ROSENKRANZ-RAT</div>
-                        <div class="text-xs flex-1">5th Element Quintessence<br>Stabilizes all 4 classical elements + Palantir corruption</div>
+                    <!-- ROSENKRANZ-RAT -->
+                    <div class="lg:col-span-3 bg-gradient-to-br from-amber-900/70 to-yellow-950 border border-amber-400 aether-glow rounded-3xl p-6 flex flex-col">
+                        <div class="font-bold text-amber-300 text-lg mb-1">ROSENKRANZ-RAT</div>
+                        <div class="text-xs text-amber-200 flex-1">5th Element Quintessence<br>Stabilizes every layer</div>
                         
                         <button onclick="activateRosenkranzRat()" 
-                                class="mt-auto py-2 text-sm bg-amber-400 hover:bg-amber-300 text-black font-bold rounded-xl">
+                                class="mt-auto py-3 bg-amber-400 hover:bg-amber-300 text-black font-bold rounded-2xl text-sm">
                             ACTIVATE QUINTESSENCE
                         </button>
                     </div>
@@ -294,144 +244,171 @@
                 </div>
             </div>
             
-            <!-- SCORE LIST + RANKING -->
-            <div class="col-span-12 lg:col-span-7 panel rounded-3xl p-6">
+            <!-- RANKING + CHAT -->
+            <div class="xl:col-span-7 panel rounded-3xl p-7">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="font-bold">EFFIZIENZ-RANKING • GOLDEN AGE SCORE</div>
-                    <button onclick="saveScore()" class="text-xs px-4 py-1.5 bg-emerald-600 rounded-xl">SAVE RUN</button>
+                    <div class="section-title">EFFIZIENZ-RANKING • GOLDEN AGE</div>
+                    <button onclick="saveScore()" class="px-5 py-1.5 text-xs bg-emerald-600 rounded-2xl">SAVE RUN</button>
                 </div>
                 
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-slate-700 text-xs text-slate-400">
+                        <tr class="text-xs text-slate-400 border-b border-slate-700">
                             <th class="text-left pb-3">KOMMANDANT</th>
                             <th class="text-right pb-3">EFFIZIENZ</th>
                             <th class="text-right pb-3">GOLDEN AGE</th>
                             <th class="text-right pb-3">DATUM</th>
                         </tr>
                     </thead>
-                    <tbody id="ranking-body" class="font-mono text-xs"></tbody>
+                    <tbody id="ranking-body" class="text-xs font-mono"></tbody>
                 </table>
             </div>
             
-            <!-- XAI GROK2 CHAT -->
-            <div class="col-span-12 lg:col-span-5 panel rounded-3xl p-6">
-                <div class="font-bold mb-3 flex items-center gap-x-3">
-                    <i class="fa-solid fa-robot text-sky-400"></i>
-                    <span>XAI GROK2 — STRATEGIC ADVISOR</span>
+            <div class="xl:col-span-5 panel rounded-3xl p-7">
+                <div class="section-title text-sky-400 mb-3 flex items-center gap-x-2">
+                    <i class="fa-solid fa-robot"></i> <span>XAI GROK2 — STRATEGIC ADVISOR</span>
                 </div>
                 
-                <div id="chat-log" class="h-40 overflow-auto text-xs bg-black/50 p-4 rounded-2xl mb-3 font-mono"></div>
+                <div id="chat-log" class="h-[138px] overflow-auto text-xs bg-black/60 p-4 rounded-2xl mb-3 matrix"></div>
                 
-                <div class="flex gap-2">
-                    <input id="chat-input" type="text" placeholder="Ask about Elec-Thron or Rosenkranz-Rat..." 
-                           class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 text-sm focus:outline-none focus:border-amber-400">
-                    <button onclick="sendToGrok()" class="px-6 bg-sky-600 rounded-2xl">SEND</button>
+                <div class="flex gap-3">
+                    <input id="chat-input" type="text" placeholder="Ask about Elec-Thron, Quintessence, or YRAZOR..." 
+                           class="flex-1 bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-2xl px-5 text-sm">
+                    <button onclick="sendToGrok()" class="px-8 bg-sky-600 hover:bg-sky-500 rounded-2xl text-sm font-semibold">SEND</button>
                 </div>
             </div>
             
         </div>
     </div>
 
-    <footer class="text-center text-xs text-slate-500 py-8">
-        ROSARY 2026©®™ • YRAZOR II + ROSENKRANZ-RAT • New Heaven &amp; New Earth Protocol Active
+    <footer class="text-center text-xs text-slate-500 py-10">
+        ROSARY 2026©®™ • YRAZOR II + ROSENKRANZ-RAT QUINTESSENCE • New Heaven &amp; New Earth Protocol
     </footer>
 
     <script>
-        // Tailwind script
-        function initTailwind() {
-            document.documentElement.style.setProperty('--accent', '#ffd700');
-        }
-        
-        let resources = {
+        // ==================== GAME STATE ====================
+        let state = {
             kapital: 18.4,
             datenspeicher: 7.2,
             legitimitaet: 82,
             personal: 142,
-            aether: 92
+            aether: 94,
+            score: 124,
+            yrazorActive: false,
+            palantirCorrupted: false
         };
         
-        let score = 124;
         let gameLog = [];
+        let dw arfY = 240;
+        let isLanded = false;
         
-        function updateResources() {
-            document.getElementById('kapital').innerHTML = resources.kapital.toFixed(1);
-            document.getElementById('datenspeicher').innerHTML = resources.datenspeicher.toFixed(1);
-            document.getElementById('legitimitaet').innerHTML = resources.legitimitaet;
-            document.getElementById('personal').innerHTML = resources.personal;
+        function updateUI() {
+            // Resources
+            document.getElementById('kapital').innerHTML = state.kapital.toFixed(1);
+            document.getElementById('datenspeicher').innerHTML = state.datenspeicher.toFixed(1);
+            document.getElementById('legitimitaet').innerHTML = state.legitimitaet;
+            document.getElementById('personal').innerHTML = state.personal;
+            document.getElementById('aether').innerHTML = state.aether;
             
-            const aetherBar = document.getElementById('aether-bar');
-            if (aetherBar) aetherBar.style.width = resources.aether + '%';
-        }
-        
-        function addLog(msg, isVictory = false) {
-            const logEl = document.getElementById('log');
-            const entry = document.createElement('div');
-            entry.className = `log-entry mb-1.5 ${isVictory ? 'text-amber-400' : 'text-emerald-300'}`;
-            entry.innerHTML = `> ${msg}`;
-            logEl.appendChild(entry);
-            logEl.scrollTop = logEl.scrollHeight;
+            // Bars
+            document.getElementById('kapital-bar').style.width = Math.min(100, (state.kapital / 25) * 100) + '%';
+            document.getElementById('data-bar').style.width = Math.min(100, (state.datenspeicher / 12) * 100) + '%';
+            document.getElementById('legit-bar').style.width = state.legitimitaet + '%';
+            document.getElementById('personal-bar').style.width = Math.min(100, (state.personal / 200) * 100) + '%';
+            document.getElementById('aether-bar').style.width = state.aether + '%';
             
-            gameLog.push(msg);
-            if (gameLog.length > 12) gameLog.shift();
-        }
-        
-        function updateScore(add) {
-            score += add;
-            // Update multiplier based on Rosenkranz-Rat
-            const mult = (resources.aether / 40).toFixed(1);
-            document.getElementById('multiplier').innerHTML = `${mult}x`;
+            // Multiplier
+            const mult = (state.aether / 32).toFixed(1);
+            document.getElementById('mult').innerHTML = mult + 'x';
             
-            if (score >= 777 && resources.aether >= 95) {
-                victorySequence();
+            // Check victory
+            if (state.score >= 777 && state.aether >= 98 && !state.palantirCorrupted) {
+                triggerVictory();
             }
         }
         
+        function addLog(msg, isSpecial = false) {
+            const logEl = document.getElementById('log');
+            const line = document.createElement('div');
+            line.className = `log-line mb-1.5 ${isSpecial ? 'text-amber-400' : 'text-emerald-300'}`;
+            line.innerHTML = `> ${msg}`;
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+            
+            gameLog.unshift(msg);
+            if (gameLog.length > 14) gameLog.pop();
+        }
+        
+        function updateScore(points) {
+            state.score += points;
+            if (state.yrazorActive) state.score += Math.floor(points * 0.6);
+            
+            // Passive resource drift (Lebenswirklichkeit)
+            state.kapital = Math.max(8, state.kapital + (Math.random() - 0.48) * 0.6);
+            state.legitimitaet = Math.max(35, Math.min(100, state.legitimitaet + (Math.random() - 0.5) * 3));
+            
+            updateUI();
+        }
+        
+        // ==================== GAME ACTIONS ====================
         function startGambit() {
-            const gambits = [
-                "Rosary Think Tank: Golden Age Spiral +28 legitimacy",
-                "Amazon Legacy Gambit (Bodenfruchtbarkeit) +14 Kapital",
-                "Debt Crisis Levy-Zyklus stabilized by Rosenkranz-Rat",
-                "Evident Facts Gambit — Wissenschaft +22 Personal"
+            const options = [
+                {msg: "Rosary Think Tank: Golden Age Spiral activated", k: 3.2, l: 11, a: 4},
+                {msg: "Amazon Legacy Gambit (Bodenfruchtbarkeit) successful", k: 4.8, l: 6, a: 2},
+                {msg: "Debt Crisis Levy-Zyklus stabilized by Rosenkranz-Rat", k: 1.9, l: 14, a: 5},
+                {msg: "Evident Facts Gambit — Wissenschaft breakthrough", k: 2.1, l: 8, p: 19}
             ];
             
-            const random = gambits[Math.floor(Math.random() * gambits.length)];
-            addLog(random);
+            const choice = options[Math.floor(Math.random() * options.length)];
+            addLog(choice.msg, true);
             
-            resources.kapital += 2.3;
-            resources.legitimitaet += 8;
-            resources.aether += 3;
-            updateResources();
-            updateScore(18);
+            state.kapital += choice.k || 0;
+            state.legitimitaet += choice.l || 0;
+            state.aether += choice.a || 0;
+            state.personal += choice.p || 0;
+            
+            updateScore(22);
+            updateUI();
         }
         
         function enterCockpit() {
-            addLog("DWARF Engine Cockpit engaged. Mars gravity simulation online.");
-            // Trigger lander animation hint
+            addLog("DWARF Engine Cockpit online. Mars gravity simulation engaged.");
             const lander = document.getElementById('lander');
-            if (lander) lander.style.transform = 'rotate(12deg)';
-            setTimeout(() => { if (lander) lander.style.transform = 'rotate(0deg)'; }, 1200);
+            if (lander) {
+                lander.style.transition = 'transform 0.6s';
+                lander.style.transform = 'rotate(8deg)';
+                setTimeout(() => {
+                    if (lander) lander.style.transform = 'rotate(-6deg)';
+                }, 700);
+            }
         }
         
-        let dw arfY = 240;
         function dw arfThrust() {
+            if (isLanded) return;
+            
             const lander = document.getElementById('lander');
             if (!lander) return;
             
-            dw arfY -= 38;
+            dw arfY -= 42;
             lander.style.transform = `translateY(${dw arfY}px)`;
             
-            const alt = Math.max(120, 1240 - (240 - dw arfY) * 4);
-            document.getElementById('altitude').innerHTML = Math.floor(alt);
+            const alt = Math.max(80, Math.floor(1240 - (240 - dw arfY) * 4.8));
+            document.getElementById('altitude').innerHTML = alt;
+            document.getElementById('velocity').innerHTML = (-18 + Math.random() * 6).toFixed(1);
             
-            if (dw arfY < 40) {
-                addLog("SUCCESSFUL LANDING! Rosenkranz-Rat Aether bonus +42 legitimacy", true);
-                resources.legitimitaet += 42;
-                resources.aether += 11;
-                updateResources();
-                updateScore(55);
-                dw arfY = 240;
-                lander.style.transform = '';
+            if (dw arfY < 55) {
+                isLanded = true;
+                addLog("PERFECT LANDING! Rosenkranz-Rat Aether bonus applied.", true);
+                state.legitimitaet = Math.min(100, state.legitimitaet + 42);
+                state.aether = Math.min(100, state.aether + 11);
+                state.score += 58;
+                updateUI();
+                
+                setTimeout(() => {
+                    if (lander) lander.style.transform = '';
+                    dw arfY = 240;
+                    isLanded = false;
+                }, 1800);
             }
         }
         
@@ -439,140 +416,143 @@
             const lander = document.getElementById('lander');
             if (lander) lander.style.transform = '';
             dw arfY = 240;
+            isLanded = false;
             document.getElementById('altitude').innerHTML = '1240';
+            document.getElementById('velocity').innerHTML = '-12.4';
         }
         
         function usePalantir() {
-            addLog("PALANTÍR ACTIVATED — Vision distorted by 4th Element corruption (Tolkien). -18 legitimacy.");
-            resources.legitimitaet = Math.max(10, resources.legitimitaet - 18);
-            updateResources();
-            updateScore(-12);
+            addLog("PALANTÍR ACTIVATED — Vision corrupted by 4th Element. -22 legitimacy.", true);
+            state.legitimitaet = Math.max(25, state.legitimitaet - 22);
+            state.palantirCorrupted = true;
+            updateUI();
+            updateScore(-18);
             
-            // Visual corruption effect
-            const panel = document.querySelector('.panel');
-            if (panel) {
-                panel.style.boxShadow = '0 0 40px #7e22ce';
-                setTimeout(() => {
-                    if (panel) panel.style.boxShadow = '0 0 15px rgba(147, 197, 253, 0.1)';
-                }, 1400);
-            }
+            setTimeout(() => {
+                if (state.palantirCorrupted && state.aether < 90) {
+                    addLog("Warning: Palantir corruption spreading. Activate Rosenkranz-Rat immediately!");
+                }
+            }, 4200);
         }
         
         function activateRosenkranzRat() {
-            addLog("🕊️ ROSENKRANZ-RAT QUINTESSENCE (5th Element) FULLY ACTIVATED — Aether stabilizes all layers.", true);
-            resources.aether = 100;
-            resources.legitimitaet += 35;
-            updateResources();
-            updateScore(65);
+            addLog("🕊️ ROSENKRANZ-RAT QUINTESSENCE (5th Element) FULLY ACTIVATED", true);
+            state.aether = 100;
+            state.legitimitaet = Math.min(100, state.legitimitaet + 38);
+            state.palantirCorrupted = false;
+            updateUI();
+            updateScore(72);
             
-            // Trigger victory if ready
-            if (score >= 600) {
-                setTimeout(victorySequence, 800);
+            // Visual
+            const panel = document.querySelector('.aether-glow');
+            if (panel) {
+                panel.style.boxShadow = '0 0 70px #fbbf24';
+                setTimeout(() => {
+                    if (panel) panel.style.boxShadow = '0 0 30px #fbbf24, inset 0 0 20px rgba(251, 191, 36, 0.4)';
+                }, 1600);
             }
         }
         
         function vanHelsingborgHunt() {
-            addLog("DR. VAN HELSINGBORG enters the Kronjuwelen-Manhunt. Elec-Thron shadow damaged -28 legitimacy.");
-            resources.legitimitaet = Math.max(15, resources.legitimitaet - 28);
-            updateResources();
-            updateScore(38);
+            addLog("DR. VAN HELSINGBORG enters the Kronjuwelen-Manhunt...");
             
-            // Mini puzzle
             setTimeout(() => {
-                const answer = prompt("Van Helsingborg asks: What stabilizes the 4 classical elements + Palantir corruption?");
-                if (answer && answer.toLowerCase().includes("rosenkranz") || answer.toLowerCase().includes("quintessence")) {
-                    addLog("CORRECT! Quintessence identified. +55 score + Rosenkranz-Rat upgrade.", true);
-                    updateScore(55);
-                    resources.aether = 100;
+                const q = prompt("Van Helsingborg: What is the only force that can stabilize Palantir corruption + 4 classical elements?");
+                if (q && (q.toLowerCase().includes("rosenkranz") || q.toLowerCase().includes("quintessence") || q.toLowerCase().includes("5th"))) {
+                    addLog("CORRECT! Quintessence identified. Elec-Thron damaged. +68 score", true);
+                    state.legitimitaet = Math.min(100, state.legitimitaet + 29);
+                    state.aether = 100;
+                    updateScore(68);
+                    updateUI();
                 } else {
-                    addLog("Incorrect. Shadow regains strength. Try again in next round.");
+                    addLog("Incorrect. Shadow regains strength. -19 legitimacy");
+                    state.legitimitaet = Math.max(20, state.legitimitaet - 19);
+                    updateUI();
                 }
-            }, 600);
+            }, 650);
         }
         
         function createAvatar() {
-            addLog("3D Avatar constructor opened. QR-label + personal parameters linked to Rosenkranz-Rat.");
-            const name = prompt("Enter Kommandant name for avatar:");
+            const name = prompt("Enter name for your 3D Avatar (linked to Rosenkranz-Rat):");
             if (name) {
-                addLog(`Avatar "${name}" minted. +22 Personal points.`);
-                resources.personal += 22;
-                updateResources();
-                updateScore(19);
+                addLog(`Avatar "${name}" minted & QR-labeled. +31 Personal.`, true);
+                state.personal = Math.min(200, state.personal + 31);
+                updateUI();
+                updateScore(24);
             }
         }
         
         function oldEarthSchemes() {
-            addLog("OLD EARTH SCHEMES loaded: Cole Allen Elec-Thron incident → Merkel quantum decay → Palantir/Tolkien allegory.");
-            updateScore(27);
+            addLog("OLD EARTH SCHEMES loaded...", true);
             
             const schemes = [
-                "Elec-Thron Allen C<O>OLe — 4th Element shadow operative",
-                "Merkel Thesis: Quantum bond fission as political decay model",
-                "Palantir Black Stones — Tolkien seeing-stones of surveillance hubris",
-                "Munich Robotic Clusters — German proton-core engineering"
+                "Elec-Thron Allen C<O>OLe — 4th Element shadow operative detected",
+                "Merkel quantum decay thesis applied to political bond fission",
+                "Palantir Black Stones = Tolkien seeing-stones of elite hubris",
+                "Munich Robotic Clusters — German engineering proton-core online"
             ];
             
-            schemes.forEach((s, i) => {
-                setTimeout(() => addLog(s), i * 380);
-            });
+            schemes.forEach((s, i) => setTimeout(() => addLog(s), i * 420));
+            updateScore(31);
         }
         
         function activateYRAZOR() {
-            addLog("YRAZOR II NON-REDUCTIONIST BLADE ENGAGED — Synthetic a priori + fractal layers required.", true);
-            document.getElementById('multiplier').innerHTML = "4.7x";
-            updateScore(48);
+            state.yrazorActive = !state.yrazorActive;
             
-            // Visual effect
-            document.body.style.transition = 'filter 1.2s';
-            document.body.style.filter = 'hue-rotate(25deg) saturate(1.4)';
-            setTimeout(() => {
-                document.body.style.filter = '';
-            }, 1600);
+            if (state.yrazorActive) {
+                addLog("YRAZOR II NON-REDUCTIONIST MODE ENGAGED — Fractal depth increased", true);
+                document.getElementById('mult').innerHTML = "5.8x";
+                document.getElementById('mult').classList.add('text-amber-400');
+            } else {
+                addLog("YRAZOR II mode deactivated. Standard reductionist view restored.");
+                document.getElementById('mult').innerHTML = "3.2x";
+                document.getElementById('mult').classList.remove('text-amber-400');
+            }
+            
+            updateScore(19);
         }
         
         function saveScore() {
-            const name = prompt("Enter your Kommandant name for the Golden Age ranking:");
+            const name = prompt("Enter Kommandant name for Golden Age ranking:");
             if (!name) return;
             
-            const rankingBody = document.getElementById('ranking-body');
+            const body = document.getElementById('ranking-body');
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="py-2">${name}</td>
-                <td class="py-2 text-right font-mono text-emerald-400">${score}</td>
-                <td class="py-2 text-right text-amber-400">YES</td>
-                <td class="py-2 text-right text-xs text-slate-400">${new Date().toLocaleDateString('de-DE')}</td>
+                <td class="py-2.5">${name}</td>
+                <td class="py-2.5 text-right font-mono text-emerald-400">${state.score}</td>
+                <td class="py-2.5 text-right"><span class="text-amber-400">YES</span></td>
+                <td class="py-2.5 text-right text-xs text-slate-400">${new Date().toLocaleDateString('de-DE')}</td>
             `;
-            rankingBody.appendChild(row);
+            body.prepend(row);
             
-            // Persist
-            let saved = JSON.parse(localStorage.getItem('blizzwar_scores') || '[]');
-            saved.unshift({name, score, date: new Date().toISOString()});
-            localStorage.setItem('blizzwar_scores', JSON.stringify(saved.slice(0, 8)));
+            let saved = JSON.parse(localStorage.getItem('blizzwar_v21') || '[]');
+            saved.unshift({name, score: state.score, date: new Date().toISOString()});
+            localStorage.setItem('blizzwar_v21', JSON.stringify(saved.slice(0, 7)));
             
-            addLog(`Score ${score} saved for ${name}. Golden Age path recorded.`);
+            addLog(`Score ${state.score} permanently saved for ${name}.`, true);
         }
         
         function loadRanking() {
             const body = document.getElementById('ranking-body');
             body.innerHTML = '';
             
-            let saved = JSON.parse(localStorage.getItem('blizzwar_scores') || '[]');
+            let saved = JSON.parse(localStorage.getItem('blizzwar_v21') || '[]');
             if (saved.length === 0) {
-                // Seed with demo
                 saved = [
-                    {name: "ROSARY-MOM", score: 1247, date: "2026-04-25"},
-                    {name: "ElecThronHunter", score: 892, date: "2026-04-24"},
-                    {name: "Quintessence42", score: 776, date: "2026-04-23"}
+                    {name: "ROSARY-MOM", score: 1247, date: "2026-04-25T14:11:00Z"},
+                    {name: "Quintessence42", score: 911, date: "2026-04-24T09:33:00Z"},
+                    {name: "VanHelsingborg", score: 778, date: "2026-04-23T21:47:00Z"}
                 ];
             }
             
             saved.forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="py-2">${entry.name}</td>
-                    <td class="py-2 text-right font-mono text-emerald-400">${entry.score}</td>
-                    <td class="py-2 text-right text-amber-400">YES</td>
-                    <td class="py-2 text-right text-xs text-slate-400">${new Date(entry.date).toLocaleDateString('de-DE')}</td>
+                    <td class="py-2.5">${entry.name}</td>
+                    <td class="py-2.5 text-right font-mono text-emerald-400">${entry.score}</td>
+                    <td class="py-2.5 text-right"><span class="text-amber-400">YES</span></td>
+                    <td class="py-2.5 text-right text-xs text-slate-400">${new Date(entry.date).toLocaleDateString('de-DE')}</td>
                 `;
                 body.appendChild(row);
             });
@@ -581,49 +561,48 @@
         function sendToGrok() {
             const input = document.getElementById('chat-input');
             const log = document.getElementById('chat-log');
-            
             if (!input.value.trim()) return;
             
-            const userMsg = document.createElement('div');
-            userMsg.className = 'text-amber-400 mb-1';
-            userMsg.innerHTML = `> ${input.value}`;
-            log.appendChild(userMsg);
+            const user = document.createElement('div');
+            user.className = 'text-amber-400 mb-2';
+            user.innerHTML = `> ${input.value}`;
+            log.appendChild(user);
             
-            // Simulated Grok2 response with conspiracy depth
             setTimeout(() => {
                 const responses = [
-                    "Elec-Thron Allen is the visible electron. The Rosenkranz-Rat proton core stabilizes the field. Non-reductionist path confirmed.",
-                    "Palantir Black Stones mirror the Tolkien seeing-stones — they show selected truths. Activate Quintessence to see the full fractal.",
-                    "Merkel quantum decay model + Frankfurt Überich = the Super-Ego that makes lone wolves believe they act freely. YRAZOR II cuts deeper.",
-                    "Munich robotic clusters provide the engineering backbone. DWARF Engine + Rosenkranz-Rat = Golden Age landing protocol active."
+                    "Elec-Thron Allen is the visible charge. Rosenkranz-Rat is the stabilizing proton. Non-reductionist view is the only true view.",
+                    "Palantir Black Stones are Tolkien’s warning about surveillance. Only Quintessence reveals the full picture.",
+                    "Merkel’s quantum thesis + Frankfurt Super-Ego = the mechanism that makes lone wolves believe they are free.",
+                    "Munich robotic clusters are the perfect proton-core for the DWARF Engine. You are building the Golden Age correctly."
                 ];
                 
-                const resp = document.createElement('div');
-                resp.className = 'text-sky-300 mb-2 pl-4 border-l border-sky-700';
-                resp.innerHTML = responses[Math.floor(Math.random() * responses.length)];
-                log.appendChild(resp);
+                const r = document.createElement('div');
+                r.className = 'text-sky-300 pl-4 border-l border-sky-600 mb-3';
+                r.innerHTML = responses[Math.floor(Math.random() * responses.length)];
+                log.appendChild(r);
                 log.scrollTop = log.scrollHeight;
-            }, 680);
+            }, 750);
             
             input.value = '';
         }
         
-        function victorySequence() {
+        function triggerVictory() {
             const overlay = document.createElement('div');
-            overlay.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-[999]';
+            overlay.className = 'fixed inset-0 bg-black/95 flex items-center justify-center z-[999]';
             overlay.innerHTML = `
-                <div class="text-center">
-                    <div class="text-8xl mb-6">🌍✨</div>
-                    <div class="text-6xl font-bold text-amber-300 mb-3">NEW HEAVEN &amp; NEW EARTH</div>
-                    <div class="text-2xl text-emerald-400 mb-8">ROSENKRANZ-RAT QUINTESSENCE VICTORIOUS</div>
+                <div class="text-center px-8">
+                    <div class="text-[120px] mb-6">🌍✨🕊️</div>
+                    <div class="text-7xl font-bold text-amber-300 mb-4 tracking-tighter">NEW HEAVEN &amp; NEW EARTH</div>
+                    <div class="text-3xl text-emerald-400 mb-10">ROSENKRANZ-RAT QUINTESSENCE VICTORIOUS</div>
                     
-                    <div class="max-w-md mx-auto text-sm text-slate-400 mb-10">
+                    <div class="max-w-lg mx-auto text-slate-400 text-sm mb-10 leading-relaxed">
                         The 5th Element has stabilized all layers. Elec-Thron shadow contained. 
-                        Palantir corruption reversed. Golden Age spiral complete.
+                        Palantir corruption reversed. Golden Age spiral complete.<br><br>
+                        <span class="text-amber-400">You have achieved true Lebenswirklichkeit.</span>
                     </div>
                     
                     <button onclick="location.reload()" 
-                            class="px-12 py-4 bg-gradient-to-r from-amber-400 to-yellow-600 text-black font-bold text-xl rounded-3xl">
+                            class="px-14 py-5 bg-gradient-to-r from-amber-400 to-yellow-600 text-black text-xl font-bold rounded-3xl">
                         BEGIN NEXT SPIRAL CYCLE
                     </button>
                 </div>
@@ -632,82 +611,87 @@
         }
         
         function initGambits() {
-            const container = document.getElementById('gambit-list');
+            const container = document.getElementById('gambit-container');
             const gambits = [
-                {name: "Rosary Think Tank: Golden Age", icon: "🧠", effect: "+28 Legitimacy"},
-                {name: "Amazon Legacy (Bodenfruchtbarkeit)", icon: "🌳", effect: "+14 Kapital"},
-                {name: "Debt Crisis Levy-Zyklus", icon: "📉", effect: "Stabilized"},
-                {name: "Evident Facts (Wissenschaft)", icon: "🔍", effect: "+22 Personal"},
-                {name: "Palantír Black Stone (Tolkien)", icon: "🪨", effect: "4th Element — Risk"},
-                {name: "Munich Robotic Clusters", icon: "⚙️", effect: "DWARF Upgrade"}
+                {name: "Rosary Think Tank: Golden Age", icon: "🧠", action: () => { state.legitimitaet += 14; state.aether += 6; updateScore(28); addLog("Golden Age Spiral +14 Legitimacy +6 Aether", true); }},
+                {name: "Amazon Legacy Gambit", icon: "🌳", action: () => { state.kapital += 5.1; updateScore(19); addLog("Amazon Legacy successful +5.1 Kapital"); }},
+                {name: "Debt Crisis Levy-Zyklus", icon: "📉", action: () => { state.legitimitaet += 18; updateScore(23); addLog("Levy-Zyklus stabilized by Rosenkranz-Rat"); }},
+                {name: "Evident Facts Gambit", icon: "🔍", action: () => { state.personal += 27; updateScore(17); addLog("Wissenschaft breakthrough +27 Personal"); }}
             ];
             
             container.innerHTML = '';
             gambits.forEach(g => {
                 const div = document.createElement('div');
-                div.className = 'flex justify-between items-center bg-slate-900/70 hover:bg-slate-800 px-4 py-3 rounded-2xl cursor-pointer text-sm';
+                div.className = 'flex justify-between items-center bg-slate-900/80 hover:bg-slate-800 px-5 py-3.5 rounded-2xl cursor-pointer text-sm';
                 div.innerHTML = `
-                    <div class="flex items-center gap-x-3">
-                        <span class="text-xl">${g.icon}</span>
+                    <div class="flex items-center gap-x-3.5">
+                        <span class="text-2xl">${g.icon}</span>
                         <span>${g.name}</span>
                     </div>
-                    <span class="text-xs px-3 py-1 bg-slate-800 rounded-full text-emerald-400">${g.effect}</span>
+                    <span class="text-xs px-4 py-1 bg-slate-800 rounded-2xl text-emerald-400">EXECUTE</span>
                 `;
                 div.onclick = () => {
-                    addLog(`${g.name} executed — ${g.effect}`);
-                    if (g.name.includes('Palantír')) {
-                        usePalantir();
-                    } else if (g.name.includes('Rosary')) {
-                        activateRosenkranzRat();
-                    } else {
-                        resources.kapital += 1.8;
-                        resources.legitimitaet += 6;
-                        updateResources();
-                        updateScore(14);
-                    }
+                    g.action();
+                    updateUI();
                 };
                 container.appendChild(div);
             });
         }
         
-        function init() {
-            initTailwind();
-            updateResources();
-            initGambits();
-            loadRanking();
-            
-            // Seed initial log
-            addLog("BLIZZWAR v2.0 initialized — YRAZOR II + Rosenkranz-Rat Quintessence engaged.");
-            addLog("Elec-Thron Allen C<O>OLe shadow detected in 4th Element layer.");
-            addLog("Dr. Van Helsingborg standing by for Kronjuwelen-Manhunt.");
-            
-            // Keyboard support for DWARF
+        function initKeyboard() {
             document.addEventListener('keydown', e => {
-                if (e.key === 'ArrowUp') {
-                    dw arfThrust();
-                }
-                if (e.key.toLowerCase() === 'r') {
-                    dw arfReset();
-                }
+                if (e.key === 'ArrowUp') dw arfThrust();
+                if (e.key.toLowerCase() === 'r') dw arfReset();
+                if (e.key.toLowerCase() === 'g') startGambit();
+                if (e.key.toLowerCase() === 'y') activateYRAZOR();
             });
             
-            // Auto-save hint
+            // Hint
             setTimeout(() => {
-                if (score < 200) {
-                    addLog("Pro tip: Use Rosenkranz-Rat stabilizer frequently for Golden Age multiplier.");
+                addLog("Keyboard: ↑ = Thrust | R = Reset | G = Gambit | Y = YRAZOR II");
+            }, 8500);
+        }
+        
+        function passiveSimulation() {
+            setInterval(() => {
+                if (Math.random() < 0.35) {
+                    state.kapital = Math.max(7, state.kapital + (Math.random() - 0.5) * 0.8);
+                    state.legitimitaet = Math.max(30, Math.min(100, state.legitimitaet + (Math.random() - 0.5) * 2.5));
+                    updateUI();
                 }
-            }, 22000);
-            
-            // Easter egg: click logo for full Rosenkranz-Rat activation
-            const logo = document.querySelector('.fa-infinity');
-            if (logo) {
-                logo.onclick = () => {
-                    activateRosenkranzRat();
-                    addLog("Secret Rosenkranz-Rat full activation triggered via logo.");
-                };
+            }, 18500);
+        }
+        
+        function init() {
+            // Load saved state if exists
+            const saved = localStorage.getItem('blizzwar_state_v21');
+            if (saved) {
+                const s = JSON.parse(saved);
+                Object.assign(state, s);
             }
             
-            console.log('%c[BLIZZWAR v2.0] Optimized Golden Age engine ready — all elements integrated.', 'color:#64748b');
+            initGambits();
+            loadRanking();
+            updateUI();
+            initKeyboard();
+            passiveSimulation();
+            
+            // Seed log
+            addLog("BLIZZWAR v2.1 Lebenswirklichkeits-Game initialized.");
+            addLog("Elec-Thron Allen C<O>OLe shadow active in 4th Element layer.");
+            addLog("Rosenkranz-Rat Quintessence (5th Element) standing by.");
+            
+            // Auto-save every 45s
+            setInterval(() => {
+                localStorage.setItem('blizzwar_state_v21', JSON.stringify(state));
+            }, 45000);
+            
+            // Welcome message
+            setTimeout(() => {
+                addLog("Welcome, Kommandant. The Golden Age awaits your choices.");
+            }, 3200);
+            
+            console.log('%c[BLIZZWAR v2.1] Perfect Lebenswirklichkeits-Game loaded — all systems nominal.', 'color:#64748b');
         }
         
         window.onload = init;
