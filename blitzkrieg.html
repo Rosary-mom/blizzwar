@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLIZZWAR©®™ v2.4 • Golden Age Mars — Lebenswirklichkeits-Game</title>
+    <title>BLIZZWAR©®™ 2026 ff.  v2.5 • Golden Age Mars — Lebenswirklichkeits-Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
         body { font-family: 'Space Grotesk', system_ui, sans-serif; }
         .cosmic { background: radial-gradient(circle at center, #0a0a2e 0%, #000000 100%); }
         .panel { background: rgba(15, 23, 42, 0.92); border: 1px solid #334155; box-shadow: 0 10px 30px -15px rgb(15 23 42 / 0.5); }
@@ -19,6 +20,19 @@
         .log-line { animation: logpop 0.3s ease forwards; }
         @keyframes aether { 0%, 100% { box-shadow: 0 0 30px #fbbf24, inset 0 0 20px rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 0 50px #fbbf24, inset 0 0 30px rgba(251, 191, 36, 0.6); } }
         .section-title { font-size: 13px; letter-spacing: 1px; font-weight: 600; }
+        
+        /* Paladin Fantasy Style */
+        .paladin-modal {
+            font-family: 'UnifrakturCook', cursive;
+            background: linear-gradient(145deg, #1a1429, #0f0c1f);
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
+        }
+        .paladin-title {
+            font-family: 'UnifrakturCook', cursive;
+            color: #d4af37;
+            text-shadow: 0 0 15px #d4af37;
+        }
     </style>
 </head>
 <body class="bg-[#05050f] text-slate-200 cosmic">
@@ -33,7 +47,7 @@
                 <div>
                     <div class="flex items-center gap-x-3">
                         <h1 class="text-6xl font-bold tracking-tighter">BLIZZWAR</h1>
-                        <div class="px-4 py-1 bg-emerald-500 text-black text-xs font-bold rounded-2xl self-start mt-3">v2.4</div>
+                        <div class="px-4 py-1 bg-emerald-500 text-black text-xs font-bold rounded-2xl self-start mt-3">v2.5</div>
                     </div>
                     <p class="text-2xl -mt-2 text-amber-400">GOLDEN AGE MARS • LEBENSWIRKLICHKEITS-GAME</p>
                 </div>
@@ -53,7 +67,7 @@
             <button onclick="createAvatar()" class="game-btn px-7 py-3.5 bg-violet-600 hover:bg-violet-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm"><i class="fa-solid fa-user-astronaut"></i> <span>3D AVATAR</span></button>
             <button onclick="oldEarthSchemes()" class="game-btn px-7 py-3.5 bg-amber-600 hover:bg-amber-500 rounded-3xl font-semibold flex items-center gap-x-3 text-sm"><i class="fa-solid fa-globe"></i> <span>OLD EARTH SCHEMES</span></button>
             <button onclick="activateYRAZOR()" class="game-btn px-7 py-3.5 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold rounded-3xl flex items-center gap-x-3 text-sm"><i class="fa-solid fa-infinity"></i> <span>YRAZOR II MODE</span></button>
-            <button onclick="showRosenkranzLore()" class="game-btn px-7 py-3.5 bg-gradient-to-r from-amber-600 to-yellow-700 text-black font-bold rounded-3xl flex items-center gap-x-3 text-sm"><i class="fa-solid fa-book"></i> <span>ROSENKRANZ-RAT LORE</span></button>
+            <button onclick="showLoreCodex()" class="game-btn px-7 py-3.5 bg-gradient-to-r from-amber-600 to-yellow-700 text-black font-bold rounded-3xl flex items-center gap-x-3 text-sm"><i class="fa-solid fa-book-open"></i> <span>LORE CODEX</span></button>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -105,7 +119,7 @@
                     <!-- DWARF LANDER -->
                     <div class="lg:col-span-5 bg-black/70 rounded-3xl p-6 relative" style="min-height: 310px;">
                         <div class="flex justify-between items-start mb-4">
-                            <div><div class="text-xs text-emerald-400">LANDING SEQUENCE</div><div class="font-mono text-sm">ARROW ↑ = THRUST | TOUCH = THRUST</div></div>
+                            <div><div class="text-xs text-emerald-400">LANDING SEQUENCE</div><div class="font-mono text-sm">ARROW ↑ = THRUST</div></div>
                             <div class="text-right"><div class="text-xs">ALT <span id="altitude" class="font-mono text-xl">1240</span>m</div><div class="text-xs">VEL <span id="velocity" class="font-mono text-xl">-12.4</span>m/s</div></div>
                         </div>
                         <div class="flex justify-center my-6"><div id="lander" class="lander text-7xl transition-transform cursor-pointer" onclick="dw arfThrust()">🛸</div></div>
@@ -129,12 +143,26 @@
                 </div>
             </div>
 
-            <!-- RANKING + CHAT -->
-            <div class="xl:col-span-7 panel rounded-3xl p-7">
-                <div class="flex items-center justify-between mb-4"><div class="section-title">EFFIZIENZ-RANKING • GOLDEN AGE</div><button onclick="saveScore()" class="px-5 py-1.5 text-xs bg-emerald-600 rounded-2xl">SAVE RUN</button></div>
-                <table class="w-full text-sm"><thead><tr class="text-xs text-slate-400 border-b border-slate-700"><th class="text-left pb-3">KOMMANDANT</th><th class="text-right pb-3">EFFIZIENZ</th><th class="text-right pb-3">GOLDEN AGE</th><th class="text-right pb-3">DATUM</th></tr></thead><tbody id="ranking-body" class="text-xs font-mono"></tbody></table>
-            </div>
+            <!-- GLOBAL RANKING (Multiplayer Style) -->
             <div class="xl:col-span-5 panel rounded-3xl p-7">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="section-title">GLOBAL RANKING • MULTIPLAYER</div>
+                    <button onclick="refreshGlobalRanking()" class="px-4 py-1 text-xs bg-emerald-600 rounded-2xl">Refresh</button>
+                </div>
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs text-slate-400 border-b border-slate-700">
+                            <th class="text-left pb-3">KOMMANDANT</th>
+                            <th class="text-right pb-3">EFFIZIENZ</th>
+                            <th class="text-right pb-3">GOLDEN AGE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="global-ranking-body" class="text-xs font-mono"></tbody>
+                </table>
+            </div>
+
+            <!-- XAI GROK2 CHAT -->
+            <div class="xl:col-span-7 panel rounded-3xl p-7">
                 <div class="section-title text-sky-400 mb-3 flex items-center gap-x-2"><i class="fa-solid fa-robot"></i> <span>XAI GROK2 — STRATEGIC ADVISOR (LIVE)</span></div>
                 <div id="chat-log" class="h-[138px] overflow-auto text-xs bg-black/60 p-4 rounded-2xl mb-3 matrix"></div>
                 <div class="flex gap-3"><input id="chat-input" type="text" placeholder="Ask about Elec-Thron, Quintessence, or YRAZOR..." class="flex-1 bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-2xl px-5 text-sm"><button onclick="sendToGrok()" class="px-8 bg-sky-600 hover:bg-sky-500 rounded-2xl text-sm font-semibold">SEND</button></div>
@@ -142,18 +170,18 @@
         </div>
     </div>
 
-    <footer class="text-center text-xs text-slate-500 py-10">ROSARY 2026©®™ • YRAZOR II + ROSENKRANZ-RAT QUINTESSENCE • New Heaven &amp; New Earth Protocol</footer>
-
-    <!-- LORE MODAL -->
+    <!-- LORE CODEX MODAL -->
     <div id="lore-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[999]">
-        <div class="max-w-2xl w-full mx-4 panel rounded-3xl p-8">
+        <div class="max-w-3xl w-full mx-4 paladin-modal rounded-3xl p-8">
             <div class="flex justify-between items-center mb-6">
-                <div class="text-3xl font-bold text-amber-300 flex items-center gap-x-3"><i class="fa-solid fa-infinity"></i> <span>ROSENKRANZ-RAT LORE</span></div>
-                <button onclick="hideLoreModal()" class="text-3xl text-slate-400 hover:text-white">&times;</button>
+                <div class="paladin-title text-4xl">LORE CODEX</div>
+                <button onclick="hideLoreModal()" class="text-3xl text-amber-400 hover:text-white">&times;</button>
             </div>
-            <div id="lore-content" class="space-y-6 text-sm leading-relaxed text-slate-300"></div>
+            <div id="lore-content" class="space-y-8 text-lg leading-relaxed"></div>
         </div>
     </div>
+
+    <footer class="text-center text-xs text-slate-500 py-10">ROSARY 2026©®™ • YRAZOR II + ROSENKRANZ-RAT QUINTESSENCE • New Heaven &amp; New Earth Protocol</footer>
 
     <script>
         // ==================== GAME STATE ====================
@@ -206,7 +234,78 @@
             updateUI();
         }
 
-        // ==================== ACTIONS ====================
+        // ==================== MULTIPLAYER GLOBAL RANKING ====================
+        function refreshGlobalRanking() {
+            const body = document.getElementById('global-ranking-body');
+            body.innerHTML = '';
+
+            const globalPlayers = [
+                { name: "ROSARY-MOM", score: state.score, golden: "YES" },
+                { name: "Quintessence42", score: 1247, golden: "YES" },
+                { name: "VanHelsingborg", score: 911, golden: "YES" },
+                { name: "ElecThronSlayer", score: 776, golden: "YES" },
+                { name: "AetherKnight", score: 689, golden: "YES" }
+            ];
+
+            globalPlayers.sort((a, b) => b.score - a.score);
+
+            globalPlayers.forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2.5">${player.name}</td>
+                    <td class="py-2.5 text-right font-mono text-emerald-400">${player.score}</td>
+                    <td class="py-2.5 text-right"><span class="text-amber-400">${player.golden}</span></td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        // ==================== LORE CODEX (Paladin Style Popups) ====================
+        function showLoreCodex() {
+            const modal = document.getElementById('lore-modal');
+            const content = document.getElementById('lore-content');
+            content.innerHTML = `
+                <div class="space-y-8 text-lg">
+                    <div class="lore-entry">
+                        <div class="paladin-title text-2xl mb-3">The Rosenkranz-Rat</div>
+                        <p class="text-slate-300">The Rosenkranz-Rat is not merely a council. It is the living 5th Element — the Quintessence that remembers every spiral. When the four classical elements fall into chaos, the Rosenkranz-Rat weaves them back into harmony through fractal governance and a-priori wisdom.</p>
+                    </div>
+                    
+                    <div class="lore-entry">
+                        <div class="paladin-title text-2xl mb-3">Rosary Think Tank: The Golden Age Spiral</div>
+                        <p class="text-slate-300">The Rosary Think Tank is the beating heart of the Golden Age. Each bead represents a decision, each prayer a strategic gambit. When the spiral is complete, New Heaven and New Earth are born from the ashes of the old world.</p>
+                    </div>
+                    
+                    <div class="lore-entry">
+                        <div class="paladin-title text-2xl mb-3">Amazon Legacy Gambit</div>
+                        <p class="text-slate-300">In the ancient forests of the Amazon, the last seeds of the old Earth were hidden. The Amazon Legacy Gambit is the sacred mission to restore the lungs of the planet. Every tree planted is a prayer answered by the Rosenkranz-Rat.</p>
+                    </div>
+                    
+                    <div class="lore-entry">
+                        <div class="paladin-title text-2xl mb-3">Debt Crisis Levy Cycle</div>
+                        <p class="text-slate-300">The old world was built on debt that could never be repaid. The Levy Cycle is the sacred mechanism through which the Rosenkranz-Rat transforms this burden into fertile ground for the Golden Age. What was once a curse becomes the seed of renewal.</p>
+                    </div>
+                    
+                    <div class="lore-entry">
+                        <div class="paladin-title text-2xl mb-3">Evident Fact Gambit</div>
+                        <p class="text-slate-300">In an age of lies, the Evident Fact Gambit is the sword of truth. It cuts through propaganda and illusion. The Rosenkranz-Rat wields this gambit to reveal the hidden patterns that the powerful try to conceal.</p>
+                    </div>
+                    
+                    <div class="lore-entry">
+                        <div class="paladin-title text-2xl mb-3">Kronjuwelen-Manhunt</div>
+                        <p class="text-slate-300">The Kronjuwelen-Manhunt is the final trial. Dr. Van Helsingborg leads the hunt against the Elec-Thron shadow that threatens to corrupt the 5th Element. Only the pure of heart and sharp of mind will succeed in this sacred quest.</p>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+        }
+
+        function hideLoreModal() {
+            const modal = document.getElementById('lore-modal');
+            modal.classList.remove('flex'); modal.classList.add('hidden');
+        }
+
+        // ==================== GAME ACTIONS ====================
         function startGambit() {
             const options = [
                 {msg: "Rosary Think Tank: Golden Age Spiral activated", k: 3.6, l: 13, a: 6},
@@ -292,18 +391,17 @@
             const body = document.getElementById('ranking-body');
             const row = document.createElement('tr'); row.innerHTML = `<td class="py-2.5">${name}</td><td class="py-2.5 text-right font-mono text-emerald-400">${state.score}</td><td class="py-2.5 text-right"><span class="text-amber-400">YES</span></td><td class="py-2.5 text-right text-xs text-slate-400">${new Date().toLocaleDateString('de-DE')}</td>`;
             body.prepend(row);
-            let saved = JSON.parse(localStorage.getItem('blizzwar_v24') || '[]'); saved.unshift({name, score: state.score, date: new Date().toISOString()}); localStorage.setItem('blizzwar_v24', JSON.stringify(saved.slice(0, 8)));
+            let saved = JSON.parse(localStorage.getItem('blizzwar_v25') || '[]'); saved.unshift({name, score: state.score, date: new Date().toISOString()}); localStorage.setItem('blizzwar_v25', JSON.stringify(saved.slice(0, 8)));
             addLog(`Score ${state.score} permanently saved for ${name}.`, true);
         }
 
         function loadRanking() {
             const body = document.getElementById('ranking-body'); body.innerHTML = '';
-            let saved = JSON.parse(localStorage.getItem('blizzwar_v24') || '[]');
+            let saved = JSON.parse(localStorage.getItem('blizzwar_v25') || '[]');
             if (saved.length === 0) saved = [{name: "ROSARY-MOM", score: 1247, date: "2026-04-25T14:11:00Z"}, {name: "Quintessence42", score: 911, date: "2026-04-24T09:33:00Z"}];
             saved.forEach(entry => { const row = document.createElement('tr'); row.innerHTML = `<td class="py-2.5">${entry.name}</td><td class="py-2.5 text-right font-mono text-emerald-400">${entry.score}</td><td class="py-2.5 text-right"><span class="text-amber-400">YES</span></td><td class="py-2.5 text-right text-xs text-slate-400">${new Date(entry.date).toLocaleDateString('de-DE')}</td>`; body.appendChild(row); });
         }
 
-        // ==================== REAL GROK2 CHAT ====================
         async function sendToGrok() {
             const input = document.getElementById('chat-input');
             const log = document.getElementById('chat-log');
@@ -335,48 +433,6 @@
             }
             log.scrollTop = log.scrollHeight;
             input.value = '';
-        }
-
-        // ==================== LORE SYSTEM ====================
-        const loreEntries = [
-            { id: 1, title: "I. The 5th Element", text: "In the beginning there were four elements. The Rosenkranz-Rat knew that four was never enough. The 5th Element — Quintessence — is the Aether that permeates all things.", unlock: "aether >= 70" },
-            { id: 2, title: "II. Elec-Thron — The Shadow Charge", text: "Elec-Thron Allen C<O>OLe is not a lone wolf. He is the visible electron orbiting the hidden proton-core of technocratic power.", unlock: "elecThronStage >= 1" },
-            { id: 3, title: "III. YRAZOR II — The Non-Reductionist Blade", text: "Ockham’s Razor cuts once. YRAZOR II cuts deeper. It demands synthetic a priori judgment + fractal a posteriori multiplicity.", unlock: "score >= 300" },
-            { id: 4, title: "IV. Merkel’s Quantum Decay", text: "Angela Merkel’s doctoral thesis on bond fission was never just chemistry. It was a prophecy. The Rosenkranz-Rat is the statistical adiabatic stabilizer.", unlock: "score >= 450" },
-            { id: 5, title: "V. Palantír — The Corrupted Seeing Stone", text: "Tolkien warned us. The Palantír shows only what the Dark Lord wishes you to see. The Rosenkranz-Rat is the only lens that reveals the full fractal truth.", unlock: "palantirCorrupted || score >= 550" },
-            { id: 6, title: "VI. The Golden Age Spiral", text: "New Heaven and New Earth is not a destination. It is a spiral. When the 5th Element reaches 100% and the Elec-Thron is bound, the Golden Age begins again — forever.", unlock: "aether >= 95 && score >= 700" }
-        ];
-
-        function showRosenkranzLore() {
-            const modal = document.getElementById('lore-modal');
-            const content = document.getElementById('lore-content');
-            content.innerHTML = '';
-
-            loreEntries.forEach(entry => {
-                let unlocked = false;
-                if (entry.unlock.includes("aether")) unlocked = state.aether >= parseInt(entry.unlock.split(">= ")[1]);
-                else if (entry.unlock.includes("score")) unlocked = state.score >= parseInt(entry.unlock.split(">= ")[1]);
-                else if (entry.unlock.includes("elecThronStage")) unlocked = state.elecThronStage >= parseInt(entry.unlock.split(">= ")[1]);
-                else if (entry.unlock.includes("palantirCorrupted")) unlocked = state.palantirCorrupted;
-                else unlocked = true;
-
-                const div = document.createElement('div');
-                div.className = `lore-entry p-5 rounded-2xl ${unlocked ? 'bg-slate-900/70 border border-amber-400/40' : 'bg-slate-950/80 border border-slate-700 opacity-60'}`;
-                
-                if (unlocked) {
-                    div.innerHTML = `<div class="font-bold text-amber-300 mb-2 flex items-center gap-x-2"><i class="fa-solid fa-infinity text-amber-400"></i> <span>${entry.title}</span></div><div class="text-slate-300 leading-relaxed">${entry.text}</div>`;
-                    if (!state.loreRead.includes(entry.id)) { state.loreRead.push(entry.id); addLog(`Lore unlocked: ${entry.title}`, true); }
-                } else {
-                    div.innerHTML = `<div class="font-bold text-slate-500 mb-2 flex items-center gap-x-2"><i class="fa-solid fa-lock"></i> <span>${entry.title}</span></div><div class="text-slate-500 italic">Entry locked. Continue your spiral.</div>`;
-                }
-                content.appendChild(div);
-            });
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-        }
-
-        function hideLoreModal() {
-            const modal = document.getElementById('lore-modal');
-            modal.classList.remove('flex'); modal.classList.add('hidden');
         }
 
         function triggerVictory() {
@@ -411,7 +467,7 @@
                 if (e.key.toLowerCase() === 'r') dw arfReset();
                 if (e.key.toLowerCase() === 'g') startGambit();
                 if (e.key.toLowerCase() === 'y') activateYRAZOR();
-                if (e.key.toLowerCase() === 'l') showRosenkranzLore();
+                if (e.key.toLowerCase() === 'l') showLoreCodex();
             });
         }
 
@@ -426,11 +482,11 @@
         }
 
         function init() {
-            const saved = localStorage.getItem('blizzwar_state_v24');
+            const saved = localStorage.getItem('blizzwar_state_v25');
             if (saved) Object.assign(state, JSON.parse(saved));
-            initGambits(); loadRanking(); updateUI(); initKeyboard(); passiveSimulation();
-            addLog("BLIZZWAR©®™ v2.4 ready — connected to live backend.");
-            setInterval(() => localStorage.setItem('blizzwar_state_v24', JSON.stringify(state)), 38000);
+            initGambits(); loadRanking(); refreshGlobalRanking(); updateUI(); initKeyboard(); passiveSimulation();
+            addLog("BLIZZWAR™ v2.5 ready — Multiplayer Ranking &amp; Lore Codex active.");
+            setInterval(() => localStorage.setItem('blizzwar_state_v25', JSON.stringify(state)), 38000);
         }
 
         window.onload = init;
