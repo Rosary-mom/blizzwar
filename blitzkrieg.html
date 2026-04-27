@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLIZZWAR v2.6 • Golden Age Mars</title>
+    <title>BLIZZWAR©®™ 2026 ff,  v2.6 • Golden Age Mars</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -11,19 +11,35 @@
         .cosmic { background: radial-gradient(circle at center, #0a0a2e 0%, #000000 100%); }
         .panel { background: rgba(15, 23, 42, 0.92); border: 1px solid #334155; }
         .aether-glow { box-shadow: 0 0 30px #fbbf24, inset 0 0 20px rgba(251, 191, 36, 0.4); }
+        
+        /* Custom Scrollbar für die Logs */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-[#05050f] text-slate-200 cosmic">
+<body class="bg-[#05050f] text-slate-200 cosmic min-h-screen">
 
-    <div class="max-w-[1380px] mx-auto px-6 pt-8">
-        <!-- Header -->
+    <div id="info-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
+        <div class="panel p-8 rounded-3xl max-w-lg w-full mx-4 border-amber-500/50 shadow-[0_0_40px_rgba(251,191,36,0.2)]">
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold text-amber-400">System Info</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="modal-content" class="text-slate-300 text-sm leading-relaxed mb-6">
+                </div>
+            <button onclick="closeModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 rounded-2xl font-semibold text-sm transition-colors">VERSTANDEN</button>
+        </div>
+    </div>
+
+    <div class="max-w-[1380px] mx-auto px-6 pt-8 pb-12">
         <div class="flex items-end justify-between mb-8">
             <div class="flex items-center gap-x-5">
                 <div class="w-16 h-16 bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 rounded-3xl flex items-center justify-center shadow-2xl aether-glow">
                     <i class="fa-solid fa-infinity text-5xl text-black"></i>
                 </div>
                 <div>
-                    <h1 class="text-6xl font-bold tracking-tighter">BLIZZWAR <span class="text-sm align-super">v2.6</span></h1>
+                    <h1 class="text-6xl font-bold tracking-tighter cursor-pointer" onclick="toggleSection('dashboard')">BLIZZWAR <span class="text-sm align-super">v2.6</span></h1>
                     <p class="text-2xl -mt-2 text-amber-400">GOLDEN AGE MARS • LEBENSWIRKLICHKEITS-GAME</p>
                 </div>
             </div>
@@ -33,80 +49,125 @@
             </div>
         </div>
 
-        <!-- Navigation -->
-        <div class="flex flex-wrap gap-3 mb-8">
-            <button onclick="startGambit()" class="px-7 py-3.5 bg-emerald-600 hover:bg-emerald-500 rounded-3xl font-semibold text-sm">START GAMBITS</button>
-            <button onclick="enterCockpit()" class="px-7 py-3.5 bg-sky-600 hover:bg-sky-500 rounded-3xl font-semibold text-sm">MARS COCKPIT</button>
-            <button onclick="startManhunt()" class="px-7 py-3.5 bg-red-600 hover:bg-red-500 rounded-3xl font-semibold text-sm">KRONJUWELEN-MANHUNT</button>
-            <button onclick="createAvatar()" class="px-7 py-3.5 bg-violet-600 hover:bg-violet-500 rounded-3xl font-semibold text-sm">3D AVATAR</button>
-            <button onclick="oldEarthSchemes()" class="px-7 py-3.5 bg-amber-600 hover:bg-amber-500 rounded-3xl font-semibold text-sm">OLD EARTH SCHEMES</button>
-            <button onclick="activateYRAZOR()" class="px-7 py-3.5 bg-yellow-600 hover:bg-yellow-500 rounded-3xl font-semibold text-sm">YRAZOR II MODE</button>
-            <button onclick="showLoreCodex()" class="px-7 py-3.5 bg-amber-700 hover:bg-amber-600 rounded-3xl font-semibold text-sm">LORE CODEX</button>
+        <div class="flex flex-wrap gap-3 mb-8 border-b border-slate-800 pb-6">
+            <button onclick="toggleSection('dashboard')" class="px-7 py-3.5 bg-slate-800 hover:bg-slate-700 rounded-3xl font-semibold text-sm transition-colors"><i class="fa-solid fa-house mr-2"></i> ÜBERSICHT</button>
+            <button onclick="toggleSection('cockpit')" class="px-7 py-3.5 bg-sky-600/80 hover:bg-sky-500 rounded-3xl font-semibold text-sm transition-colors">MARS COCKPIT</button>
+            <button onclick="toggleSection('manhunt')" class="px-7 py-3.5 bg-red-600/80 hover:bg-red-500 rounded-3xl font-semibold text-sm transition-colors">MANHUNT</button>
+            <button onclick="toggleSection('avatar')" class="px-7 py-3.5 bg-violet-600/80 hover:bg-violet-500 rounded-3xl font-semibold text-sm transition-colors">3D AVATAR</button>
+            <button onclick="toggleSection('oldearth')" class="px-7 py-3.5 bg-amber-600/80 hover:bg-amber-500 rounded-3xl font-semibold text-sm transition-colors">OLD EARTH</button>
+            
+            <div class="flex-1"></div> <button onclick="activateYRAZOR()" class="px-7 py-3.5 bg-yellow-600 hover:bg-yellow-500 text-black rounded-3xl font-bold text-sm shadow-[0_0_15px_rgba(202,138,4,0.5)]"><i class="fa-solid fa-bolt mr-2"></i>YRAZOR II</button>
+            <button onclick="showLoreCodex()" class="px-7 py-3.5 bg-slate-700 hover:bg-slate-600 border border-slate-500 rounded-3xl font-semibold text-sm"><i class="fa-solid fa-book-journal-whills mr-2"></i>LORE CODEX</button>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
             
-            <!-- Resources -->
-            <div class="xl:col-span-4 panel rounded-3xl p-7">
-                <div class="flex justify-between mb-5">
-                    <div class="text-emerald-400 text-sm font-semibold">KOMMANDO-RESSOURCEN</div>
+            <div class="xl:col-span-4 flex flex-col gap-6">
+                <div class="panel rounded-3xl p-7">
+                    <div class="flex justify-between mb-5">
+                        <div class="text-emerald-400 text-sm font-semibold">KOMMANDO-RESSOURCEN</div>
+                    </div>
+                    <div class="space-y-4 text-lg">
+                        <div class="flex justify-between"><span>Kapital:</span> <span id="kapital" class="font-mono text-amber-300">18.4</span></div>
+                        <div class="flex justify-between"><span>Datenspeicher:</span> <span id="datenspeicher" class="font-mono text-sky-300">7.2</span></div>
+                        <div class="flex justify-between"><span>Legitimität:</span> <span id="legitimitaet" class="font-mono text-violet-300">82</span></div>
+                        <div class="flex justify-between"><span>Personal:</span> <span id="personal" class="font-mono text-emerald-300">142</span></div>
+                        <div class="pt-4 border-t border-slate-700 flex justify-between font-bold"><span>Aether (5th Element):</span> <span id="aether" class="font-mono text-amber-400 text-xl">94</span></div>
+                    </div>
                 </div>
-                <div class="space-y-5">
-                    <div>Kapital: <span id="kapital" class="font-mono text-amber-300">18.4</span></div>
-                    <div>Datenspeicher: <span id="datenspeicher" class="font-mono text-sky-300">7.2</span></div>
-                    <div>Legitimität: <span id="legitimitaet" class="font-mono text-violet-300">82</span></div>
-                    <div>Personal: <span id="personal" class="font-mono text-emerald-300">142</span></div>
-                    <div class="pt-4 border-t border-slate-700">Aether (5th Element): <span id="aether" class="font-mono text-amber-300 text-xl">94</span></div>
+
+                <div class="panel rounded-3xl p-7 flex-1">
+                    <div class="text-red-400 text-sm font-semibold mb-3 flex justify-between">
+                        <span>OPERATIONS-LOG</span>
+                        <i class="fa-solid fa-satellite-dish animate-pulse"></i>
+                    </div>
+                    <div id="log" class="h-64 overflow-auto text-xs bg-black/80 p-4 rounded-2xl font-mono border border-slate-800"></div>
                 </div>
             </div>
 
-            <!-- Gambits -->
-            <div class="xl:col-span-5 panel rounded-3xl p-7">
-                <div class="text-amber-400 text-sm font-semibold mb-4">GAMBITS &amp; PROJEKTE</div>
-                <div id="gambit-container" class="space-y-3"></div>
-            </div>
+            <div class="xl:col-span-8 flex flex-col gap-6">
+                
+                <div id="section-dashboard" class="game-section">
+                    <div class="panel rounded-3xl p-7 mb-6">
+                        <div class="text-amber-400 text-sm font-semibold mb-4"><i class="fa-solid fa-chess-knight mr-2"></i> AKTIVE GAMBITS & PROJEKTE</div>
+                        <div id="gambit-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
 
-            <!-- Log -->
-            <div class="xl:col-span-3 panel rounded-3xl p-7">
-                <div class="text-red-400 text-sm font-semibold mb-3">OPERATIONS-LOG</div>
-                <div id="log" class="h-48 overflow-auto text-xs bg-black/60 p-4 rounded-2xl matrix"></div>
-            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="panel rounded-3xl p-7">
+                            <div class="flex justify-between mb-4">
+                                <div class="text-emerald-400 text-sm font-semibold">GLOBAL RANKING</div>
+                                <button onclick="refreshGlobalRanking()" class="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded transition-colors"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                            <div id="global-ranking-body" class="text-sm space-y-2 font-mono"></div>
+                        </div>
 
-            <!-- Cockpit -->
-            <div class="xl:col-span-12 panel rounded-3xl p-7">
-                <div class="text-2xl font-bold mb-4">MARS MISSION COCKPIT</div>
-                <div class="flex gap-6">
-                    <div>
-                        <div id="lander" onclick="dwarfThrust()" class="text-8xl cursor-pointer">🛸</div>
-                        <div class="flex gap-4 mt-4">
-                            <button onclick="dwarfThrust()" class="px-6 py-2 bg-emerald-600 rounded-2xl">THRUST</button>
-                            <button onclick="dwarfReset()" class="px-6 py-2 bg-slate-700 rounded-2xl">RESET</button>
+                        <div class="panel rounded-3xl p-7">
+                            <div class="text-sky-400 text-sm font-semibold mb-3"><i class="fa-solid fa-robot mr-2"></i> XAI GROK2 — LIVE</div>
+                            <div id="chat-log" class="h-32 overflow-auto text-xs bg-black/80 p-4 rounded-2xl mb-3 border border-slate-800 font-mono"></div>
+                            <div class="flex gap-2">
+                                <input id="chat-input" type="text" placeholder="Grok befragen..." class="flex-1 bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl text-sm focus:outline-none focus:border-sky-500">
+                                <button onclick="sendToGrok()" class="px-4 bg-sky-600 hover:bg-sky-500 transition-colors rounded-xl text-sm font-bold"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex-1">
-                        <div>Altitude: <span id="altitude" class="font-mono">1240</span>m</div>
-                        <div>Velocity: <span id="velocity" class="font-mono">-12.4</span>m/s</div>
+                </div>
+
+                <div id="section-cockpit" class="game-section hidden panel rounded-3xl p-7 h-full">
+                    <div class="text-3xl font-bold mb-2 text-sky-400"><i class="fa-solid fa-rocket mr-3"></i>MARS MISSION COCKPIT</div>
+                    <p class="text-slate-400 mb-8">DWARF Engine Kontrollzentrum. Steuere den Lander sicher in den Krater.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-10 items-center justify-center p-10 bg-black/50 rounded-2xl border border-slate-800">
+                        <div class="text-center">
+                            <div id="lander" onclick="dwarfThrust()" class="text-9xl cursor-pointer hover:-translate-y-2 transition-transform filter drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">🛸</div>
+                            <div class="flex gap-4 mt-8 justify-center">
+                                <button onclick="dwarfThrust()" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-bold">THRUST (↑)</button>
+                                <button onclick="dwarfReset()" class="px-8 py-3 bg-slate-700 hover:bg-slate-600 rounded-2xl font-bold">RESET</button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-700 min-w-[250px]">
+                            <div class="text-sm text-slate-400 mb-4 border-b border-slate-700 pb-2">TELEMETRIE</div>
+                            <div class="mb-4">Altitude:<br><span id="altitude" class="font-mono text-3xl text-emerald-400">1240</span> <span class="text-slate-500">m</span></div>
+                            <div>Velocity:<br><span id="velocity" class="font-mono text-3xl text-red-400">-12.4</span> <span class="text-slate-500">m/s</span></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Global Ranking -->
-            <div class="xl:col-span-5 panel rounded-3xl p-7">
-                <div class="flex justify-between mb-4">
-                    <div class="text-emerald-400 text-sm font-semibold">GLOBAL RANKING</div>
-                    <button onclick="refreshGlobalRanking()" class="text-xs px-4 py-1 bg-emerald-600 rounded">Refresh</button>
+                <div id="section-manhunt" class="game-section hidden panel rounded-3xl p-7 h-full">
+                    <div class="text-3xl font-bold mb-2 text-red-500"><i class="fa-solid fa-crown mr-3"></i>KRONJUWELEN-MANHUNT</div>
+                    <p class="text-slate-400 mb-8">Geotagging und HUMINT-Analyse. Finde die Artefakte.</p>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-red-950/30 p-6 rounded-2xl border border-red-900/50">
+                            <h4 class="font-bold text-red-400 mb-4">FAHNDUNGS-MATRIX</h4>
+                            <button onclick="addLog('Datenanalyse läuft... keine neuen Spuren.'); showModal('Fahndung', 'Die lokalen Behörden verweigern die Kooperation. Wir müssen Satellitendaten nutzen.')" class="w-full py-3 bg-red-700/50 hover:bg-red-600/50 border border-red-500 rounded-xl">Spur untersuchen (-5 Daten)</button>
+                        </div>
+                        <div class="bg-sky-950/30 p-6 rounded-2xl border border-sky-900/50">
+                            <h4 class="font-bold text-sky-400 mb-4">GEO-TRACKING</h4>
+                            <button onclick="addLog('QR-Scanner aktiviert.'); showModal('Scanner', 'Bitte halte deine Kamera auf einen validen Chimera-QR-Code.')" class="w-full py-3 bg-sky-700/50 hover:bg-sky-600/50 border border-sky-500 rounded-xl">Kamera aktivieren</button>
+                        </div>
+                    </div>
                 </div>
-                <div id="global-ranking-body" class="text-sm"></div>
-            </div>
 
-            <!-- Chat -->
-            <div class="xl:col-span-7 panel rounded-3xl p-7">
-                <div class="text-sky-400 text-sm font-semibold mb-3">XAI GROK2 — LIVE</div>
-                <div id="chat-log" class="h-40 overflow-auto text-xs bg-black/60 p-4 rounded-2xl mb-3"></div>
-                <div class="flex gap-3">
-                    <input id="chat-input" type="text" placeholder="Ask anything..." class="flex-1 bg-slate-900 border border-slate-700 px-5 rounded-2xl text-sm">
-                    <button onclick="sendToGrok()" class="px-8 bg-sky-600 rounded-2xl text-sm">SEND</button>
+                <div id="section-avatar" class="game-section hidden panel rounded-3xl p-7 h-full">
+                    <div class="text-3xl font-bold mb-2 text-violet-400"><i class="fa-solid fa-user-astronaut mr-3"></i>3D AVATAR KONSTRUKTOR</div>
+                    <p class="text-slate-400 mb-8">Bereite deinen digitalen Repräsentanten für den Print vor.</p>
+                    <div class="text-center p-10 bg-black/40 rounded-2xl border border-dashed border-violet-500/50">
+                        <i class="fa-solid fa-cube text-6xl text-violet-500/50 mb-4"></i>
+                        <p class="mb-6">Kein Avatar geladen.</p>
+                        <button onclick="createAvatar()" class="px-8 py-3 bg-violet-600 hover:bg-violet-500 rounded-2xl font-bold">NEUEN AVATAR ERSTELLEN</button>
+                    </div>
                 </div>
+
+                <div id="section-oldearth" class="game-section hidden panel rounded-3xl p-7 h-full">
+                    <div class="text-3xl font-bold mb-2 text-amber-500"><i class="fa-solid fa-globe mr-3"></i>OLD EARTH SCHEMES</div>
+                    <p class="text-slate-400 mb-8">Simulationen der prä-kolonialen Erde zur Strategiefindung.</p>
+                    <div class="bg-black/60 p-6 rounded-2xl border border-amber-900 text-center">
+                        <p class="text-amber-500/70 mb-4">Systeme booten... Archivdaten werden dekomprimiert.</p>
+                        <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-600"></i>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -115,6 +176,7 @@
         // ==================== CLEAN GAME STATE ====================
         let state = { kapital: 18.4, datenspeicher: 7.2, legitimitaet: 82, personal: 142, aether: 94, score: 124, yrazorActive: false };
 
+        // ==================== UI & NAVIGATION ====================
         function updateUI() {
             document.getElementById('kapital').innerHTML = state.kapital.toFixed(1);
             document.getElementById('datenspeicher').innerHTML = state.datenspeicher.toFixed(1);
@@ -126,109 +188,164 @@
         function addLog(msg) {
             const log = document.getElementById('log');
             const line = document.createElement('div');
-            line.className = 'mb-1 text-emerald-300';
-            line.innerHTML = `> ${msg}`;
+            const time = new Date().toLocaleTimeString('de-DE', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+            line.className = 'mb-1 text-emerald-300 border-b border-slate-800/50 pb-1';
+            line.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="text-sky-400">&gt;</span> ${msg}`;
             log.appendChild(line);
             log.scrollTop = log.scrollHeight;
         }
 
-        // ==================== FIXED FUNCTIONS ====================
-        function startGambit() {
-            addLog("Rosary Think Tank activated! +16 Legitimacy");
-            state.legitimitaet = Math.min(100, state.legitimitaet + 16);
+        function toggleSection(sectionName) {
+            // Verstecke alle Sections
+            document.querySelectorAll('.game-section').forEach(el => el.classList.add('hidden'));
+            // Zeige die gewünschte Section
+            const target = document.getElementById(`section-${sectionName}`);
+            if(target) {
+                target.classList.remove('hidden');
+                addLog(`Navigations-Routing: Modul [${sectionName.toUpperCase()}] geladen.`);
+            }
+        }
+
+        // ==================== MODAL SYSTEM (Lateral Words) ====================
+        function showModal(title, text) {
+            document.getElementById('modal-title').innerHTML = title;
+            document.getElementById('modal-content').innerHTML = text;
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        // ==================== GAME FUNCTIONS ====================
+        function executeGambit(name, type) {
+            if(type === 'thinktank') {
+                state.legitimitaet = Math.min(100, state.legitimitaet + 16);
+                addLog(`Projekt initialisiert: ${name}. +16 Legitimität.`);
+                showModal('Rosary Think Tank', '<b>Klassifizierung: Goldenes Zeitalter</b><br><br>Durch den Einsatz konzentrierter kognitiver Ressourcen auf dem Mars haben wir eine philosophische Doktrin entwickelt, die die Kolonisten vereint. Die gesellschaftliche Legitimität steigt signifikant.');
+            } else if (type === 'amazon') {
+                state.kapital -= 2.5;
+                state.aether += 12;
+                addLog(`Projekt initialisiert: ${name}. -2.5 Kapital, +12 Aether.`);
+                showModal('Amazon Legacy', '<b>Klassifizierung: Bio-Engineering</b><br><br>Wir nutzen genetische Profile des alten Amazonasbeckens, um extrem widerstandsfähige Flechten im Krater anzusiedeln. Die Terraforming-Grundlage (Aether) verbessert sich.');
+            }
             updateUI();
         }
 
-        function enterCockpit() {
-            addLog("Mars Cockpit opened.");
-        }
-
-        function startManhunt() {
-            addLog("Kronjuwelen-Manhunt started!");
-        }
-
         function createAvatar() {
-            const name = prompt("Avatar name:");
-            if (name) addLog(`Avatar ${name} created!`);
-        }
-
-        function oldEarthSchemes() {
-            addLog("Old Earth Schemes loaded.");
+            const name = prompt("Autorisierung erforderlich. Bitte Avatar-Kennung eingeben:");
+            if (name) {
+                addLog(`Avatar-Protokoll für [${name}] erstellt! Warten auf 3D-Druckfreigabe.`);
+                showModal('Avatar Registration', `Der genetische und digitale Blueprint für <b>${name}</b> wurde im Mainframe gesichert. Das System bereitet nun die STL-Daten für die Fabrikation vor.`);
+            }
         }
 
         function activateYRAZOR() {
             state.yrazorActive = !state.yrazorActive;
-            addLog(state.yrazorActive ? "YRAZOR II MODE ACTIVATED" : "YRAZOR II deactivated");
+            addLog(state.yrazorActive ? "WARNUNG: YRAZOR II MODE ACTIVATED. Limitierer offline." : "YRAZOR II deactivated. Systeme normal.");
+            if(state.yrazorActive) {
+                document.body.style.boxShadow = "inset 0 0 100px rgba(220, 38, 38, 0.2)";
+                showModal('YRAZOR II Protokoll', '<span class="text-red-400 font-bold">KRITISCHE SYSTEMWARNUNG</span><br><br>Der YRAZOR-Modus überschreibt ethische Subroutinen der DWARF-Engine. Maximaler Schub ist freigegeben. Das Risiko für die Besatzung steigt um 400%, aber die Missionsgeschwindigkeit verdoppelt sich.');
+            } else {
+                document.body.style.boxShadow = "none";
+            }
         }
 
         function dwarfThrust() {
-            addLog("DWARF Engine thrust engaged!");
+            addLog("DWARF Engine Schub aktiviert. Telemetrie-Update folgt.");
             state.aether = Math.min(100, state.aether + 5);
+            
+            // Simuliere physikalische Änderung
+            let alt = parseInt(document.getElementById('altitude').innerText);
+            let vel = parseFloat(document.getElementById('velocity').innerText);
+            document.getElementById('altitude').innerText = Math.max(0, alt - 150);
+            document.getElementById('velocity').innerText = (vel + 2.5).toFixed(1);
+            
             updateUI();
         }
 
         function dwarfReset() {
-            addLog("Landing sequence reset.");
+            addLog("DWARF Lande-Sequenz zurückgesetzt.");
+            document.getElementById('altitude').innerText = '1240';
+            document.getElementById('velocity').innerText = '-12.4';
         }
 
-        function usePalantir() {
-            addLog("Palantir gazed. -18 Legitimacy");
-            state.legitimitaet = Math.max(20, state.legitimitaet - 18);
-            updateUI();
-        }
-
-        function activateRosenkranzRat() {
-            addLog("ROSENKRANZ-RAT QUINTESSENCE ACTIVATED!");
-            state.aether = 100;
-            state.legitimitaet = Math.min(100, state.legitimitaet + 40);
-            updateUI();
-        }
-
-        function vanHelsingborgHunt() {
-            addLog("Van Helsingborg Hunt started!");
+        function showLoreCodex() {
+            addLog("Zugriff auf Archivdaten: Lore Codex.");
+            showModal('Lore Codex: Archiv der Menschheit', '<b>Eintrag 1: Der Fall der alten Erde</b><br>Nach der Levy-Zyklus-Krise im Jahr 2024 brach das ökonomische Gleichgewicht zusammen. Projekt Chimera wurde als Arche konzipiert.<br><br><b>Eintrag 2: Das 5. Element (Aether)</b><br>Eine synthetische Ressource, die den Raum zwischen Legitimität und Überleben auf dem Mars füllt. Er ist messbar, aber flüchtig.');
         }
 
         function refreshGlobalRanking() {
+            addLog("Pinge Server für globale Rangliste...");
             const container = document.getElementById('global-ranking-body');
             container.innerHTML = `
-                <div>1. ROSARY-MOM — 1247</div>
-                <div>2. Quintessence42 — 911</div>
-                <div>3. VanHelsingborg — 776</div>
+                <div class="flex justify-between p-2 bg-emerald-900/30 rounded"><span>1. ROSARY-MOM</span> <span class="text-emerald-400 font-bold">1247 🏆</span></div>
+                <div class="flex justify-between p-2 bg-slate-800/50 rounded"><span>2. Quintessence42</span> <span class="text-slate-400 font-bold">911</span></div>
+                <div class="flex justify-between p-2 bg-slate-800/50 rounded"><span>3. VanHelsingborg</span> <span class="text-slate-400 font-bold">776</span></div>
+                <div class="flex justify-between p-2 bg-slate-800/50 rounded text-slate-500"><span>4. Leviathan_X</span> <span class="font-bold">602</span></div>
             `;
+            setTimeout(() => addLog("Rangliste synchronisiert."), 500);
         }
 
+        // ==================== XAI GROK API (Vercel Backend) ====================
         async function sendToGrok() {
             const input = document.getElementById('chat-input');
             const log = document.getElementById('chat-log');
             if (!input.value.trim()) return;
 
             const msg = input.value;
-            log.innerHTML += `<div class="text-amber-400">&gt; ${msg}</div>`;
+            log.innerHTML += `<div class="text-amber-400 mb-1"><span class="text-slate-500">Du:</span> ${msg}</div>`;
+            input.value = '';
+            input.placeholder = 'Grok rechnet...';
+            input.disabled = true;
 
             try {
-                const res = await fetch('/chat', {
+                // HINWEIS: Hier auf dein neues Vercel Backend /api/chat geroutet!
+                const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({message: msg})
+                    body: JSON.stringify({ userMessage: msg })
                 });
+                
+                if(!res.ok) throw new Error('API Response not OK');
+                
                 const data = await res.json();
-                log.innerHTML += `<div class="text-sky-300 pl-4">${data.response || "No response"}</div>`;
+                
+                // Extrahieren der Antwort, abhängig von deinem Vercel Backend Script
+                let botReply = "Systemfehler: Keine gültige Antwort.";
+                if (data.reply) botReply = data.reply;
+                else if (data.choices && data.choices[0].message) botReply = data.choices[0].message.content;
+                
+                log.innerHTML += `<div class="text-sky-300 pl-4 mb-2 border-l-2 border-sky-500/50"><span class="text-sky-500 text-[10px] uppercase block mb-0.5">XAI GROK</span>${botReply}</div>`;
+                addLog("XAI Kommunikation erfolgreich abgeschlossen.");
             } catch (e) {
-                log.innerHTML += `<div class="text-red-400">Backend error</div>`;
+                log.innerHTML += `<div class="text-red-400 pl-4 mb-2">Backend/Verbindungsfehler. Ist die Vercel Function online?</div>`;
+                addLog("Fehler bei der XAI Kommunikation.", e);
             }
+            
+            input.placeholder = 'Grok befragen...';
+            input.disabled = false;
+            input.focus();
             log.scrollTop = log.scrollHeight;
-            input.value = '';
         }
+        
+        // Enter-Taste für den Chat
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendToGrok();
+        });
 
-        function showLoreCodex() {
-            alert("Lore Codex opened! (Full version coming in next update)");
-        }
-
+        // ==================== INITIALISIERUNG ====================
         function initGambits() {
             const container = document.getElementById('gambit-container');
             container.innerHTML = `
-                <div onclick="startGambit()" class="cursor-pointer p-3 bg-slate-800 rounded-2xl hover:bg-slate-700">🧠 Rosary Think Tank</div>
-                <div onclick="startGambit()" class="cursor-pointer p-3 bg-slate-800 rounded-2xl hover:bg-slate-700">🌳 Amazon Legacy Gambit</div>
+                <div onclick="executeGambit('Rosary Think Tank', 'thinktank')" class="cursor-pointer p-4 bg-slate-800 rounded-2xl hover:bg-slate-700 border border-slate-700 hover:border-amber-500/50 transition-all shadow-lg group">
+                    <div class="font-bold text-amber-400 group-hover:text-amber-300"><i class="fa-solid fa-brain w-6"></i> Rosary Think Tank</div>
+                    <div class="text-xs text-slate-400 mt-1">Erhöht Legitimität.</div>
+                </div>
+                <div onclick="executeGambit('Amazon Legacy Gambit', 'amazon')" class="cursor-pointer p-4 bg-slate-800 rounded-2xl hover:bg-slate-700 border border-slate-700 hover:border-emerald-500/50 transition-all shadow-lg group">
+                    <div class="font-bold text-emerald-400 group-hover:text-emerald-300"><i class="fa-solid fa-leaf w-6"></i> Amazon Legacy</div>
+                    <div class="text-xs text-slate-400 mt-1">Kapital zu Aether Synthese.</div>
+                </div>
             `;
         }
 
@@ -236,7 +353,8 @@
             initGambits();
             refreshGlobalRanking();
             updateUI();
-            addLog("BLIZZWAR v2.6 initialized successfully!");
+            addLog("BLIZZWAR v2.6 Core System geladen.");
+            addLog("Warte auf Kommandant-Input...");
             console.log('%c[BLIZZWAR] All systems nominal.', 'color:#22c55e');
         }
 
