@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // CORS-Header, falls Vercel blockiert
+  // CORS-Header
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -10,16 +10,14 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ reply: 'Systemfehler: Nur POST-Anfragen erlaubt.' });
+    return res.status(405).json({ reply: 'Nur POST-Anfragen erlaubt.' });
   }
 
   try {
     const { userMessage } = req.body;
 
-    // Prüfen, ob der API Key im Vercel Dashboard gesetzt ist!
     if (!process.env.XAI_API_KEY) {
-      console.error("KRITISCHER FEHLER: XAI_API_KEY fehlt in den Vercel Environment Variables!");
-      return res.status(500).json({ reply: 'Systemfehler: API Key nicht im Vercel Backend gefunden.' });
+      return res.status(500).json({ reply: 'Vercel API Key fehlt.' });
     }
 
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -29,29 +27,42 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.XAI_API_KEY}`
       },
       body: JSON.stringify({
-        // HIER WURDE DER BOSS AUSGESCHALTET:
-     model: "grok-3-mini"
+        model: "grok-beta", // Standard-Modell, das immer antworten sollte
         messages: [
-          { role: "system", content: "Du bist der sarkastische KI-Begleiter der Mars-Mission 'Projekt Chimera'. Antworte kurz und witzig." },
+          { role: "system", content: "Du bist der sarkastische KI-Begleiter der Mars-Mission 'Projekt Chimera'." },
           { role: "user", content: userMessage || "Hallo Grok!" }
         ]
       })
     });
 
+    // Wir lesen den rohen Text, um Abstürze bei json() zu vermeiden
+    const rawText = await response.text();
+
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error("XAI API Fehler:", errorData);
-      return res.status(response.status).json({ reply: `XAI API weigert sich: ${response.status} - ${errorData}` });
+      console.error("XAI API Fehler:", rawText);
+      return res.status(response.status).json({ reply: `XAI weigert sich: ${response.status} - ${rawText}` });
     }
 
-    const data = await response.json();
-    const grokReply = data.choices[0].message.content;
+    // Versuch, die Daten auszupacken
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (parseError) {
+      return res.status(500).json({ reply: 'xAI hat kein gültiges JSON geschickt.' });
+    }
+
+    // Bulletproof Auslesen der Antwort
+    let grokReply = "Ich habe geantwortet, aber mein Funkgerät ist kaputt.";
+    if (data && data.choices && data.choices.length > 0 && data.choices[0].message) {
+      grokReply = data.choices[0].message.content;
+    } else {
+      grokReply = "Ungewohntes Datenformat von xAI: " + JSON.stringify(data).substring(0, 100);
+    }
     
-    // Immer im Feld 'reply' zurücksenden
-    res.status(200).json({ reply: grokReply });
+    return res.status(200).json({ reply: grokReply });
 
   } catch (error) {
-    console.error("Vercel Serverless Error:", error);
-    res.status(500).json({ reply: 'Serverfehler: Verbindung abgebrochen.' });
+    console.error("Vercel Serverless Error (Fatal):", error);
+    return res.status(500).json({ reply: `Fataler Backend-Crash: ${error.message}` });
   }
 }
