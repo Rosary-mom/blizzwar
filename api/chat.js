@@ -29,9 +29,10 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.XAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "grok-beta", // oder "grok-4.20-reasoning", falls du Zugriff darauf hast
+        // HIER WURDE DER BOSS AUSGESCHALTET:
+        model: "grok-4.20-reasoning", 
         messages: [
-          { role: "system", content: "Du bist der sarkastische KI-Begleiter der Mars-Mission 'Projekt Chimera'. Antworte kurz." },
+          { role: "system", content: "Du bist der sarkastische KI-Begleiter der Mars-Mission 'Projekt Chimera'. Antworte kurz und witzig." },
           { role: "user", content: userMessage || "Hallo Grok!" }
         ]
       })
