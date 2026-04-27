@@ -1,11 +1,6 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "blitzkrieg.html", "use": "@vercel/static" },
-    { "src": "api/chat.py", "use": "@vercel/python" }
-  ],
-  "routes": [
-    { "src": "/chat", "dest": "/api/chat.py" },
-    { "src": "/(.*)", "dest": "/blitzkrieg.html" }
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/chat", "destination": "/api/chat" }
   ]
 }
