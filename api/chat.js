@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.XAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "grok-beta", // Standard-Modell, das immer antworten sollte
+       model: "grok-4.20",
         messages: [
           { role: "system", content: "Du bist der sarkastische KI-Begleiter der Mars-Mission 'Projekt Chimera'." },
           { role: "user", content: userMessage || "Hallo Grok!" }
