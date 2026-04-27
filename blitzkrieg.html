@@ -299,18 +299,26 @@
             input.placeholder = 'Grok rechnet...';
             input.disabled = true;
 
-            try {
+           try {
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ userMessage: msg })
                 });
                 
-                // Wir lesen die Daten IMMER aus, auch wenn es ein Fehler ist!
-                const data = await res.json();
+                // Wir lesen die Antwort zuerst als rohen Text, egal was Vercel uns schickt!
+                const rawText = await res.text();
+                
+                let data;
+                try {
+                    // Wir versuchen, den Text in JSON umzuwandeln
+                    data = JSON.parse(rawText);
+                } catch (parseError) {
+                    // Wenn es HTML ist (das < Zeichen), fangen wir es ab und zeigen die ersten 100 Zeichen!
+                    throw new Error(`Vercel sendet eine HTML-Seite statt API-Daten (Status ${res.status}): ` + rawText.substring(0, 100) + "...");
+                }
                 
                 if(!res.ok) {
-                    // Wenn xAI oder Vercel meckern, werfen wir den ECHTEN Fehlertext aus dem Backend!
                     throw new Error(data.reply || `HTTP Error ${res.status}`);
                 }
                 
@@ -322,9 +330,10 @@
                 addLog("XAI Kommunikation erfolgreich abgeschlossen.");
                 
             } catch (e) {
-                // HIER DRUCKEN WIR DIE WAHRHEIT INS CHAT-FENSTER
-                log.innerHTML += `<div class="text-red-400 pl-4 mb-2">🚨 System-Log: ${e.message}</div>`;
-                addLog("Fehler bei der XAI Kommunikation: " + e.message);
+                // Die HTML-Zeichen entschärfen, damit das System-Log sie drucken kann
+                const safeError = e.message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                log.innerHTML += `<div class="text-red-400 pl-4 mb-2 font-mono text-[10px]">🚨 SYSTEM-LOG:<br>${safeError}</div>`;
+                addLog("Fehler bei der XAI Kommunikation.");
             }
             
             input.placeholder = 'Grok befragen...';
