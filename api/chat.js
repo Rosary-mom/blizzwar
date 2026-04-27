@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         // HIER WURDE DER BOSS AUSGESCHALTET:
-       model: "grok-2-latest", 
+     model: "grok-3-mini"
         messages: [
           { role: "system", content: "Du bist der sarkastische KI-Begleiter der Mars-Mission 'Projekt Chimera'. Antworte kurz und witzig." },
           { role: "user", content: userMessage || "Hallo Grok!" }
