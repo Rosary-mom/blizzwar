@@ -288,7 +288,7 @@
         }
 
         // ==================== XAI GROK API (Vercel Backend) ====================
-        async function sendToGrok() {
+       async function sendToGrok() {
             const input = document.getElementById('chat-input');
             const log = document.getElementById('chat-log');
             if (!input.value.trim()) return;
@@ -300,27 +300,31 @@
             input.disabled = true;
 
             try {
-                // HINWEIS: Hier auf dein neues Vercel Backend /api/chat geroutet!
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ userMessage: msg })
                 });
                 
-                if(!res.ok) throw new Error('API Response not OK');
-                
+                // Wir lesen die Daten IMMER aus, auch wenn es ein Fehler ist!
                 const data = await res.json();
                 
-                // Extrahieren der Antwort, abhängig von deinem Vercel Backend Script
+                if(!res.ok) {
+                    // Wenn xAI oder Vercel meckern, werfen wir den ECHTEN Fehlertext aus dem Backend!
+                    throw new Error(data.reply || `HTTP Error ${res.status}`);
+                }
+                
                 let botReply = "Systemfehler: Keine gültige Antwort.";
                 if (data.reply) botReply = data.reply;
                 else if (data.choices && data.choices[0].message) botReply = data.choices[0].message.content;
                 
                 log.innerHTML += `<div class="text-sky-300 pl-4 mb-2 border-l-2 border-sky-500/50"><span class="text-sky-500 text-[10px] uppercase block mb-0.5">XAI GROK</span>${botReply}</div>`;
                 addLog("XAI Kommunikation erfolgreich abgeschlossen.");
+                
             } catch (e) {
-                log.innerHTML += `<div class="text-red-400 pl-4 mb-2">Backend/Verbindungsfehler. Ist die Vercel Function online?</div>`;
-                addLog("Fehler bei der XAI Kommunikation.", e);
+                // HIER DRUCKEN WIR DIE WAHRHEIT INS CHAT-FENSTER
+                log.innerHTML += `<div class="text-red-400 pl-4 mb-2">🚨 System-Log: ${e.message}</div>`;
+                addLog("Fehler bei der XAI Kommunikation: " + e.message);
             }
             
             input.placeholder = 'Grok befragen...';
@@ -328,11 +332,6 @@
             input.focus();
             log.scrollTop = log.scrollHeight;
         }
-        
-        // Enter-Taste für den Chat
-        document.getElementById('chat-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendToGrok();
-        });
 
         // ==================== INITIALISIERUNG ====================
         function initGambits() {
