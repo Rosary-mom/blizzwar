@@ -4,16 +4,16 @@ import numpy as np
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
+        content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data)
 
-        initial = data.get("initial", 2000)
-        years = data.get("years", 5)
-        base_return = data.get("base_return", 0.089)
-        bonus = data.get("first_fruits_bonus", 0.028)
-        simulations = data.get("simulations", 10000)
-        first_fruits_share = data.get("first_fruits_share", 0.12)
+        initial = float(data.get("initial", 2000))
+        years = int(data.get("years", 5))
+        base_return = float(data.get("base_return", 0.089))
+        bonus = float(data.get("first_fruits_bonus", 0.028))
+        simulations = int(data.get("simulations", 10000))
+        first_fruits_share = float(data.get("first_fruits_share", 0.12))
 
         np.random.seed(42)
         annual_returns = np.random.normal(base_return + bonus, 0.12, (simulations, years))
