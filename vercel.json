@@ -1,6 +1,11 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/chat", "destination": "/api/chat" }
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.py", "use": "@vercel/python" },
+    { "src": "rosenkranz-app/index.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/rosenkranz-app/(.*)", "dest": "/rosenkranz-app/index.html" }
   ]
 }
