@@ -3,86 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rosenkranz-Rat©®™ • Dynamic Regenerative Index</title>
+    <title>Rosenkranz-Rat©®™ 2026 ff. • Dynamic Regenerative Index</title>
     <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f8f9fa;
-            margin: 0;
-            padding: 40px 20px;
-            color: #1a3c34;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        header {
-            background: linear-gradient(135deg, #1a3c34, #2d5a4f);
-            color: white;
-            padding: 50px 40px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.8rem;
-            margin: 0 0 10px 0;
-            font-weight: 700;
-        }
-        .subtitle {
-            font-size: 1.3rem;
-            opacity: 0.95;
-            margin: 0;
-        }
-        .main-content {
-            padding: 50px 40px;
-        }
-        .simulation-box {
-            background: #f8f9fa;
-            border: 2px solid #1a3c34;
-            border-radius: 12px;
-            padding: 35px;
-            margin: 30px 0;
-        }
-        button {
-            background: #1a3c34;
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.15rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            background: #2d5a4f;
-            transform: translateY(-2px);
-        }
-        #simulation-result {
-            margin-top: 25px;
-            padding: 25px;
-            background: white;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            white-space: pre-line;
-            line-height: 1.6;
-            border: 1px solid #ddd;
-            display: none;
-        }
-        .footer {
-            text-align: center;
-            padding: 30px;
-            font-size: 0.95rem;
-            color: #666;
-        }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; margin: 0; padding: 40px 20px; color: #1a3c34; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; }
+        header { background: linear-gradient(135deg, #1a3c34, #2d5a4f); color: white; padding: 50px 40px; text-align: center; }
+        h1 { font-size: 2.8rem; margin: 0 0 10px 0; font-weight: 700; }
+        .subtitle { font-size: 1.3rem; opacity: 0.95; margin: 0; }
+        .main-content { padding: 50px 40px; }
+        .simulation-box { background: #f8f9fa; border: 2px solid #1a3c34; border-radius: 12px; padding: 35px; margin: 30px 0; }
+        button { background: #1a3c34; color: white; border: none; padding: 16px 40px; font-size: 1.15rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        button:hover { background: #2d5a4f; transform: translateY(-2px); }
+        #simulation-result { margin-top: 25px; padding: 25px; background: white; border-radius: 8px; font-family: 'Courier New', monospace; white-space: pre-line; line-height: 1.6; border: 1px solid #ddd; display: none; }
+        .footer { text-align: center; padding: 30px; font-size: 0.95rem; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header>
             <h1>Rosenkranz-Rat</h1>
             <p class="subtitle">Dynamic Regenerative Index (DRI) • Live Simulation</p>
@@ -95,12 +32,10 @@
                 10.000 Simulationen • 5 Jahre • 8,9 % Basisrendite + 2,8 % First-Fruits-Bonus
             </p>
 
-            <!-- SIMULATION BEREICH -->
             <div class="simulation-box">
                 <button onclick="runSimulation()" style="width: 100%; font-size: 1.3rem; padding: 20px;">
                     ▶ Simulation jetzt starten (10.000 Läufe)
                 </button>
-
                 <div id="simulation-result"></div>
             </div>
 
@@ -136,10 +71,7 @@
                 })
             });
 
-            if (!response.ok) {
-                throw new Error('Server-Fehler');
-            }
-
+            if (!response.ok) throw new Error('Server-Fehler');
             const data = await response.json();
 
             resultDiv.innerHTML = `
@@ -151,10 +83,9 @@ First-Fruits Ausschüttung:       €${data.mean_first_fruits.toLocaleString()}
 5. Perzentil (Worst-Case):       €${data.p5.toLocaleString()}
 95. Perzentil (Best-Case):       €${data.p95.toLocaleString()}
 Wahrscheinlichkeit >10 % p.a.:   ${data.prob_over_10pct} %
-
             `;
         } catch (error) {
-            resultDiv.innerHTML = '❌ Fehler bei der Simulation.<br>Bitte später erneut versuchen oder den Support kontaktieren.';
+            resultDiv.innerHTML = '❌ Fehler bei der Simulation.<br>Bitte später erneut versuchen.';
             console.error(error);
         }
     }
