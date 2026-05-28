@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "rosenkranz-app/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/rosenkranz-app/(.*)",
+      "dest": "/rosenkranz-app/index.html"
+    }
+  ]
+}
