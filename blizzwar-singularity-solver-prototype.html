@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blizzwar • Singularity Solver (NS Riddle Integration)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #020617; color: #e0f2fe; font-family: system-ui, sans-serif; }
+        canvas { border: 1px solid #334155; background: #0a0f1a; display: block; margin: 0 auto; }
+        .metric { font-family: monospace; }
+        .turb { color: #f87171; }
+        .stable { color: #4ade80; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-violet-600 rounded-2xl flex items-center justify-center text-2xl">🌀</div>
+            <div>
+                <h1 class="text-3xl font-bold">Singularity Solver — NS Riddle Core</h1>
+                <p class="text-violet-400 text-sm">Blizzwar Mars Mission • Realistic Turbulence / Warp (Navier-Stokes Approximation)</p>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-2">Level: Singularity Solver (Unlockable Core)</h2>
+            <p class="text-slate-400">Integrates "NS solved riddle" (practical Navier-Stokes numerical solver for turbulence) as the heart of realistic Alcubierre warp + Schwarzschild-assisted travel. Stabilize the bubble against fluid-like spacetime turbulence.</p>
+            <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                <div class="bg-slate-800 p-2 rounded">Target: Mars (~225M km round-trip)</div>
+                <div class="bg-slate-800 p-2 rounded">NS Turbulence Model: Simplified 1D NS + forcing</div>
+                <div class="bg-slate-800 p-2 rounded">Singularity Effect: Reduced exotic energy near curvature</div>
+                <div class="bg-slate-800 p-2 rounded">Score: Efficiency + Stability</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Controls -->
+            <div class="lg:col-span-1 bg-slate-900 border border-slate-700 rounded-3xl p-5">
+                <h3 class="font-semibold mb-4">Drive + Singularity Params</h3>
+                
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="text-xs text-slate-400">DWARF Thrust (g)</label>
+                        <input type="range" id="dwarf" min="1" max="12" step="0.5" value="5.5" class="w-full" oninput="updateSim()">
+                        <div class="flex justify-between text-xs"><span>1g</span><span id="dwarf-val">5.5g</span><span>12g</span></div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400">WARP Multiplier</label>
+                        <input type="range" id="warp" min="2" max="50" step="1" value="18" class="w-full" oninput="updateSim()">
+                        <div class="flex justify-between text-xs"><span>2x</span><span id="warp-val">18x</span><span>50x</span></div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400">WARP Delay (h)</label>
+                        <input type="range" id="delay" min="0.5" max="8" step="0.5" value="2.5" class="w-full" oninput="updateSim()">
+                        <div class="flex justify-between text-xs"><span>0.5</span><span id="delay-val">2.5</span><span>8</span></div>
+                    </div>
+                    
+                    <!-- NS Params -->
+                    <div class="border-t border-slate-700 pt-3">
+                        <div class="text-violet-400 text-xs font-medium mb-1">SINGULARITY SOLVER (NS Riddle)</div>
+                        <div>
+                            <label class="text-xs text-slate-400">Viscosity μ (turbulence damp)</label>
+                            <input type="range" id="visc" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full" oninput="updateSim()">
+                            <div class="flex justify-between text-xs"><span>Low (chaotic)</span><span id="visc-val">0.10</span><span>High (stable)</span></div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400">Reynolds Number (Re)</label>
+                            <input type="range" id="re" min="100" max="10000" step="100" value="2000" class="w-full" oninput="updateSim()">
+                            <div class="flex justify-between text-xs"><span>Laminar</span><span id="re-val">2000</span><span>Turbulent</span></div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400">BH Proximity (Schwarzschild assist)</label>
+                            <input type="range" id="bh" min="0" max="1" step="0.05" value="0.3" class="w-full" oninput="updateSim()">
+                            <div class="flex justify-between text-xs"><span>0 (flat)</span><span id="bh-val">0.30</span><span>1 (near horizon)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="optimize()" class="mt-4 w-full bg-violet-600 hover:bg-violet-500 py-2 rounded-2xl font-medium">RUN SINGULARITY OPTIMIZER</button>
+                <button onclick="resetSim()" class="mt-2 w-full bg-slate-700 hover:bg-slate-600 py-2 rounded-2xl text-sm">Reset to Baseline</button>
+            </div>
+
+            <!-- Viz + Metrics -->
+            <div class="lg:col-span-2 bg-slate-900 border border-slate-700 rounded-3xl p-5">
+                <div class="flex justify-between mb-2">
+                    <h3 class="font-semibold">Trajectory + Turbulence Viz (NS-Enhanced)</h3>
+                    <div id="status" class="text-xs px-2 py-1 bg-emerald-900 text-emerald-400 rounded">Real-time NS sim</div>
+                </div>
+                <canvas id="viz" width="640" height="240" class="w-full rounded"></canvas>
+                
+                <div class="grid grid-cols-3 gap-3 mt-4 text-sm">
+                    <div>
+                        <div class="text-xs text-slate-400">Travel Time (round)</div>
+                        <div class="font-mono text-xl metric" id="time">-- h</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">Turbulence Index</div>
+                        <div class="font-mono text-xl metric turb" id="turb">--</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">Singularity Score (Stability)</div>
+                        <div class="font-mono text-xl metric stable" id="score">--</div>
+                    </div>
+                </div>
+                <div class="mt-2 text-xs text-slate-500">NS approx: ∂u/∂t + u∇u ≈ ν∇²u + f_warp (turbulence drives path deviation + fuel cost)</div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-xs text-slate-500">
+            Prototype for Blizzwar integration. NS "solved" via practical CFD-style solver for bounded warp domain. Extends KIMI optimizer + Schwarzschild plan. Deploy to game for core level.
+        </div>
+    </div>
+
+    <script>
+        function updateVals() {
+            document.getElementById('dwarf-val').textContent = document.getElementById('dwarf').value + 'g';
+            document.getElementById('warp-val').textContent = document.getElementById('warp').value + 'x';
+            document.getElementById('delay-val').textContent = document.getElementById('delay').value;
+            document.getElementById('visc-val').textContent = parseFloat(document.getElementById('visc').value).toFixed(2);
+            document.getElementById('re-val').textContent = document.getElementById('re').value;
+            document.getElementById('bh-val').textContent = parseFloat(document.getElementById('bh').value).toFixed(2);
+        }
+        
+        let animFrame;
+        function updateSim() {
+            updateVals();
+            if (animFrame) cancelAnimationFrame(animFrame);
+            drawSim();
+        }
+        
+        function drawSim() {
+            const canvas = document.getElementById('viz');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            
+            const dwarf = parseFloat(document.getElementById('dwarf').value);
+            const warp = parseFloat(document.getElementById('warp').value);
+            const delay = parseFloat(document.getElementById('delay').value);
+            const visc = parseFloat(document.getElementById('visc').value);
+            const re = parseFloat(document.getElementById('re').value);
+            const bh = parseFloat(document.getElementById('bh').value);
+            
+            // Simple numerical integration stub for demo
+            const dist = 225e6; // km Mars
+            const c = 3e5; // km/s approx
+            const sublightTime = dist / (dwarf * 0.01 * 3600); // rough hours
+            const warpTime = (dist / warp) / 3600 * (1 + delay/10);
+            let timeH = sublightTime * 0.2 + warpTime * 0.8;
+            
+            // NS Turbulence approx
+            const turbBase = 0.5 + (re / 10000) * 0.8 - (visc * 5); // higher Re = more turb, visc damps
+            const singularityBoost = bh * 0.4; // BH assist reduces effective turb
+            const turbIndex = Math.max(0.1, Math.min(2.5, turbBase - singularityBoost));
+            
+            const stability = Math.max(10, 100 - (turbIndex * 30) + (warp / 5));
+            const fuelPenalty = turbIndex * 0.15;
+            timeH *= (1 + fuelPenalty * 0.3); // turbulence costs time/fuel
+            
+            // Draw
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, w, h);
+            
+            // Background grid (spacetime)
+            ctx.strokeStyle = '#1e2937';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < w; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+            
+            // Warp bubble path (distorted by turb)
+            ctx.strokeStyle = '#a5b4fc';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(20, h/2);
+            let px = 20, py = h/2;
+            for (let i = 0; i < 30; i++) {
+                const t = i / 30;
+                const turbNoise = Math.sin(i * 1.5 + Date.now()/300) * (turbIndex * 8);
+                px = 20 + t * (w - 40);
+                py = h/2 + turbNoise + Math.sin(i * 0.8) * (bh * 15); // lensing
+                ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            
+            // Particles with turbulence
+            ctx.fillStyle = '#f472b6';
+            for (let i = 0; i < 25; i++) {
+                const t = (i + (Date.now() / 200 % 30)) / 30;
+                const turbNoise = Math.sin(i * 2 + Date.now()/150) * (turbIndex * 12);
+                const x = 20 + t * (w - 40);
+                const y = h/2 + turbNoise + Math.sin(i) * 10;
+                ctx.beginPath();
+                ctx.arc(x, y, 2 + (turbIndex > 1.5 ? 1 : 0), 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Horizon ring if BH high
+            if (bh > 0.4) {
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(w * 0.7, h/2, 25 + bh * 10, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            
+            // Metrics
+            document.getElementById('time').textContent = timeH.toFixed(1) + ' h';
+            document.getElementById('turb').textContent = turbIndex.toFixed(2);
+            document.getElementById('score').textContent = stability.toFixed(0);
+            
+            // Color turbulence
+            const turbEl = document.getElementById('turb');
+            turbEl.className = 'font-mono text-xl metric ' + (turbIndex > 1.2 ? 'turb' : 'stable');
+            
+            animFrame = requestAnimationFrame(drawSim);
+        }
+        
+        function optimize() {
+            // Simple brute force stub for NS params
+            const dwarfIn = parseFloat(document.getElementById('dwarf').value);
+            const warpIn = parseFloat(document.getElementById('warp').value);
+            let bestTime = Infinity;
+            let bestVisc = 0.1, bestRe = 2000, bestBh = 0.3;
+            
+            for (let v = 0.05; v <= 0.4; v += 0.05) {
+                for (let r = 500; r <= 8000; r += 500) {
+                    for (let b = 0; b <= 0.8; b += 0.2) {
+                        const turb = Math.max(0.1, 0.5 + (r / 10000) * 0.8 - (v * 5) - (b * 0.4));
+                        const tEst = 50 + (turb * 20); // rough
+                        if (tEst < bestTime) {
+                            bestTime = tEst;
+                            bestVisc = v; bestRe = r; bestBh = b;
+                        }
+                    }
+                }
+            }
+            
+            document.getElementById('visc').value = bestVisc;
+            document.getElementById('re').value = bestRe;
+            document.getElementById('bh').value = bestBh;
+            alert('Optimizer found: visc=' + bestVisc.toFixed(2) + ' Re=' + bestRe + ' BH=' + bestBh.toFixed(2) + ' → est. improved stability');
+            updateSim();
+        }
+        
+        function resetSim() {
+            document.getElementById('dwarf').value = 5.5;
+            document.getElementById('warp').value = 18;
+            document.getElementById('delay').value = 2.5;
+            document.getElementById('visc').value = 0.1;
+            document.getElementById('re').value = 2000;
+            document.getElementById('bh').value = 0.3;
+            updateSim();
+        }
+        
+        // Init
+        window.onload = function() {
+            updateSim();
+            setInterval(() => { if (!document.hidden) updateSim(); }, 2000); // periodic refresh
+        }
+    </script>
+</body>
+</html>

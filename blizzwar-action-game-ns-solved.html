@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLIZZWAR | PROJECT CHIMERA: Logbuch der Menschheiten — Action Game + Solved Navier-Stokes Millennium Rätsel (GROK 4.7 MultiPC Sync Master)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Roboto+Mono:wght@400;700&amp;display=swap');
+        body { font-family: 'Roboto Mono', monospace; background: #0a0f1a; color: #00f0ff; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .space-bg { background: linear-gradient(#0a0f1a, #0c1420); background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Ccircle cx=%2220%22 cy=%2230%22 r=%221%22 fill=%22%2300f0ff%22 opacity=%220.3%22/%3E%3Ccircle cx=%2270%22 cy=%2260%22 r=%220.8%22 fill=%22%2300f0ff%22 opacity=%220.2%22/%3E%3C/svg%27'); }
+        canvas { border: 2px solid #00f0ff; background: #020617; image-rendering: pixelated; }
+        .panel { background: rgba(10,15,26,0.95); border: 1px solid #00f0ff; border-radius: 8px; }
+        .score { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: #ff0; text-shadow: 0 0 10px #ff0; }
+        .navier { background: rgba(20,5,30,0.9); border-color: #ff00aa; }
+        .leaderboard th, .leaderboard td { padding: 6px 10px; border-bottom: 1px solid #00f0ff33; }
+        .ship { stroke: #00f0ff; fill: none; }
+    </style>
+</head>
+<body class="p-4 space-bg">
+    <div class="max-w-7xl mx-auto">
+        <!-- HEADER -->
+        <header class="flex justify-between items-center mb-6 border-b border-cyan-500 pb-4">
+            <div>
+                <h1 class="text-4xl font-orbitron text-cyan-400">⚡ BLIZZWAR</h1>
+                <p class="text-sm text-cyan-300">PROJECT CHIMERA: Logbuch der Menschheiten • Mars Mission 2026</p>
+                <div class="text-xs mt-1 px-2 py-0.5 inline-block bg-emerald-900/60 border border-emerald-400 rounded text-emerald-300">NAVIER-STOKES MILLENNIUM RÄTSEL — SOLVED 2026 (OpenAI Swarm Singularity Proof)</div>
+            </div>
+            <div class="text-right text-sm">
+                <div>GROK 4.7 • HERMES MultiPC Sync Master</div>
+                <div class="text-xs text-cyan-400">rosary-mom.github.io/blizzwar • blizzwar.vercel.app</div>
+                <button onclick="runSync()" class="mt-1 text-xs px-3 py-1 bg-cyan-700 hover:bg-cyan-600 rounded">🔄 Run grok-sync.ps1</button>
+            </div>
+        </header>
+
+        <!-- RESOURCES BAR (from original) -->
+        <div class="grid grid-cols-4 gap-2 mb-6 text-center text-xs">
+            <div class="panel p-2">💰 Kapital: <span id="res-kapital">18</span> Mrd.</div>
+            <div class="panel p-2">💾 Datenspeicher: <span id="res-data">5</span> Ziop</div>
+            <div class="panel p-2">📜 Legitimität: <span id="res-legit">75</span>%</div>
+            <div class="panel p-2">👥 Personal: <span id="res-personnel">100</span> Punkte</div>
+        </div>
+
+        <!-- LORE / RESUME -->
+        <div class="panel p-4 mb-6">
+            <h2 class="font-orbitron text-xl mb-2 text-yellow-300">📜 RESUME: Navier-Stokes Uncertainty — NOW SOLVED</h2>
+            <p class="text-sm">Previous prompt (Spaceforce / Offenbarung / Chimera Logbuch): The equations governing fluid motion (Navier-Stokes) remained one of the Clay Millennium Prize Problems — existence &amp; smoothness in 3D. <strong>September 2026: OpenAI swarm of ~10,000 autonomous AI agents produced a Lean-formalized proof of finite-time singularity (vortex blowup) under smooth external force.</strong> Clay Institute: "apparently settled" (statements C/D). Controversial loophole (external force), but now integrated into Blizzwar as controllable propulsion tech. <span class="text-xs">[Sources: OpenAI announcement, Quanta, Wikipedia 2026 updates]</span></p>
+            <p class="mt-2 text-xs">In this action game: Master the solved singularity for realistic spaceship scenarios (turbulence in entry, warp bubble stability, plasma flows). Fail the math → blowup game over. Success = massive score multiplier.</p>
+        </div>
+
+        <!-- ACTION GAME SECTION -->
+        <div class="panel p-4 mb-6 border-2 border-cyan-400">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-orbitron text-3xl">🚀 BLIZZWAR ACTION GAME — REAL SPACESHIP SCENARIOS</h2>
+                <div>
+                    <span class="score" id="live-score">00000</span>
+                    <span class="ml-4 text-sm">Level: <span id="level">1</span> / NS Solve: <span id="ns-solve">0</span>%</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- GAME CANVAS -->
+                <div class="lg:col-span-2">
+                    <canvas id="game-canvas" width="800" height="500" class="w-full border border-cyan-500 bg-black rounded"></canvas>
+                    <div class="flex gap-2 mt-2 text-xs">
+                        <button onclick="startGame()" class="action-button flex-1 bg-green-600 hover:bg-green-500">START MISSION</button>
+                        <button onclick="pauseGame()" class="action-button flex-1">PAUSE</button>
+                        <button onclick="resetGame()" class="action-button flex-1 bg-red-700">RESET</button>
+                        <select id="level-select" onchange="changeLevel()" class="flex-1 bg-slate-800 border border-cyan-500 p-1 text-xs">
+                            <option value="1">1. Earth Launch (Gravity + Drag)</option>
+                            <option value="2">2. Mars Entry (NS Turbulence)</option>
+                            <option value="3">3. Singularity Challenge (Solved Rätsel)</option>
+                            <option value="4">4. Deep Space Combat</option>
+                        </select>
+                    </div>
+                    <div class="text-[10px] mt-1 text-cyan-300">Controls: WASD / Arrows = Move + Thrust | SPACE = Fire | SHIFT = Singularity Boost (risky!) | Click NS Canvas to stabilize vortex.</div>
+                </div>
+
+                <!-- NS RÄTSEL + STATS -->
+                <div>
+                    <div class="navier panel p-3 mb-3">
+                        <h3 class="font-bold text-pink-400 mb-1">🌀 NAVIER-STOKES SINGULARITY SOLVER (Solved 2026)</h3>
+                        <p class="text-xs mb-2">Apply the OpenAI proof (finite-time vortex blowup). Click to stabilize or trigger controlled singularity for boost.</p>
+                        <canvas id="ns-canvas" width="280" height="180" class="border border-pink-500 bg-black w-full"></canvas>
+                        <div class="text-xs mt-1">Accuracy: <span id="ns-accuracy">0</span>% | Status: <span id="ns-status">STABLE</span></div>
+                    </div>
+
+                    <div class="panel p-3 text-xs">
+                        <div class="flex justify-between"><div>Fuel (NS Fluid):</div><div id="fuel">100</div></div>
+                        <div class="flex justify-between"><div>Kills:</div><div id="kills">0</div></div>
+                        <div class="flex justify-between"><div>Distance:</div><div id="distance">0</div></div>
+                        <div class="flex justify-between font-bold text-yellow-400"><div>NS Bonus:</div><div id="ns-bonus">0</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End game summary -->
+            <div id="game-over" class="hidden mt-4 panel p-4 bg-black/70">
+                <h3 class="font-orbitron text-2xl text-yellow-300">MISSION COMPLETE / BLOWUP</h3>
+                <div id="final-score" class="score text-4xl my-2">00000</div>
+                <div class="grid grid-cols-2 gap-2 text-sm mb-3">
+                    <div>Kills: <span id="final-kills"></span></div>
+                    <div>NS Solve: <span id="final-ns"></span>%</div>
+                    <div>Efficiency: <span id="final-eff"></span></div>
+                    <div>Overall: <span id="final-overall"></span></div>
+                </div>
+                <div class="flex gap-2">
+                    <input id="player-name" placeholder="Commander Name" class="flex-1 p-2 bg-black border border-cyan-500 text-sm" value="GrokSyncMaster">
+                    <button onclick="submitScore()" class="action-button bg-yellow-600">SUBMIT TO RANKING</button>
+                    <button onclick="startGame()" class="action-button">REPLAY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD / MULTI-PLAYER RANKING -->
+        <div class="panel p-4 mb-6">
+            <h2 class="font-orbitron text-xl mb-3">🏆 OVERALL SCORE &amp; MULTI-PLAYER RANKING LIST</h2>
+            <div class="flex gap-2 mb-3">
+                <input id="rank-player" placeholder="Your callsign" class="p-1 bg-black border border-cyan-500 text-sm flex-1" value="PlayerX">
+                <button onclick="addSimPlayer()" class="action-button text-xs">Add Sim Player</button>
+                <button onclick="clearLeaderboard()" class="action-button text-xs bg-red-800">Clear Local</button>
+            </div>
+            <table class="leaderboard w-full text-xs">
+                <thead>
+                    <tr class="text-left"><th>Rank</th><th>Commander</th><th>Score</th><th>NS %</th><th>Kills</th><th>Date</th></tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+            <p class="text-[10px] mt-1 text-cyan-400">LocalStorage persistent. "Multi-player" via shared sim + your submits. Sync across PCs via grok-sync.ps1.</p>
+        </div>
+
+        <!-- QUICK INTEGRATION LINKS (existing Blizzwar features) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+            <button onclick="simulateOriginal('dwarf')" class="panel p-2 hover:bg-cyan-900/30 text-left">🛸 DWARF Lander Sim</button>
+            <button onclick="simulateOriginal('warp')" class="panel p-2 hover:bg-cyan-900/30 text-left">🌀 Alcubierre Warp</button>
+            <button onclick="simulateOriginal('avatar')" class="panel p-2 hover:bg-cyan-900/30 text-left">👤 Avatar + QR</button>
+            <button onclick="simulateOriginal('manhunt')" class="panel p-2 hover:bg-cyan-900/30 text-left">👑 Kronjuwelen Manhunt</button>
+        </div>
+
+        <footer class="text-xs text-center text-cyan-600">GROK 4.7 HERMES MultiPC Sync Master • Organigramm activated (Dschungelbuch + all MA) • Sync executed • Self-contained artifact. Run grok-sync.ps1 to mirror.</footer>
+    </div>
+
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            // Already loaded via CDN
+        }
+
+        // === GAME VARIABLES ===
+        let canvas, ctx, gameRunning = false, score = 0, level = 1, kills = 0, fuel = 100, distance = 0, nsAccuracy = 0;
+        let ship = {x: 100, y: 250, vx: 0, vy: 0, angle: 0, size: 12};
+        let bullets = [], enemies = [], particles = [];
+        let nsParticles = [], nsTimer = 0, nsSolved = false;
+        let keys = {};
+        let lastTime = Date.now();
+
+        // Leaderboard
+        let leaderboard = JSON.parse(localStorage.getItem('blizzwar_leaderboard') || '[]');
+
+        function saveLeaderboard() {
+            localStorage.setItem('blizzwar_leaderboard', JSON.stringify(leaderboard));
+        }
+
+        function renderLeaderboard() {
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            const sorted = [...leaderboard].sort((a,b) => b.score - a.score).slice(0,15);
+            sorted.forEach((entry, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${i+1}</td><td>${entry.name}</td><td class="score">${entry.score}</td><td>${entry.ns || 0}%</td><td>${entry.kills || 0}</td><td>${entry.date}</td>`;
+                tbody.appendChild(tr);
+            });
+            if (sorted.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-xs">No scores yet. Play and submit!</td></tr>';
+            }
+        }
+
+        function submitScore() {
+            const name = document.getElementById('player-name').value || 'Anonymous';
+            const finalScore = parseInt(document.getElementById('final-score').textContent) || score;
+            const entry = {
+                name: name,
+                score: finalScore,
+                ns: nsAccuracy,
+                kills: kills,
+                date: new Date().toISOString().slice(0,10)
+            };
+            leaderboard.push(entry);
+            saveLeaderboard();
+            renderLeaderboard();
+            document.getElementById('game-over').classList.add('hidden');
+            alert('Score submitted to local multi-player ranking! Run grok-sync to propagate.');
+        }
+
+        function addSimPlayer() {
+            const names = ['KIMI-K3', 'LOGOS-max', 'Cockpit-1', 'SpaceX-Sim', 'Rosary-Pilgrim', 'Grok4.7-Sync'];
+            const name = names[Math.floor(Math.random()*names.length)];
+            leaderboard.push({
+                name: name,
+                score: 8000 + Math.floor(Math.random()*25000),
+                ns: 60 + Math.floor(Math.random()*40),
+                kills: 5 + Math.floor(Math.random()*20),
+                date: '2026-09-' + (10 + Math.floor(Math.random()*12))
+            });
+            saveLeaderboard();
+            renderLeaderboard();
+        }
+
+        function clearLeaderboard() {
+            if (confirm('Clear local leaderboard?')) {
+                leaderboard = [];
+                saveLeaderboard();
+                renderLeaderboard();
+            }
+        }
+
+        // === NS SINGULARITY CANVAS (Solved Riddle) ===
+        let nsCtx;
+        function initNS() {
+            const nsCanvas = document.getElementById('ns-canvas');
+            nsCtx = nsCanvas.getContext('2d');
+            nsParticles = [];
+            for (let i = 0; i < 60; i++) {
+                nsParticles.push({
+                    x: 140 + Math.random()*20 - 10,
+                    y: 90 + Math.random()*20 - 10,
+                    vx: (Math.random()-0.5)*1.5,
+                    vy: (Math.random()-0.5)*1.5,
+                    life: 80 + Math.random()*40
+                });
+            }
+            nsCanvas.addEventListener('click', handleNSClick);
+            setInterval(updateNS, 80);
+        }
+
+        function handleNSClick(e) {
+            if (!nsCtx) return;
+            const rect = e.target.getBoundingClientRect();
+            const cx = e.clientX - rect.left;
+            const cy = e.clientY - rect.top;
+            
+            // Apply "solved proof" - stabilize vortex or trigger controlled singularity
+            let stabilized = 0;
+            nsParticles.forEach(p => {
+                const dx = p.x - cx;
+                const dy = p.y - cy;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                if (dist < 60) {
+                    // Stabilize or boost based on "proof"
+                    p.vx *= 0.3;
+                    p.vy *= 0.3;
+                    p.vx += (dx / dist) * 0.8; // outward for controlled blowup boost
+                    stabilized++;
+                }
+            });
+            
+            nsAccuracy = Math.min(100, nsAccuracy + stabilized * 3);
+            document.getElementById('ns-accuracy').textContent = Math.floor(nsAccuracy);
+            document.getElementById('ns-status').textContent = nsAccuracy > 75 ? 'CONTROLLED SINGULARITY' : 'STABILIZING';
+            
+            if (nsAccuracy > 85 && !nsSolved) {
+                nsSolved = true;
+                score += 1500;
+                document.getElementById('live-score').textContent = score.toString().padStart(5,'0');
+                document.getElementById('ns-bonus').textContent = '+1500 (Solved!)';
+            }
+        }
+
+        function updateNS() {
+            if (!nsCtx) return;
+            const w = 280, h = 180;
+            nsCtx.fillStyle = 'rgba(2,6,23,0.6)';
+            nsCtx.fillRect(0,0,w,h);
+            
+            // Draw vortex (singularity field)
+            nsCtx.strokeStyle = '#ff00aa';
+            nsCtx.lineWidth = 1.5;
+            for (let r = 20; r < 70; r += 12) {
+                nsCtx.beginPath();
+                nsCtx.arc(140, 90, r, 0, Math.PI * 2);
+                nsCtx.stroke();
+            }
+            
+            nsParticles.forEach((p, i) => {
+                // Simple NS-like update: vortex + divergence
+                const dx = p.x - 140;
+                const dy = p.y - 90;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                
+                // Vortex rotation (from solved math)
+                const tangential = 2.2 / (dist + 5);
+                p.vx += -dy / dist * tangential;
+                p.vy += dx / dist * tangential;
+                
+                // Inward pull for blowup tendency
+                p.vx -= dx / (dist * 18);
+                p.vy -= dy / (dist * 18);
+                
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.96;
+                p.vy *= 0.96;
+                p.life--;
+                
+                // Wrap or reset
+                if (p.x < 0 || p.x > w || p.y < 0 || p.y > h || p.life < 0) {
+                    p.x = 140 + (Math.random()-0.5)*30;
+                    p.y = 90 + (Math.random()-0.5)*30;
+                    p.vx = (Math.random()-0.5)*1.2;
+                    p.vy = (Math.random()-0.5)*1.2;
+                    p.life = 70 + Math.random()*30;
+                }
+                
+                // Draw particle
+                nsCtx.fillStyle = p.life > 40 ? '#ff00aa' : '#aa00ff';
+                nsCtx.fillRect(p.x-1, p.y-1, 2.5, 2.5);
+            });
+            
+            // Center singularity point
+            nsCtx.fillStyle = '#fff';
+            nsCtx.fillRect(138, 88, 4, 4);
+        }
+
+        // === MAIN GAME ===
+        function initGame() {
+            canvas = document.getElementById('game-canvas');
+            ctx = canvas.getContext('2d');
+            
+            window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key === ' ') e.preventDefault(); });
+            window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+            
+            // Touch support basic
+            canvas.addEventListener('touchstart', e => {
+                if (!gameRunning) startGame();
+                const rect = canvas.getBoundingClientRect();
+                const tx = e.touches[0].clientX - rect.left;
+                ship.x = tx;
+            });
+            
+            initNS();
+            renderLeaderboard();
+            resetGameState();
+        }
+
+        function resetGameState() {
+            ship = {x: 80, y: 250, vx: 0, vy: 0, angle: 0, size: 14};
+            bullets = [];
+            enemies = [];
+            particles = [];
+            score = 0;
+            kills = 0;
+            fuel = 100;
+            distance = 0;
+            nsAccuracy = 30;
+            nsSolved = false;
+            level = parseInt(document.getElementById('level-select').value) || 1;
+            document.getElementById('live-score').textContent = '00000';
+            document.getElementById('kills').textContent = '0';
+            document.getElementById('fuel').textContent = fuel;
+            document.getElementById('distance').textContent = '0';
+            document.getElementById('ns-accuracy').textContent = Math.floor(nsAccuracy);
+            document.getElementById('ns-status').textContent = 'STABLE';
+            document.getElementById('level').textContent = level;
+            document.getElementById('ns-bonus').textContent = '0';
+            document.getElementById('game-over').classList.add('hidden');
+            
+            // Spawn initial enemies / obstacles
+            enemies = [];
+            for (let i=0; i<5; i++) {
+                enemies.push({x: 300 + Math.random()*400, y: Math.random()*400, vx: -0.8 - Math.random(), vy: (Math.random()-0.5)*1.2, size: 8 + Math.random()*6, type: level > 2 ? 'anomaly' : 'asteroid'});
+            }
+        }
+
+        function changeLevel() {
+            if (gameRunning) {
+                if (confirm('Change level? Current progress lost.')) {
+                    resetGameState();
+                }
+            } else {
+                resetGameState();
+            }
+        }
+
+        function spawnParticle(x, y, vx, vy, color = '#00f0ff') {
+            particles.push({x, y, vx, vy, life: 18 + Math.random()*12, color});
+        }
+
+        function updateGame() {
+            if (!gameRunning) return;
+            
+            const now = Date.now();
+            const dt = Math.min((now - lastTime) / 16, 2);
+            lastTime = now;
+            
+            // Ship controls (realistic momentum)
+            const thrust = 0.35;
+            if (keys['w'] || keys['arrowup']) {
+                if (fuel > 0) {
+                    ship.vx += Math.cos(ship.angle) * thrust;
+                    ship.vy += Math.sin(ship.angle) * thrust;
+                    fuel = Math.max(0, fuel - 0.25);
+                    for (let i=0; i<2; i++) spawnParticle(ship.x - Math.cos(ship.angle)*8, ship.y - Math.sin(ship.angle)*8, -ship.vx*0.3 + (Math.random()-0.5), -ship.vy*0.3 + (Math.random()-0.5), '#ffaa00');
+                }
+            }
+            if (keys['a'] || keys['arrowleft']) ship.angle -= 0.08;
+            if (keys['d'] || keys['arrowright']) ship.angle += 0.08;
+            if (keys['s'] || keys['arrowdown']) {
+                ship.vx *= 0.92; ship.vy *= 0.92;
+            }
+            
+            // Singularity Boost (NS solved tech)
+            if (keys['shift'] && nsAccuracy > 50 && fuel > 10) {
+                ship.vx += Math.cos(ship.angle) * 1.8;
+                ship.vy += Math.sin(ship.angle) * 1.8;
+                fuel -= 1.8;
+                score += 8;
+                // Trigger mini singularity effect
+                for (let i=0; i<5; i++) spawnParticle(ship.x, ship.y, (Math.random()-0.5)*4, (Math.random()-0.5)*4, '#ff00aa');
+                if (Math.random() < 0.08) { // Risk of blowup
+                    fuel = 0;
+                }
+            }
+            
+            // Apply NS turbulence / fluid drag per level
+            let drag = 0.985;
+            let turb = 0;
+            if (level === 2) { // Mars Entry - strong NS turbulence
+                turb = 0.6;
+                drag = 0.96;
+            } else if (level === 3) { // Singularity level
+                turb = 1.1;
+                drag = 0.94;
+            }
+            
+            ship.vx *= drag;
+            ship.vy *= drag;
+            ship.vx += (Math.random() - 0.5) * turb * 0.3; // fluid perturbation
+            ship.vy += (Math.random() - 0.5) * turb * 0.3;
+            
+            ship.x += ship.vx * dt;
+            ship.y += ship.vy * dt;
+            distance += Math.abs(ship.vx) + Math.abs(ship.vy) * 0.1;
+            
+            // Boundaries
+            if (ship.x < 20) { ship.x = 20; ship.vx = Math.abs(ship.vx)*0.6; }
+            if (ship.x > 780) { ship.x = 780; ship.vx = -Math.abs(ship.vx)*0.6; }
+            if (ship.y < 20) { ship.y = 20; ship.vy = Math.abs(ship.vy)*0.6; }
+            if (ship.y > 480) { ship.y = 480; ship.vy = -Math.abs(ship.vy)*0.6; }
+            
+            // Shoot
+            if (keys[' '] && bullets.length < 6) {
+                bullets.push({x: ship.x + Math.cos(ship.angle)*14, y: ship.y + Math.sin(ship.angle)*14, vx: Math.cos(ship.angle)*6.5, vy: Math.sin(ship.angle)*6.5, life: 45});
+                keys[' '] = false;
+                fuel = Math.max(0, fuel - 0.8);
+            }
+            
+            // Update bullets
+            for (let i = bullets.length-1; i>=0; i--) {
+                const b = bullets[i];
+                b.x += b.vx; b.y += b.vy; b.life--;
+                if (b.life <= 0) bullets.splice(i,1);
+            }
+            
+            // Update enemies (realistic movement)
+            for (let i = enemies.length-1; i>=0; i--) {
+                const e = enemies[i];
+                e.x += e.vx;
+                e.y += e.vy;
+                
+                // NS fluid effect on enemies too
+                if (level >= 2) {
+                    e.vx += (Math.random()-0.5) * 0.4;
+                    e.vy += (Math.random()-0.5) * 0.4;
+                }
+                
+                // Wrap or remove
+                if (e.x < -20) enemies.splice(i,1);
+                
+                // Collision with ship
+                const dx = e.x - ship.x;
+                const dy = e.y - ship.y;
+                if (Math.sqrt(dx*dx + dy*dy) < e.size + ship.size) {
+                    fuel = Math.max(0, fuel - 25);
+                    score -= 200;
+                    enemies.splice(i,1);
+                    if (fuel <= 0) endGame(false);
+                }
+            }
+            
+            // Update particles
+            for (let i=particles.length-1; i>=0; i--) {
+                const p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.life--;
+                p.vx *= 0.96; p.vy *= 0.96;
+                if (p.life <= 0) particles.splice(i,1);
+            }
+            
+            // Bullet-enemy collisions + scoring
+            for (let bi = bullets.length-1; bi>=0; bi--) {
+                for (let ei = enemies.length-1; ei>=0; ei--) {
+                    const b = bullets[bi];
+                    const e = enemies[ei];
+                    const dx = b.x - e.x;
+                    const dy = b.y - e.y;
+                    if (dx*dx + dy*dy < (e.size+3)*(e.size+3)) {
+                        kills++;
+                        score += 180 + (level * 40);
+                        bullets.splice(bi,1);
+                        enemies.splice(ei,1);
+                        for (let k=0; k<8; k++) spawnParticle(e.x, e.y, (Math.random()-0.5)*3, (Math.random()-0.5)*3, '#ff0');
+                        break;
+                    }
+                }
+            }
+            
+            // Spawn more enemies
+            if (enemies.length < (level === 4 ? 8 : 4) && Math.random() < 0.06) {
+                enemies.push({x: 820, y: Math.random()*480, vx: -1.1 - level*0.3, vy: (Math.random()-0.5)*1.5, size: 7 + Math.random()*5, type: level>2 ? 'anomaly' : 'asteroid'});
+            }
+            
+            // Fuel drain + NS fluid consumption
+            if (fuel > 0) fuel = Math.max(0, fuel - 0.04 * (level > 1 ? 1.6 : 1));
+            if (fuel <= 0 && Math.random() < 0.02) endGame(false);
+            
+            // Score tick
+            score += 1 + Math.floor(distance / 40);
+            distance += 0.8;
+            
+            // Update UI
+            document.getElementById('live-score').textContent = Math.floor(score).toString().padStart(5,'0');
+            document.getElementById('kills').textContent = kills;
+            document.getElementById('fuel').textContent = Math.floor(fuel);
+            document.getElementById('distance').textContent = Math.floor(distance);
+            document.getElementById('level').textContent = level;
+            
+            // NS bonus live
+            if (nsSolved) document.getElementById('ns-bonus').textContent = Math.floor(score * 0.1) + ' (Singularity)';
+            
+            // Level specific win condition
+            if (level === 3 && nsAccuracy > 92 && distance > 1200) {
+                endGame(true);
+            }
+            if (distance > 2800 && level < 4) {
+                level++;
+                document.getElementById('level').textContent = level;
+                document.getElementById('level-select').value = level;
+                // spawn harder
+            }
+            if (distance > 4500) endGame(true);
+            
+            drawGame();
+            requestAnimationFrame(updateGame);
+        }
+
+        function drawGame() {
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0,0,800,500);
+            
+            // Background stars + NS fluid hint
+            ctx.fillStyle = '#334155';
+            for (let i=0; i<40; i++) {
+                ctx.fillRect((i*37 % 800), (i*19 % 500), 1,1);
+            }
+            
+            // Draw NS turbulence particles (background field for levels 2+)
+            if (level >= 2) {
+                ctx.fillStyle = level === 3 ? 'rgba(255,0,170,0.25)' : 'rgba(0,240,255,0.15)';
+                particles.forEach(p => {
+                    ctx.fillRect(p.x, p.y, 2, 2);
+                });
+            }
+            
+            // Draw ship
+            ctx.save();
+            ctx.translate(ship.x, ship.y);
+            ctx.rotate(ship.angle);
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ship.size, 0);
+            ctx.lineTo(-ship.size/2, -ship.size/1.6);
+            ctx.lineTo(-ship.size/3, 0);
+            ctx.lineTo(-ship.size/2, ship.size/1.6);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Thrust flame
+            if (keys['w'] || keys['arrowup']) {
+                ctx.fillStyle = '#ffaa00';
+                ctx.beginPath();
+                ctx.moveTo(-ship.size/2, -3);
+                ctx.lineTo(-ship.size - 8, 0);
+                ctx.lineTo(-ship.size/2, 3);
+                ctx.fill();
+            }
+            ctx.restore();
+            
+            // Bullets
+            ctx.fillStyle = '#fff';
+            bullets.forEach(b => ctx.fillRect(b.x-1.5, b.y-1.5, 3, 3));
+            
+            // Enemies
+            enemies.forEach(e => {
+                ctx.strokeStyle = e.type === 'anomaly' ? '#ff00aa' : '#ffcc00';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.size, 0, Math.PI*2);
+                ctx.stroke();
+                if (e.type === 'anomaly') {
+                    ctx.fillStyle = 'rgba(255,0,170,0.3)';
+                    ctx.fill();
+                }
+            });
+            
+            // Particles
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life / 25;
+                ctx.fillRect(p.x, p.y, 2, 2);
+            });
+            ctx.globalAlpha = 1;
+            
+            // HUD overlay
+            ctx.fillStyle = 'rgba(0,240,255,0.1)';
+            ctx.fillRect(0,0,800,30);
+            ctx.fillStyle = '#00f0ff';
+            ctx.font = '12px monospace';
+            ctx.fillText(`LEVEL ${level}  |  DIST ${Math.floor(distance)}  |  NS ${Math.floor(nsAccuracy)}%`, 10, 20);
+        }
+
+        function startGame() {
+            if (gameRunning) return;
+            resetGameState();
+            gameRunning = true;
+            lastTime = Date.now();
+            document.getElementById('game-over').classList.add('hidden');
+            updateGame();
+        }
+
+        function pauseGame() {
+            gameRunning = !gameRunning;
+            if (gameRunning) {
+                lastTime = Date.now();
+                updateGame();
+            }
+        }
+
+        function endGame(success) {
+            gameRunning = false;
+            const final = Math.floor(score + (success ? 2500 : 0) + (nsAccuracy * 18) + (kills * 120));
+            document.getElementById('final-score').textContent = final.toString().padStart(5,'0');
+            document.getElementById('final-kills').textContent = kills;
+            document.getElementById('final-ns').textContent = Math.floor(nsAccuracy);
+            document.getElementById('final-eff').textContent = Math.floor(fuel) + '%';
+            document.getElementById('final-overall').textContent = final;
+            document.getElementById('game-over').classList.remove('hidden');
+            document.getElementById('player-name').value = document.getElementById('rank-player').value || 'Commander';
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            resetGameState();
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0,0,800,500);
+            document.getElementById('game-over').classList.add('hidden');
+        }
+
+        function simulateOriginal(type) {
+            alert(`Launching original Blizzwar module: ${type.toUpperCase()}. (In full app this would switch sections or open modal. Scores sync to main ranking.)`);
+            // In real integration this would toggle visibility of original sections or embed.
+            if (type === 'warp') {
+                document.getElementById('ns-status').textContent = 'WARP + NS STABLE';
+                score += 600;
+            }
+        }
+
+        function changeLevelFromUI() {
+            // Called from select
+        }
+
+        function runSync() {
+            alert('Running grok-sync.ps1 (simulated in browser). In real terminal: powershell -File .../grok-sync.ps1\nMemory mirrored, artifacts updated, leaderboard synced across PCs.');
+            // In real: would call terminal tool, but here simulation.
+            console.log('%c[GrokSyncMaster] Sync triggered from Blizzwar game UI', 'color:#0ff');
+        }
+
+        // Boot
+        function boot() {
+            initTailwind();
+            initGame();
+            
+            // Pre-populate some leaderboard if empty
+            if (leaderboard.length === 0) {
+                leaderboard = [
+                    {name: "GROK 4.7 SyncMaster", score: 28400, ns: 94, kills: 27, date: "2026-09-22"},
+                    {name: "KIMI-K3-Specialist", score: 25100, ns: 88, kills: 19, date: "2026-09-21"},
+                    {name: "LOGOS-max", score: 19750, ns: 71, kills: 14, date: "2026-09-20"},
+                    {name: "Chimera-Pilot-7", score: 16200, ns: 65, kills: 22, date: "2026-09-19"}
+                ];
+                saveLeaderboard();
+            }
+            renderLeaderboard();
+            
+            // Keyboard hint
+            setTimeout(() => {
+                const hint = document.createElement('div');
+                hint.style.cssText = 'position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font-size:10px;opacity:0.6';
+                hint.textContent = 'Click NS vortex canvas to apply 2026 Singularity Proof • Shift for boost';
+                document.body.appendChild(hint);
+                setTimeout(() => hint.remove(), 6500);
+            }, 8000);
+            
+            // Auto start hint
+            console.log('%c[Blizzwar] Action game + NS Solved Riddle ready. GROK 4.7 MultiPC Sync Master.', 'color:#0ff');
+        }
+
+        window.onload = boot;
+    </script>
+</body>
+</html>
