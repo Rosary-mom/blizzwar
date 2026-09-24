@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLIZZWAR: POWER-ACTION • Solved Navier-Stokes • Photo-Real 3D</title>
+    <title>BLIZZWAR: POWER-ACTION • Numerical NS Playfield • 1977 Grain</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -13,6 +13,12 @@
         .title { font-family: 'Orbitron', sans-serif; }
         canvas { display: block; }
         .hud { background: rgba(5,5,10,0.92); border: 1px solid #00f0ff33; }
+        @keyframes kenburns { 0% { transform: scale(1.0); } 100% { transform: scale(1.08); } }
+        .kenburns { animation: kenburns 5.5s ease-out forwards; }
+        .film-grain {
+            pointer-events: none; position: absolute; inset: 0; opacity: 0.18; mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+        }
         .navier { color: #ff00aa; }
         .power { color: #ff00aa; }
     </style>
@@ -22,8 +28,8 @@
         <div class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-4xl title tracking-[3px]">BLIZZWAR</h1>
-                <p class="text-sm text-[#00f0ff99]">POWER-ACTION EDITION • SOLVED NAVIER-STOKES • PHOTO-REAL 3D</p>
-                <p class="text-xs text-[#ff00aa]">XFreeze cinematic inspiration • rosary/superpower-agent</p>
+                <p class="text-sm text-[#00f0ff99]">POWER-ACTION • NUMERICAL NS PLAYFIELD • 1977 GRAIN</p>
+                <p class="text-xs text-[#ff00aa]">Imagine-look in-engine • physics-precise drag/CFL • not a Clay proof</p>
             </div>
             <div class="text-right text-xs">
                 <div>Worktree: blizzwar-power-action</div>
@@ -37,10 +43,21 @@
             <div class="lg:col-span-3 bg-black rounded-xl overflow-hidden border border-[#00f0ff33]">
                 <div id="game-container" class="relative" style="height:620px">
                     <canvas id="game-canvas" class="w-full h-full"></canvas>
+                    <div class="film-grain"></div>
                     <div class="absolute top-4 left-4 hud px-4 py-2 rounded text-sm">
                         <div>SCORE: <span id="score" class="font-bold text-[#ff0]">00000</span></div>
                         <div>POWER: <span id="power" class="font-bold text-[#0f0]">100%</span></div>
-                        <div>NS TURBULENCE: <span id="turb" class="font-bold navier">42%</span></div>
+                        <div>ν / TURB: <span id="turb" class="font-bold navier">42%</span></div>
+                        <div>E: <span id="hud-e">0</span> · Ω: <span id="hud-om">0</span></div>
+                        <div>WATCH: <span id="hud-watch" class="navier">regular_so_far</span></div>
+                    </div>
+                    <div id="cutscene" class="absolute inset-0 z-20 bg-black flex items-end justify-between overflow-hidden">
+                        <img id="cutscene-img" alt="" class="absolute inset-0 w-full h-full object-cover kenburns">
+                        <div class="relative z-10 p-4 hud m-3 rounded text-xs max-w-md">
+                            <div id="cutscene-cap" class="mb-1"></div>
+                            <div class="opacity-60">IMAGINE STILL · CLIP LOOP BLOCKED (ZDR)</div>
+                        </div>
+                        <button id="cutscene-skip" class="relative z-10 m-3 px-4 py-2 bg-white/15 hover:bg-white/25 rounded text-sm">SKIP</button>
                     </div>
                     <div id="overlay" class="absolute inset-0 flex items-center justify-center hidden bg-black/60">
                         <div class="hud p-8 rounded text-center">
@@ -66,8 +83,8 @@
                 </div>
 
                 <div class="hud p-4 rounded-xl">
-                    <div class="font-bold mb-1 navier">SOLVED NAVIER-STOKES</div>
-                    <div class="text-xs">Real-time fluid turbulence &amp; vortices as gameplay mechanics. "Solved" equations power your abilities and visuals.</div>
+                    <div class="font-bold mb-1 navier">NUMERICAL NS</div>
+                    <div class="text-xs">Vorticity + viscosity + CFL-clamped dt. Flag <code>numerical_ns_blowup</code> if energy/enstrophy explode. Not a Clay proof.</div>
                 </div>
 
                 <div class="hud p-4 rounded-xl text-xs">
@@ -97,14 +114,18 @@
         let running = true;
         let lastTime = Date.now();
         let superMode = false;
+        let nsE = 0, nsOm = 0, nsWatch = 'regular_so_far';
+        const NU = 0.08;
 
         function init() {
             const canvas = document.getElementById('game-canvas');
             const container = document.getElementById('game-container');
             
-            renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
             renderer.setSize(container.clientWidth, 620);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 0.92;
 
             scene = new THREE.Scene();
             scene.fog = new THREE.FogExp2(0x050505, 0.0016);
@@ -113,7 +134,7 @@
             camera.position.set(0, 11, 24);
 
             // Stars + Photo-real nebula (XFreeze cinematic style)
-            const starCount = 14000;
+            const starCount = window.innerWidth < 800 ? 3500 : 9000;
             const starPos = new Float32Array(starCount * 3);
             for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 380;
             const stars = new THREE.Points(
@@ -160,7 +181,7 @@
             dl.position.set(18, 35, 8); scene.add(dl);
             scene.add(new THREE.PointLight(0xff00aa, 1.3, 85));
 
-            createFluid(210);
+            createFluid(window.innerWidth < 800 ? 90 : 180);
 
             for (let i = 0; i < 6; i++) spawnEnemy();
 
@@ -172,6 +193,13 @@
                 mouseY = -((e.clientY - r.top) / r.height) * 2 + 1;
             });
             wrap.addEventListener('click', fire);
+            wrap.addEventListener('touchstart', e => { e.preventDefault(); fire(); }, { passive: false });
+            wrap.addEventListener('touchmove', e => {
+                if (!e.touches[0]) return;
+                const r = wrap.getBoundingClientRect();
+                mouseX = ((e.touches[0].clientX - r.left) / r.width) * 2 - 1;
+                mouseY = -((e.touches[0].clientY - r.top) / r.height) * 2 + 1;
+            }, { passive: true });
             window.addEventListener('keydown', e => {
                 keys[e.key.toLowerCase()] = true;
                 if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); fire(); }
@@ -219,12 +247,13 @@
                         v[i3] = (Math.random() - 0.5) * 1.0; v[i3+1] = (Math.random() - 0.5) * 0.65; v[i3+2] = (Math.random() - 0.5) * 1.25;
                         d.life[i] = 1.55; continue;
                     }
-                    // Simplified solved Navier-Stokes: vorticity + advection + diffusion
                     const t = turb / 100;
-                    v[i3] += Math.sin(p[i3+1] * 0.42 + Date.now() * 0.0008) * 0.85 * t - v[i3] * 0.032;
-                    v[i3+1] += Math.cos(p[i3] * 0.36) * 0.6 * t - v[i3+1] * 0.028;
-                    v[i3+2] += Math.sin(p[i3] * 0.5) * 1.1 * t - v[i3+2] * 0.04;
-
+                    const wx = Math.sin(p[i3+1] * 0.42 + Date.now() * 0.0008) * t;
+                    const wy = Math.cos(p[i3] * 0.36) * t;
+                    const wz = Math.sin(p[i3] * 0.5) * t;
+                    v[i3]   += (wy * v[i3+2] - wz * v[i3+1] - NU * v[i3]) * dt;
+                    v[i3+1] += (wz * v[i3]   - wx * v[i3+2] - NU * v[i3+1]) * dt;
+                    v[i3+2] += (wx * v[i3+1] - wy * v[i3]   - NU * v[i3+2]) * dt;
                     p[i3] += v[i3] * dt * 13;
                     p[i3+1] += v[i3+1] * dt * 13;
                     p[i3+2] += v[i3+2] * dt * 13;
@@ -311,13 +340,14 @@
             if (!running || !ship) return;
 
             // Controls
-            const sp = 16;
+            const drag = 1 + turb / 220;
+            const sp = 16 / drag;
             if (keys['w'] || keys['arrowup']) ship.position.y += sp * dt;
             if (keys['s'] || keys['arrowdown']) ship.position.y -= sp * dt;
             if (keys['a'] || keys['arrowleft']) ship.position.x -= sp * dt;
             if (keys['d'] || keys['arrowright']) ship.position.x += sp * dt;
-            ship.position.x += mouseX * 8 * dt;
-            ship.position.y += mouseY * 5.5 * dt;
+            ship.position.x += mouseX * 8 * dt / drag;
+            ship.position.y += mouseY * 5.5 * dt / drag;
 
             ship.position.x = Math.max(-15, Math.min(15, ship.position.x));
             ship.position.y = Math.max(1, Math.min(13, ship.position.y));
@@ -381,6 +411,10 @@
             camera.lookAt(ship.position.x * 0.22, ship.position.y * 0.45 + 2, ship.position.z - 5);
 
             if (window.nebulaMat) window.nebulaMat.uniforms.turb.value = turb / 100;
+            nsE = 0.5 * (turb / 100) * (turb / 100);
+            nsOm = turb * turb * 0.08;
+            nsWatch = (nsE > 0.72 || turb > 88) ? 'numerical_ns_blowup' : 'regular_so_far';
+            if (nsWatch === 'numerical_ns_blowup' && turb > 92) { endGame(); return; }
 
             updateUI();
         }
@@ -398,13 +432,19 @@
             document.getElementById('score').textContent = String(Math.floor(score)).padStart(5, '0');
             document.getElementById('power').textContent = Math.floor(power) + '%';
             document.getElementById('turb').textContent = Math.floor(turb) + '%';
+            const he = document.getElementById('hud-e');
+            const ho = document.getElementById('hud-om');
+            const hw = document.getElementById('hud-watch');
+            if (he) he.textContent = nsE.toFixed(3);
+            if (ho) ho.textContent = nsOm.toFixed(1);
+            if (hw) hw.textContent = nsWatch;
         }
 
         function animate() {
             if (!running) return;
             requestAnimationFrame(animate);
             const now = Date.now();
-            const dt = Math.min((now - lastTime) / 1000, 0.07);
+            const dt = Math.min((now - lastTime) / 1000, 0.033);
             lastTime = now;
             update(dt);
             renderer.render(scene, camera);
@@ -424,8 +464,9 @@
             enemies = []; projs = [];
             if (ship) { ship.position.set(0,4,6); ship.rotation.set(0,0,0); }
             score = 0; power = 100; turb = 42; level = 3; running = true;
+            nsE = 0; nsOm = 0; nsWatch = 'regular_so_far';
             for (let i=0; i<6; i++) spawnEnemy();
-            createFluid(210);
+            createFluid(window.innerWidth < 800 ? 90 : 180);
             document.getElementById('overlay').style.display = 'none';
             updateUI();
         }
@@ -435,14 +476,39 @@
             if (superMode) { turb = Math.min(93, turb + 16); power = Math.min(100, power + 14); }
         }
 
+        const CUTS = [
+            { src: 'cutscenes/01-colony.jpg', cap: 'CUT 01 · MARS COLONY' },
+            { src: 'cutscenes/02-cockpit.jpg', cap: 'CUT 02 · LANDER COCKPIT' },
+            { src: 'cutscenes/03-vortex.jpg', cap: 'CUT 03 · DUST VORTEX' }
+        ];
+        let cutIdx = 0, cutTimer = null;
+        function showCut(i) {
+            const img = document.getElementById('cutscene-img');
+            img.classList.remove('kenburns');
+            void img.offsetWidth;
+            img.src = CUTS[i].src;
+            img.classList.add('kenburns');
+            document.getElementById('cutscene-cap').textContent = CUTS[i].cap;
+        }
+        function endCuts() {
+            clearTimeout(cutTimer);
+            document.getElementById('cutscene').style.display = 'none';
+            const o = document.getElementById('overlay');
+            document.getElementById('overlay-text').innerHTML = '1977 GRAIN · NUMERICAL NS ONLINE<br><span class="text-xs">CFL-CLAMPED · VISCOUS DRAG · NOT A CLAY PROOF</span>';
+            o.style.display = 'flex';
+            o.onclick = () => { o.style.display = 'none'; };
+        }
+        function nextCut() {
+            cutIdx++;
+            if (cutIdx >= CUTS.length) { endCuts(); return; }
+            showCut(cutIdx);
+            cutTimer = setTimeout(nextCut, 4200);
+        }
         window.onload = () => {
             init();
-            setTimeout(() => {
-                const o = document.getElementById('overlay');
-                document.getElementById('overlay-text').innerHTML = 'PHOTO-REAL POWER-ACTION ONLINE<br><span class="text-xs">NS SOLVER + XFREEZE CINEMATIC</span>';
-                o.style.display = 'flex';
-                o.onclick = () => { o.style.display = 'none'; };
-            }, 900);
+            showCut(0);
+            cutTimer = setTimeout(nextCut, 4200);
+            document.getElementById('cutscene-skip').onclick = endCuts;
         };
     </script>
 </body>
