@@ -18,7 +18,7 @@
             <div class="w-10 h-10 bg-violet-600 rounded-2xl flex items-center justify-center text-2xl">🌀</div>
             <div>
                 <h1 class="text-3xl font-bold">Singularity Solver — NS Riddle Core</h1>
-                <p class="text-violet-400 text-sm">Blizzwar Mars Mission • Realistic Turbulence / Warp (Navier-Stokes Approximation)</p>
+                <p class="text-violet-400 text-sm">Blizzwar · Endpunkt Ceres (Neue Erde) · Wegpunkt Mars · Turbulenz nur bis zum Mars-Eintritt</p>
             </div>
         </div>
 
@@ -26,7 +26,8 @@
             <h2 class="text-xl font-semibold mb-2">Level: Singularity Solver (Unlockable Core)</h2>
             <p class="text-slate-400">Integrates "NS solved riddle" (practical Navier-Stokes numerical solver for turbulence) as the heart of realistic Alcubierre warp + Schwarzschild-assisted travel. Stabilize the bubble against fluid-like spacetime turbulence.</p>
             <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                <div class="bg-slate-800 p-2 rounded">Target: Mars (~225M km round-trip)</div>
+                <div class="bg-slate-800 p-2 rounded">Wegpunkt Mars · ~225 Mio. km</div>
+                <div class="bg-slate-800 p-2 rounded">Endpunkt Ceres 2,77 AE · g 0,28 m/s² · Vakuum · Vinalia Faculae</div>
                 <div class="bg-slate-800 p-2 rounded">NS Turbulence Model: Simplified 1D NS + forcing</div>
                 <div class="bg-slate-800 p-2 rounded">Singularity Effect: Reduced exotic energy near curvature</div>
                 <div class="bg-slate-800 p-2 rounded">Score: Efficiency + Stability</div>
@@ -90,7 +91,7 @@
                 
                 <div class="grid grid-cols-3 gap-3 mt-4 text-sm">
                     <div>
-                        <div class="text-xs text-slate-400">Travel Time (round)</div>
+                        <div class="text-xs text-slate-400">Reisezeit bis Ceres (via Mars)</div>
                         <div class="font-mono text-xl metric" id="time">-- h</div>
                     </div>
                     <div>
@@ -102,7 +103,8 @@
                         <div class="font-mono text-xl metric stable" id="score">--</div>
                     </div>
                 </div>
-                <div class="mt-2 text-xs text-slate-500">NS approx: ∂u/∂t + u∇u ≈ ν∇²u + f_warp (turbulence drives path deviation + fuel cost)</div>
+                <div id="route-legs" class="mt-2 text-xs text-slate-400"></div>
+                <div class="mt-2 text-xs text-slate-500">NS-Näherung wirkt auf der Mars-Etappe. Ab dem Wegpunkt ist der Ceres-Anflug vakuumglatt: keine Luftturbulenz.</div>
             </div>
         </div>
 
@@ -140,12 +142,12 @@
             const re = parseFloat(document.getElementById('re').value);
             const bh = parseFloat(document.getElementById('bh').value);
             
-            // Simple numerical integration stub for demo
-            const dist = 225e6; // km Mars
-            const c = 3e5; // km/s approx
-            const sublightTime = dist / (dwarf * 0.01 * 3600); // rough hours
-            const warpTime = (dist / warp) / 3600 * (1 + delay/10);
-            let timeH = sublightTime * 0.2 + warpTime * 0.8;
+            // Hohmann-Etappen: Mars bleibt der Wegpunkt, Ceres (2,77 AE) ist der Endpunkt.
+            const marsLegH = 0.5 * Math.pow((1 + 1.524) / 2, 1.5) * 365.25 * 24;
+            const ceresLegH = 0.5 * Math.pow((1.524 + 2.77) / 2, 1.5) * 365.25 * 24;
+            const marsShare = marsLegH / (marsLegH + ceresLegH);
+            const driveScale = Math.max(1, warp * (0.35 + dwarf * 0.08));
+            let timeH = (marsLegH + ceresLegH) / driveScale * (1 + delay / 24);
             
             // NS Turbulence approx
             const turbBase = 0.5 + (re / 10000) * 0.8 - (visc * 5); // higher Re = more turb, visc damps
@@ -154,7 +156,7 @@
             
             const stability = Math.max(10, 100 - (turbIndex * 30) + (warp / 5));
             const fuelPenalty = turbIndex * 0.15;
-            timeH *= (1 + fuelPenalty * 0.3); // turbulence costs time/fuel
+            timeH *= (1 + fuelPenalty * 0.3 * marsShare); // Turbulenz nur auf der Mars-Etappe
             
             // Draw
             ctx.fillStyle = '#020617';
@@ -173,14 +175,16 @@
             // Warp bubble path (distorted by turb)
             ctx.strokeStyle = '#a5b4fc';
             ctx.lineWidth = 3;
+            const marsX = 20 + marsShare * (w - 40);
             ctx.beginPath();
             ctx.moveTo(20, h/2);
             let px = 20, py = h/2;
             for (let i = 0; i < 30; i++) {
                 const t = i / 30;
-                const turbNoise = Math.sin(i * 1.5 + Date.now()/300) * (turbIndex * 8);
                 px = 20 + t * (w - 40);
-                py = h/2 + turbNoise + Math.sin(i * 0.8) * (bh * 15); // lensing
+                const vacuum = px > marsX;
+                const turbNoise = vacuum ? Math.sin(i * 0.4) * 1.2 : Math.sin(i * 1.5 + Date.now()/300) * (turbIndex * 8);
+                py = h/2 + turbNoise + (vacuum ? 0 : Math.sin(i * 0.8) * (bh * 15));
                 ctx.lineTo(px, py);
             }
             ctx.stroke();
@@ -189,13 +193,37 @@
             ctx.fillStyle = '#f472b6';
             for (let i = 0; i < 25; i++) {
                 const t = (i + (Date.now() / 200 % 30)) / 30;
-                const turbNoise = Math.sin(i * 2 + Date.now()/150) * (turbIndex * 12);
-                const x = 20 + t * (w - 40);
-                const y = h/2 + turbNoise + Math.sin(i) * 10;
+                const x = 20 + (t % 1) * (w - 40);
+                const vacuum = x > marsX;
+                const turbNoise = vacuum ? 0 : Math.sin(i * 2 + Date.now()/150) * (turbIndex * 12);
+                const y = h/2 + turbNoise + (vacuum ? 0 : Math.sin(i) * 10);
                 ctx.beginPath();
-                ctx.arc(x, y, 2 + (turbIndex > 1.5 ? 1 : 0), 0, Math.PI * 2);
+                ctx.arc(x, y, vacuum ? 1.4 : 2 + (turbIndex > 1.5 ? 1 : 0), 0, Math.PI * 2);
                 ctx.fill();
             }
+
+            function body(x, y, r, color, label) {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = '11px sans-serif';
+                ctx.fillText(label, x - 18, y - r - 6);
+            }
+            body(28, h/2, 7, '#60a5fa', 'Erde');
+            body(marsX, h/2, 6, '#ea580c', 'Mars');
+            ctx.fillStyle = '#d6d3d1';
+            ctx.beginPath();
+            ctx.arc(w - 28, h/2, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#f8f5ea';
+            ctx.beginPath();
+            ctx.arc(w - 24, h/2 - 2, 3.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('Ceres', w - 46, h/2 - 18);
             
             // Horizon ring if BH high
             if (bh > 0.4) {
@@ -207,7 +235,13 @@
             }
             
             // Metrics
-            document.getElementById('time').textContent = timeH.toFixed(1) + ' h';
+            const days = timeH / 24;
+            document.getElementById('time').textContent = days.toFixed(1) + ' T';
+            const legs = document.getElementById('route-legs');
+            if (legs) {
+                const scale = timeH / (marsLegH + ceresLegH);
+                legs.textContent = `Mars-Wegpunkt ${ (marsLegH * scale / 24).toFixed(1) } Tage · Ceres-Etappe ${ (ceresLegH * scale / 24).toFixed(1) } Tage · Endpunkt Vinalia Faculae`;
+            }
             document.getElementById('turb').textContent = turbIndex.toFixed(2);
             document.getElementById('score').textContent = stability.toFixed(0);
             

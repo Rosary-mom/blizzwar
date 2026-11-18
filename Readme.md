@@ -3,7 +3,7 @@
 Live: **https://rosary-mom.github.io/blizzwar**  
 Repo: https://github.com/Rosary-mom/blizzwar
 
-Hub `index.html` (Projekt Chimera / Mars Mission). 3D-Lauf: `blizzwar-power-action-threejs.html`.
+Hub `index.html` (Projekt Chimera). Endpunkt von Lander und Flugsimulation: **Ceres (Neue Erde)**, Landung Vinalia Faculae. Mars bleibt der Wegpunkt; die Mars-Cutscenes bleiben die Filmreferenz. 3D-Lauf: `blizzwar-power-action-threejs.html`.
 
 ## Imagine Cutscenes
 
