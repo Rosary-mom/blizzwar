@@ -97,6 +97,7 @@
                     <div class="panel p-3 text-xs">
                         <div class="flex justify-between"><div>Treibstoff:</div><div id="fuel">100</div></div>
                         <div class="flex justify-between"><div>Abschüsse:</div><div id="kills">0</div></div>
+                        <div class="flex justify-between text-yellow-200"><div>Abschuss-Bonus:</div><div id="kill-bonus">0</div></div>
                         <div class="flex justify-between"><div>Distanz:</div><div id="distance">0</div></div>
                         <div class="flex justify-between font-bold text-yellow-400"><div>NS-Bonus:</div><div id="ns-bonus">0</div></div>
                     </div>
@@ -109,7 +110,7 @@
                 <div id="final-dest" class="text-sm text-amber-200 mb-1">Endpunkt: Ceres · Neue Erde</div>
                 <div id="final-score" class="score text-4xl my-2">00000</div>
                 <div class="grid grid-cols-2 gap-2 text-sm mb-3">
-                    <div>Abschüsse: <span id="final-kills"></span></div>
+                    <div>Abschüsse: <span id="final-kills"></span> · Bonus <span id="final-kill-bonus"></span></div>
                     <div>NS-Lösung: <span id="final-ns"></span>%</div>
                     <div>Effizienz: <span id="final-eff"></span></div>
                     <div>Gesamt: <span id="final-overall"></span></div>
@@ -160,6 +161,7 @@
 
         // === GAME VARIABLES ===
         let canvas, ctx, gameRunning = false, score = 0, level = 1, kills = 0, fuel = 100, distance = 0, nsAccuracy = 0;
+        const KILL_BONUS = 250;
         let ship = {x: 100, y: 250, vx: 0, vy: 0, angle: 0, size: 12};
         let bullets = [], enemies = [], particles = [];
         let nsParticles = [], nsTimer = 0, nsSolved = false;
@@ -427,6 +429,8 @@
             level = parseInt(document.getElementById('level-select').value) || 1;
             document.getElementById('live-score').textContent = '00000';
             document.getElementById('kills').textContent = '0';
+            const killBonusReset = document.getElementById('kill-bonus');
+            if (killBonusReset) killBonusReset.textContent = '0';
             document.getElementById('fuel').textContent = fuel;
             document.getElementById('distance').textContent = '0';
             publishNs();
@@ -679,7 +683,7 @@
                     const dy = b.y - e.y;
                     if (dx*dx + dy*dy < (e.size+3)*(e.size+3)) {
                         kills++;
-                        score += 180 + (level * 40);
+                        score += 180 + (level * 40) + KILL_BONUS;
                         bullets.splice(bi,1);
                         enemies.splice(ei,1);
                         for (let k=0; k<8; k++) spawnParticle(e.x, e.y, (Math.random()-0.5)*3, (Math.random()-0.5)*3, '#ff0');
@@ -709,6 +713,8 @@
             showLiveScore(score);
             publishNs();
             document.getElementById('kills').textContent = kills;
+            const killBonusEl = document.getElementById('kill-bonus');
+            if (killBonusEl) killBonusEl.textContent = String(kills * KILL_BONUS);
             document.getElementById('fuel').textContent = Math.floor(fuel);
             document.getElementById('distance').textContent = Math.floor(distance);
             document.getElementById('level').textContent = level;
@@ -878,7 +884,7 @@
 
         function overallScore(success) {
             const ceresWin = !!(success && (landedCeres || level === 5));
-            return Math.floor(score + (success ? 2500 : 0) + (ceresWin ? 1800 : 0) + (nsAccuracy * 18) + (kills * 120));
+            return Math.floor(score + (success ? 2500 : 0) + (ceresWin ? 1800 : 0) + (nsAccuracy * 18));
         }
 
         function endGame(success) {
@@ -897,6 +903,8 @@
             }
             document.getElementById('final-score').textContent = text;
             document.getElementById('final-kills').textContent = kills;
+            const finalKillBonus = document.getElementById('final-kill-bonus');
+            if (finalKillBonus) finalKillBonus.textContent = String(kills * KILL_BONUS);
             document.getElementById('final-ns').textContent = publishNs();
             document.getElementById('final-eff').textContent = Math.floor(fuel) + '%';
             document.getElementById('final-overall').textContent = text;
@@ -935,14 +943,10 @@
             initTailwind();
             initGame();
             
-            // Pre-populate some leaderboard if empty
-            if (leaderboard.length === 0) {
-                leaderboard = [
-                    {name: "GROK 4.7 SyncMaster", score: 28400, ns: 94, kills: 27, date: "2026-09-22"},
-                    {name: "KIMI-K3-Specialist", score: 25100, ns: 88, kills: 19, date: "2026-09-21"},
-                    {name: "LOGOS-max", score: 19750, ns: 71, kills: 14, date: "2026-09-20"},
-                    {name: "Chimera-Pilot-7", score: 16200, ns: 65, kills: 22, date: "2026-09-19"}
-                ];
+            const sampleNames = new Set(['GROK 4.7 SyncMaster', 'KIMI-K3-Specialist', 'LOGOS-max', 'Chimera-Pilot-7']);
+            const withoutSamples = leaderboard.filter((entry) => !sampleNames.has(entry.name));
+            if (withoutSamples.length !== leaderboard.length) {
+                leaderboard = withoutSamples;
                 saveLeaderboard();
             }
             renderLeaderboard();
