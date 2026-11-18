@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23020617'/%3E%3C/svg%3E">
     <title>BLIZZWAR | PROJECT CHIMERA: Logbuch der Menschheiten — Action Game + Solved Navier-Stokes Millennium Rätsel (GROK 4.7 MultiPC Sync Master)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -26,12 +27,12 @@
             <div>
                 <h1 class="text-4xl font-orbitron text-cyan-400">⚡ BLIZZWAR</h1>
                 <p class="text-sm text-cyan-300">PROJEKT CHIMERA: Logbuch der Menschheiten • Wegpunkt Mars • Endpunkt Ceres (Neue Erde)</p>
-                <div class="text-xs mt-1 px-2 py-0.5 inline-block bg-emerald-900/60 border border-emerald-400 rounded text-emerald-300">NAVIER-STOKES MILLENNIUM RÄTSEL — SOLVED 2026 (OpenAI Swarm Singularity Proof)</div>
+                <div class="text-xs mt-1 px-2 py-0.5 inline-block bg-emerald-900/60 border border-emerald-400 rounded text-emerald-300">NAVIER-STOKES-MILLENNIUMRÄTSEL — GELÖST 2026</div>
             </div>
             <div class="text-right text-sm">
-                <div>GROK 4.7 • HERMES MultiPC Sync Master</div>
-                <div class="text-xs text-cyan-400">rosary-mom.github.io/blizzwar • blizzwar.vercel.app</div>
-                <button onclick="runSync()" class="mt-1 text-xs px-3 py-1 bg-cyan-700 hover:bg-cyan-600 rounded">🔄 Run grok-sync.ps1</button>
+                <div>Wegpunkt Mars · Endpunkt Ceres</div>
+                <div class="text-xs text-cyan-400">blizzwar.vercel.app</div>
+                <button onclick="runSync()" class="mt-1 text-xs px-3 py-1 bg-cyan-700 hover:bg-cyan-600 rounded">Synchronisieren</button>
             </div>
         </header>
 
@@ -45,18 +46,18 @@
 
         <!-- LORE / RESUME -->
         <div class="panel p-4 mb-6">
-            <h2 class="font-orbitron text-xl mb-2 text-yellow-300">📜 RESUME: Navier-Stokes Uncertainty — NOW SOLVED</h2>
-            <p class="text-sm">Previous prompt (Spaceforce / Offenbarung / Chimera Logbuch): The equations governing fluid motion (Navier-Stokes) remained one of the Clay Millennium Prize Problems — existence &amp; smoothness in 3D. <strong>September 2026: OpenAI swarm of ~10,000 autonomous AI agents produced a Lean-formalized proof of finite-time singularity (vortex blowup) under smooth external force.</strong> Clay Institute: "apparently settled" (statements C/D). Controversial loophole (external force), but now integrated into Blizzwar as controllable propulsion tech. <span class="text-xs">[Sources: OpenAI announcement, Quanta, Wikipedia 2026 updates]</span></p>
-            <p class="mt-2 text-xs">In this action game: Master the solved singularity for realistic spaceship scenarios (turbulence in entry, warp bubble stability, plasma flows). Fail the math → blowup game over. Success = massive score multiplier.</p>
+            <h2 class="font-orbitron text-xl mb-2 text-yellow-300">📜 Überblick: Navier-Stokes — 2026 gelöst</h2>
+            <p class="text-sm">Die Gleichungen der Strömung (Navier-Stokes) gehörten zu den Millennium-Problemen: Existenz und Glätte in 3D. Im September 2026 hat ein Schwarm von etwa 10.000 autonomen KI-Agenten einen Lean-Beweis einer Singularität in endlicher Zeit vorgelegt. Im Spiel steuert diese Lösung den Antrieb — Turbulenz beim Mars-Eintritt, die Warp-Blase, das Plasma. Scheitert die Rechnung, endet die Mission. Gelingt sie, steigt der Punktestand.</p>
+            <p class="mt-2 text-xs">Wegpunkt bleibt Mars. Der Endpunkt der Route ist Ceres, die Neue Erde.</p>
         </div>
 
         <!-- ACTION GAME SECTION -->
         <div class="panel p-4 mb-6 border-2 border-cyan-400">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="font-orbitron text-3xl">🚀 BLIZZWAR ACTION GAME — REAL SPACESHIP SCENARIOS</h2>
+                <h2 class="font-orbitron text-3xl">🚀 BLIZZWAR AKTIONSSPIEL — RAUMFLUG</h2>
                 <div>
                     <span class="score" id="live-score">00000</span>
-                    <span class="ml-4 text-sm">Level: <span id="level">1</span> / NS Solve: <span id="ns-solve">0</span>%</span>
+                    <span class="ml-4 text-sm">Stufe: <span id="level">1</span> / NS-Lösung: <span id="ns-solve">0</span>%</span>
                 </div>
             </div>
 
@@ -64,86 +65,91 @@
                 <!-- GAME CANVAS -->
                 <div class="lg:col-span-2">
                     <canvas id="game-canvas" width="800" height="500" class="w-full border border-cyan-500 bg-black rounded"></canvas>
-                    <div class="flex gap-2 mt-2 text-xs">
-                        <button onclick="startGame()" class="action-button flex-1 bg-green-600 hover:bg-green-500">START MISSION</button>
-                        <button onclick="pauseGame()" class="action-button flex-1">PAUSE</button>
-                        <button onclick="resetGame()" class="action-button flex-1 bg-red-700">RESET</button>
-                        <select id="level-select" onchange="changeLevel()" class="flex-1 bg-slate-800 border border-cyan-500 p-1 text-xs">
-                            <option value="1">1. Earth Launch (Gravity + Drag)</option>
-                            <option value="2">2. Mars Entry (NS Turbulence)</option>
-                            <option value="3">3. Singularity Challenge (Solved Rätsel)</option>
-                            <option value="4">4. Deep Space Combat</option>
-                            <option value="5">5. Ceres-Anflug + Landung (Neue Erde, Vakuum)</option>
+                    <div class="flex flex-wrap gap-2 mt-3 text-xs">
+                        <button onclick="startGame()" class="action-button bg-green-600 hover:bg-green-500">Mission starten</button>
+                        <button onclick="pauseGame()" class="action-button">Pause</button>
+                        <button onclick="resetGame()" class="action-button bg-red-700">Zurücksetzen</button>
+                    </div>
+                    <div class="mt-3">
+                        <label for="level-select" class="block text-xs mb-1 text-cyan-200">Stufe</label>
+                        <select id="level-select" onchange="changeLevel()" class="w-full bg-slate-800 border border-cyan-500 p-2 text-xs">
+                            <option value="1">1. Erdstart (Schwerkraft und Widerstand)</option>
+                            <option value="2">2. Mars-Eintritt (NS-Turbulenz)</option>
+                            <option value="3">3. Singularitätsprobe (gelöstes Rätsel)</option>
+                            <option value="4">4. Tiefraumgefecht</option>
+                            <option value="5">5. Ceres-Anflug und Landung (Neue Erde, Vakuum)</option>
                         </select>
                     </div>
-                    <p id="stage-label" class="text-xs mt-2 text-amber-200">Route: Erde → Mars (Wegpunkt) → Ceres · Vinalia Faculae, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre</p>
+                    <p id="stage-label" class="text-xs mt-3 text-amber-200">Route: Erde → Mars (Wegpunkt) → Ceres · Vinalia Faculae, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre</p>
                     <p id="ceres-telem" class="text-xs mt-1 text-amber-100 min-h-[1rem]"></p>
-                    <div class="text-[10px] mt-1 text-cyan-300">Steuerung: WASD / Pfeile = Schub | LEERTASTE = Feuer | UMSCHALT = Singularitäts-Boost | Stufe 5: ↑ bremst die 0,28 m/s², ← → seitlich, keine Luftturbulenz.</div>
+                    <p class="text-xs mt-2 leading-relaxed text-cyan-200">Steuerung: WASD oder Pfeile = Schub. Leertaste = Feuer. Umschalt = Singularitäts-Boost. Stufe 5: erst fallen lassen, bei „JETZT BREMSEN“ die Pfeiltaste nach oben bis zum Aufsetzen halten. Links und rechts nur zur Seitenkorrektur. Keine Luftturbulenz.</p>
                 </div>
 
                 <!-- NS RÄTSEL + STATS -->
                 <div>
                     <div class="navier panel p-3 mb-3">
-                        <h3 class="font-bold text-pink-400 mb-1">🌀 NAVIER-STOKES SINGULARITY SOLVER (Solved 2026)</h3>
-                        <p class="text-xs mb-2">Apply the OpenAI proof (finite-time vortex blowup). Click to stabilize or trigger controlled singularity for boost.</p>
+                        <h3 class="font-bold text-pink-400 mb-1">🌀 Navier-Stokes-Singularität (gelöst 2026)</h3>
+                        <p class="text-xs mb-2">Klick in den Wirbel: stabilisieren oder eine kontrollierte Singularität für den Boost auslösen.</p>
                         <canvas id="ns-canvas" width="280" height="180" class="border border-pink-500 bg-black w-full"></canvas>
-                        <div class="text-xs mt-1">Accuracy: <span id="ns-accuracy">0</span>% | Status: <span id="ns-status">STABLE</span></div>
+                        <div class="text-xs mt-1">Genauigkeit: <span id="ns-accuracy">0</span>% | Status: <span id="ns-status">STABIL</span></div>
                     </div>
 
                     <div class="panel p-3 text-xs">
-                        <div class="flex justify-between"><div>Fuel (NS Fluid):</div><div id="fuel">100</div></div>
-                        <div class="flex justify-between"><div>Kills:</div><div id="kills">0</div></div>
-                        <div class="flex justify-between"><div>Distance:</div><div id="distance">0</div></div>
-                        <div class="flex justify-between font-bold text-yellow-400"><div>NS Bonus:</div><div id="ns-bonus">0</div></div>
+                        <div class="flex justify-between"><div>Treibstoff:</div><div id="fuel">100</div></div>
+                        <div class="flex justify-between"><div>Abschüsse:</div><div id="kills">0</div></div>
+                        <div class="flex justify-between"><div>Distanz:</div><div id="distance">0</div></div>
+                        <div class="flex justify-between font-bold text-yellow-400"><div>NS-Bonus:</div><div id="ns-bonus">0</div></div>
                     </div>
                 </div>
             </div>
 
             <!-- End game summary -->
             <div id="game-over" class="hidden mt-4 panel p-4 bg-black/70">
-                <h3 id="final-title" class="font-orbitron text-2xl text-yellow-300">MISSION COMPLETE / BLOWUP</h3>
+                <h3 id="final-title" class="font-orbitron text-2xl text-yellow-300">Mission beendet</h3>
                 <div id="final-dest" class="text-sm text-amber-200 mb-1">Endpunkt: Ceres · Neue Erde</div>
                 <div id="final-score" class="score text-4xl my-2">00000</div>
                 <div class="grid grid-cols-2 gap-2 text-sm mb-3">
-                    <div>Kills: <span id="final-kills"></span></div>
-                    <div>NS Solve: <span id="final-ns"></span>%</div>
-                    <div>Efficiency: <span id="final-eff"></span></div>
-                    <div>Overall: <span id="final-overall"></span></div>
+                    <div>Abschüsse: <span id="final-kills"></span></div>
+                    <div>NS-Lösung: <span id="final-ns"></span>%</div>
+                    <div>Effizienz: <span id="final-eff"></span></div>
+                    <div>Gesamt: <span id="final-overall"></span></div>
                 </div>
-                <div class="flex gap-2">
-                    <input id="player-name" placeholder="Commander Name" class="flex-1 p-2 bg-black border border-cyan-500 text-sm" value="GrokSyncMaster">
-                    <button onclick="submitScore()" class="action-button bg-yellow-600">SUBMIT TO RANKING</button>
-                    <button onclick="startGame()" class="action-button">REPLAY</button>
+                <div class="flex flex-wrap gap-2">
+                    <input id="player-name" placeholder="Rufname" class="flex-1 p-2 bg-black border border-cyan-500 text-sm" value="">
+                    <button onclick="submitScore()" class="action-button bg-yellow-600">In die Rangliste</button>
+                    <button onclick="startGame()" class="action-button">Nochmal</button>
                 </div>
+                <p id="submit-status" class="text-sm mt-2 min-h-[1.25rem]" role="status" aria-live="polite"></p>
             </div>
         </div>
 
         <!-- LEADERBOARD / MULTI-PLAYER RANKING -->
         <div class="panel p-4 mb-6">
-            <h2 class="font-orbitron text-xl mb-3">🏆 OVERALL SCORE &amp; MULTI-PLAYER RANKING LIST</h2>
-            <div class="flex gap-2 mb-3">
-                <input id="rank-player" placeholder="Your callsign" class="p-1 bg-black border border-cyan-500 text-sm flex-1" value="PlayerX">
-                <button onclick="addSimPlayer()" class="action-button text-xs">Add Sim Player</button>
-                <button onclick="clearLeaderboard()" class="action-button text-xs bg-red-800">Clear Local</button>
+            <h2 class="font-orbitron text-xl mb-3">🏆 Gesamtwert und Rangliste</h2>
+            <div class="flex flex-wrap gap-2 mb-3">
+                <input id="rank-player" placeholder="Rufname" class="p-1 bg-black border border-cyan-500 text-sm flex-1" value="">
+                <button onclick="addSimPlayer()" class="action-button text-xs">Sim-Pilot</button>
+                <button onclick="clearLeaderboard()" class="action-button text-xs bg-red-800">Lokal leeren</button>
             </div>
+            <p id="rank-status" class="text-sm mb-2 min-h-[1.25rem]" role="status" aria-live="polite"></p>
             <table class="leaderboard w-full text-xs">
                 <thead>
-                    <tr class="text-left"><th>Rank</th><th>Commander</th><th>Score</th><th>NS %</th><th>Kills</th><th>Date</th></tr>
+                    <tr class="text-left"><th>Rang</th><th>Kommandant</th><th>Punkte</th><th>NS %</th><th>Abschüsse</th><th>Datum</th></tr>
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
             </table>
-            <p class="text-[10px] mt-1 text-cyan-400">LocalStorage persistent. "Multi-player" via shared sim + your submits. Sync across PCs via grok-sync.ps1.</p>
+            <p class="text-[10px] mt-1 text-cyan-400">Lokal im Browser gespeichert. Die Rangliste enthält nur Rufname und Punktestand.</p>
         </div>
 
         <!-- QUICK INTEGRATION LINKS (existing Blizzwar features) -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
-            <button onclick="simulateOriginal('dwarf')" class="panel p-2 hover:bg-cyan-900/30 text-left">🛸 DWARF Lander Sim</button>
-            <button onclick="simulateOriginal('warp')" class="panel p-2 hover:bg-cyan-900/30 text-left">🌀 Alcubierre Warp</button>
-            <button onclick="simulateOriginal('avatar')" class="panel p-2 hover:bg-cyan-900/30 text-left">👤 Avatar + QR</button>
-            <button onclick="simulateOriginal('manhunt')" class="panel p-2 hover:bg-cyan-900/30 text-left">👑 Kronjuwelen Manhunt</button>
+            <button onclick="simulateOriginal('dwarf')" class="panel p-2 hover:bg-cyan-900/30 text-left">🛸 DWARF-Lander</button>
+            <button onclick="simulateOriginal('warp')" class="panel p-2 hover:bg-cyan-900/30 text-left">🌀 Alcubierre-Warp</button>
+            <button onclick="simulateOriginal('avatar')" class="panel p-2 hover:bg-cyan-900/30 text-left">👤 Avatar und QR</button>
+            <button onclick="simulateOriginal('manhunt')" class="panel p-2 hover:bg-cyan-900/30 text-left">👑 Kronjuwelen-Jagd</button>
         </div>
 
-        <footer class="text-xs text-center text-cyan-600">GROK 4.7 HERMES MultiPC Sync Master • Organigramm activated (Dschungelbuch + all MA) • Sync executed • Self-contained artifact. Run grok-sync.ps1 to mirror.</footer>
+        <footer class="text-xs text-center text-cyan-600">Blizzwar · Wegpunkt Mars · Endpunkt Ceres · lokale Rangliste in diesem Browser.</footer>
     </div>
 
     <script>
@@ -163,9 +169,14 @@
         let stageNoteUntil = 0;
         let ceresArmed = false;
         let landedCeres = false;
+        let ceresFlight = null;
         const CERES_G = 0.28;
-        const CERES_M_PER_PX = 0.45;
+        const CERES_THRUST_MS = 1.15;
+        const CERES_BRAKE_TARGET = 1.5;
+        const CERES_TOUCH_VY = 4.5;
+        const CERES_APPROACH_M = 240;
         const CERES_PAD = { x0: 330, x1: 500, y: 468 };
+        const CERES_M_PER_PX = CERES_APPROACH_M / (CERES_PAD.y - 40);
 
         // Leaderboard
         let leaderboard = JSON.parse(localStorage.getItem('blizzwar_leaderboard') || '[]');
@@ -174,35 +185,73 @@
             localStorage.setItem('blizzwar_leaderboard', JSON.stringify(leaderboard));
         }
 
+        function sanitizeCallsign(raw) {
+            return String(raw || '')
+                .replace(/[\u0000-\u001F\u007F]/g, '')
+                .replace(/[<>&"'`]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 32);
+        }
+
+        function showRankStatus(text, ok) {
+            const tone = ok ? 'text-emerald-300' : 'text-amber-300';
+            ['rank-status', 'submit-status'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.className = `text-sm mt-2 min-h-[1.25rem] ${tone}`;
+                el.textContent = text;
+            });
+        }
+
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = '';
+            tbody.replaceChildren();
             const sorted = [...leaderboard].sort((a,b) => b.score - a.score).slice(0,15);
+            if (sorted.length === 0) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 6;
+                td.className = 'text-center text-xs';
+                td.textContent = 'Noch keine Einträge. Spielen und eintragen.';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                return;
+            }
             sorted.forEach((entry, i) => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${i+1}</td><td>${entry.name}</td><td class="score">${entry.score}</td><td>${entry.ns || 0}%</td><td>${entry.kills || 0}</td><td>${entry.date}</td>`;
+                [String(i + 1), entry.name, String(entry.score), `${entry.ns || 0}%`, String(entry.kills || 0), entry.date].forEach((val, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 2) td.className = 'score';
+                    td.textContent = val == null ? '' : String(val);
+                    tr.appendChild(td);
+                });
                 tbody.appendChild(tr);
             });
-            if (sorted.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-xs">No scores yet. Play and submit!</td></tr>';
-            }
         }
 
         function submitScore() {
-            const name = document.getElementById('player-name').value || 'Anonymous';
-            const finalScore = parseInt(document.getElementById('final-score').textContent) || score;
+            const name = sanitizeCallsign(document.getElementById('player-name').value);
+            if (!name) {
+                showRankStatus('Bitte einen Rufnamen eintragen. Leerzeichen bleiben erhalten.', false);
+                return;
+            }
+            const finalScore = parseInt(document.getElementById('final-score').textContent, 10);
             const entry = {
                 name: name,
-                score: finalScore,
-                ns: nsAccuracy,
+                score: Number.isFinite(finalScore) ? finalScore : Math.floor(score),
+                ns: Math.floor(nsAccuracy),
                 kills: kills,
                 date: new Date().toISOString().slice(0,10)
             };
             leaderboard.push(entry);
             saveLeaderboard();
             renderLeaderboard();
-            document.getElementById('game-over').classList.add('hidden');
-            alert('Score submitted to local multi-player ranking! Run grok-sync to propagate.');
+            document.getElementById('player-name').value = name;
+            document.getElementById('rank-player').value = name;
+            showRankStatus('Gespeichert: ' + name + ' · ' + entry.score + ' Punkte in der lokalen Rangliste.', true);
+            const board = document.getElementById('rank-status');
+            if (board) board.scrollIntoView({ block: 'nearest' });
         }
 
         function addSimPlayer() {
@@ -220,7 +269,7 @@
         }
 
         function clearLeaderboard() {
-            if (confirm('Clear local leaderboard?')) {
+            if (confirm('Lokale Rangliste leeren?')) {
                 leaderboard = [];
                 saveLeaderboard();
                 renderLeaderboard();
@@ -268,14 +317,14 @@
             });
             
             nsAccuracy = Math.min(100, nsAccuracy + stabilized * 3);
-            document.getElementById('ns-accuracy').textContent = Math.floor(nsAccuracy);
-            document.getElementById('ns-status').textContent = nsAccuracy > 75 ? 'CONTROLLED SINGULARITY' : 'STABILIZING';
+            publishNs();
+            document.getElementById('ns-status').textContent = nsAccuracy > 75 ? 'KONTROLLIERTE SINGULARITÄT' : 'STABILISIERT';
             
-            if (nsAccuracy > 85 && !nsSolved) {
+            if (nsAccuracy > 85 && !nsSolved && gameRunning) {
                 nsSolved = true;
                 score += 1500;
-                document.getElementById('live-score').textContent = score.toString().padStart(5,'0');
-                document.getElementById('ns-bonus').textContent = '+1500 (Solved!)';
+                showLiveScore(score);
+                document.getElementById('ns-bonus').textContent = '+1500 (gelöst)';
             }
         }
 
@@ -339,8 +388,17 @@
             canvas = document.getElementById('game-canvas');
             ctx = canvas.getContext('2d');
             
-            window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key === ' ') e.preventDefault(); });
-            window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+            window.addEventListener('keydown', e => {
+                const tag = e.target && e.target.tagName;
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable)) return;
+                keys[e.key.toLowerCase()] = true;
+                if (e.key === ' ') e.preventDefault();
+            });
+            window.addEventListener('keyup', e => {
+                const tag = e.target && e.target.tagName;
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable)) return;
+                keys[e.key.toLowerCase()] = false;
+            });
             
             // Touch support basic
             canvas.addEventListener('touchstart', e => {
@@ -371,13 +429,14 @@
             document.getElementById('kills').textContent = '0';
             document.getElementById('fuel').textContent = fuel;
             document.getElementById('distance').textContent = '0';
-            document.getElementById('ns-accuracy').textContent = Math.floor(nsAccuracy);
-            document.getElementById('ns-status').textContent = 'STABLE';
+            publishNs();
+            document.getElementById('ns-status').textContent = 'STABIL';
             document.getElementById('level').textContent = level;
             document.getElementById('ns-bonus').textContent = '0';
             document.getElementById('game-over').classList.add('hidden');
             ceresArmed = false;
             landedCeres = false;
+            ceresFlight = null;
             stageNote = '';
             
             // Spawn initial enemies / obstacles. Stufe 5 ist der Landeanflug, ohne Gegner.
@@ -404,17 +463,26 @@
             if (stageLabel) stageLabel.textContent = text;
         }
 
+        function ceresShouldBrake(alt, vy) {
+            const decel = CERES_THRUST_MS - CERES_G;
+            if (decel <= 0 || vy <= CERES_BRAKE_TARGET) return false;
+            const burnTime = (vy - CERES_BRAKE_TARGET) / decel;
+            const burnDist = vy * burnTime - 0.5 * decel * burnTime * burnTime;
+            return alt <= burnDist;
+        }
+
         function beginCeresApproach() {
             if (ceresArmed) return;
             ceresArmed = true;
             enemies = [];
+            ceresFlight = { alt: CERES_APPROACH_M, vy: 3.2, brake: false };
             ship.x = 415;
-            ship.y = 120;
             ship.vx = 0;
-            ship.vy = 0.55;
+            ship.vy = 0;
+            ship.y = CERES_PAD.y - ceresFlight.alt / CERES_M_PER_PX;
             ship.angle = -Math.PI / 2;
             fuel = Math.max(fuel, 100);
-            noteStage('CERES-ANFLUG · Neue Erde · Vinalia Faculae · Vakuum, keine Turbulenz');
+            noteStage('CERES-ANFLUG · Neue Erde · Vinalia Faculae · bei „JETZT BREMSEN“ oben halten');
         }
 
         function maybeAdvanceLevel() {
@@ -437,7 +505,7 @@
 
         function changeLevel() {
             if (gameRunning) {
-                if (confirm('Change level? Current progress lost.')) {
+                if (confirm('Stufe wechseln? Der laufende Flug geht verloren.')) {
                     resetGameState();
                 }
             } else {
@@ -454,21 +522,26 @@
             
             const now = Date.now();
             const dt = Math.min((now - lastTime) / 16, 2);
+            const dtSec = Math.min((now - lastTime) / 1000, 0.05);
             lastTime = now;
             
-            // Ship controls. Stufe 5 ist ein Vakuum-Lander: ↑ gegen die Ceres-Gravitation, keine Luftreibung.
+            // Ship controls. Stufe 5 ist ein Vakuum-Lander in Metern: ↑ gegen 0,28 m/s².
             const thrust = 0.35;
-            if (level === 5) {
-                const thrustA = (1.0 / CERES_M_PER_PX) / 3600;
-                const latA = thrustA * 0.7;
+            if (level === 5 && ceresFlight) {
+                const latA = (0.7 / CERES_M_PER_PX) / 3600;
                 ship.angle = -Math.PI / 2;
                 if ((keys['w'] || keys['arrowup']) && fuel > 0) {
-                    ship.vy -= thrustA * dt;
-                    fuel = Math.max(0, fuel - 0.045 * dt);
+                    ceresFlight.vy -= CERES_THRUST_MS * dtSec;
+                    fuel = Math.max(0, fuel - 2.4 * dtSec);
                     spawnParticle(ship.x, ship.y + 16, (Math.random()-0.5)*0.2, 0.4, '#ffcc66');
                 }
                 if (keys['a'] || keys['arrowleft']) ship.vx -= latA * dt;
                 if (keys['d'] || keys['arrowright']) ship.vx += latA * dt;
+                ceresFlight.vy += CERES_G * dtSec;
+                ceresFlight.alt -= ceresFlight.vy * dtSec;
+                if (!ceresFlight.brake && ceresShouldBrake(ceresFlight.alt, ceresFlight.vy)) ceresFlight.brake = true;
+                ship.y = Math.max(24, CERES_PAD.y - Math.max(0, ceresFlight.alt) / CERES_M_PER_PX);
+                ship.vy = 0;
             } else if (keys['w'] || keys['arrowup']) {
                 if (fuel > 0) {
                     ship.vx += Math.cos(ship.angle) * thrust;
@@ -510,7 +583,6 @@
             } else if (level === 5) {
                 turb = 0;
                 drag = 1;
-                ship.vy += ((CERES_G / CERES_M_PER_PX) / 3600) * dt;
             }
             
             ship.vx *= drag;
@@ -521,7 +593,7 @@
             }
             
             ship.x += ship.vx * dt;
-            ship.y += ship.vy * dt;
+            if (level !== 5) ship.y += ship.vy * dt;
             distance += Math.abs(ship.vx) + Math.abs(ship.vy) * 0.1;
             
             // Boundaries. Auf Ceres ersetzt der Boden den unteren Abprall.
@@ -529,14 +601,24 @@
             if (ship.x > 780) { ship.x = 780; ship.vx = -Math.abs(ship.vx)*0.6; }
             if (ship.y < 20) { ship.y = 20; ship.vy = Math.abs(ship.vy)*0.6; }
             if (level !== 5 && ship.y > 480) { ship.y = 480; ship.vy = -Math.abs(ship.vy)*0.6; }
-            if (level === 5 && ship.y >= CERES_PAD.y) {
-                const vyMs = ship.vy * 60 * CERES_M_PER_PX;
+            if (level === 5 && ceresFlight && ceresFlight.alt <= 0) {
+                ceresFlight.alt = 0;
+                ceresFlight.brake = false;
+                ship.y = CERES_PAD.y;
+                const vyMs = ceresFlight.vy;
                 const vxMs = ship.vx * 60 * CERES_M_PER_PX;
                 const onPad = ship.x >= CERES_PAD.x0 && ship.x <= CERES_PAD.x1;
-                const soft = vyMs <= 2.1 && vyMs >= -0.8 && Math.abs(vxMs) <= 1.4;
-                ship.y = CERES_PAD.y;
+                const soft = vyMs <= CERES_TOUCH_VY && vyMs >= -1.2 && Math.abs(vxMs) <= 2;
                 landedCeres = onPad && soft;
+                ceresFlight.status = landedCeres ? 'GELANDET · VINALIA FACULAE' : 'ZU HART — AUFGESCHLAGEN';
+                const telemNow = document.getElementById('ceres-telem');
+                if (telemNow) {
+                    telemNow.textContent = landedCeres
+                        ? 'Gelandet · Vinalia Faculae · Occator · 19,8° N'
+                        : 'Zu hart aufgesetzt · neuer Anflug über Mission starten';
+                }
                 endGame(landedCeres);
+                drawGame();
                 return;
             }
             
@@ -614,31 +696,34 @@
             // Fuel drain + NS fluid consumption. Auf Ceres nur der Schub verbraucht Treibstoff.
             if (level !== 5 && fuel > 0) fuel = Math.max(0, fuel - 0.04 * (level > 1 ? 1.6 : 1));
             if (level !== 5 && fuel <= 0 && Math.random() < 0.02) endGame(false);
+            if (!gameRunning) {
+                drawGame();
+                return;
+            }
             
             // Score tick
             score += 1 + Math.floor(distance / 40);
             distance += 0.8;
             
             // Update UI
-            document.getElementById('live-score').textContent = Math.floor(score).toString().padStart(5,'0');
+            showLiveScore(score);
+            publishNs();
             document.getElementById('kills').textContent = kills;
             document.getElementById('fuel').textContent = Math.floor(fuel);
             document.getElementById('distance').textContent = Math.floor(distance);
             document.getElementById('level').textContent = level;
             const telem = document.getElementById('ceres-telem');
             if (telem) {
-                if (level === 5) {
-                    const vyMs = ship.vy * 60 * CERES_M_PER_PX;
+                if (level === 5 && ceresFlight && ceresFlight.alt > 0) {
                     const vxMs = ship.vx * 60 * CERES_M_PER_PX;
-                    const altM = Math.max(0, (CERES_PAD.y - ship.y) * CERES_M_PER_PX);
-                    telem.textContent = `Ceres-Anflug · Höhe ${altM.toFixed(0)} m · Vy ${vyMs.toFixed(1)} m/s · Vx ${vxMs.toFixed(1)} m/s · Treibstoff ${Math.floor(fuel)}`;
-                } else if (!telem.textContent.startsWith('Ceres-Anflug')) {
+                    telem.textContent = `Ceres-Anflug · Höhe ${Math.max(0, ceresFlight.alt).toFixed(0)} m · Vy ${ceresFlight.vy.toFixed(1)} m/s · Vx ${vxMs.toFixed(1)} m/s · Treibstoff ${Math.floor(fuel)}${ceresFlight.brake ? ' · JETZT BREMSEN HALTEN' : ''}`;
+                } else if (level !== 5) {
                     telem.textContent = '';
                 }
             }
             
             // NS bonus live
-            if (nsSolved) document.getElementById('ns-bonus').textContent = Math.floor(score * 0.1) + ' (Singularity)';
+            if (nsSolved) document.getElementById('ns-bonus').textContent = Math.floor(score * 0.1) + ' (Singularität)';
             
             // Singularität bleibt eine Etappe. Gewonnen wird erst mit der Ceres-Landung.
             if (level === 3 && nsAccuracy > 92 && distance > 1200 && !stageNote.includes('Singularität stabil')) {
@@ -673,11 +758,16 @@
                 ctx.fillStyle = '#f6f1df';
                 ctx.font = '12px monospace';
                 ctx.fillText('VINALIA FACULAE  19,8° N', CERES_PAD.x0 + 8, CERES_PAD.y - 10);
-                const vyMs = ship.vy * 60 * CERES_M_PER_PX;
+                const vyMs = ceresFlight ? ceresFlight.vy : 0;
                 const vxMs = ship.vx * 60 * CERES_M_PER_PX;
                 ctx.fillStyle = '#f3ead0';
                 ctx.fillText(`CERES g=0,28 m/s²  VAKUUM  Vy ${vyMs.toFixed(1)} m/s  Vx ${vxMs.toFixed(1)} m/s`, 10, 46);
-                if (vyMs > 3 && ship.y > 380) ctx.fillText('JETZT BREMSEN ↑', 10, 64);
+                if (ceresFlight && ceresFlight.status) {
+                    ctx.fillStyle = landedCeres ? '#b6ffcf' : '#ffd0c4';
+                    ctx.fillText(ceresFlight.status, 10, 78);
+                } else if (ceresFlight && ceresFlight.brake && gameRunning) {
+                    ctx.fillText('JETZT BREMSEN — HALTEN', 10, 78);
+                }
             }
 
             // Draw NS turbulence particles (background field for levels 2–4, nicht auf Ceres)
@@ -744,10 +834,10 @@
             ctx.fillStyle = '#00f0ff';
             ctx.font = '12px monospace';
             const routeTag = level === 5 ? 'CERES LANDUNG' : (level === 2 ? 'MARS WEGPUNKT' : 'KURS CERES');
-            ctx.fillText(`LEVEL ${level}  ${routeTag}  |  DIST ${Math.floor(distance)}  |  NS ${Math.floor(nsAccuracy)}%`, 10, 20);
-            if (stageNote && Date.now() < stageNoteUntil) {
+            ctx.fillText(`STUFE ${level}  ${routeTag}  |  DIST ${Math.floor(distance)}  |  NS ${Math.floor(nsAccuracy)}%`, 10, 20);
+            if (stageNote && Date.now() < stageNoteUntil && !(level === 5 && ceresFlight && ceresFlight.brake)) {
                 ctx.fillStyle = '#f8f4d8';
-                ctx.fillText(stageNote, 10, level === 5 ? 64 : 44);
+                ctx.fillText(stageNote, 10, level === 5 ? 96 : 44);
             }
         }
 
@@ -768,27 +858,49 @@
             }
         }
 
+        function publishNs() {
+            const text = String(Math.floor(nsAccuracy));
+            const header = document.getElementById('ns-solve');
+            const side = document.getElementById('ns-accuracy');
+            if (header) header.textContent = text;
+            if (side) side.textContent = text;
+            return text;
+        }
+
+        function showLiveScore(value) {
+            const text = Math.max(0, Math.floor(value)).toString().padStart(5, '0');
+            const live = document.getElementById('live-score');
+            if (live) live.textContent = text;
+            return text;
+        }
+
+        function overallScore(success) {
+            const ceresWin = !!(success && (landedCeres || level === 5));
+            return Math.floor(score + (success ? 2500 : 0) + (ceresWin ? 1800 : 0) + (nsAccuracy * 18) + (kills * 120));
+        }
+
         function endGame(success) {
             gameRunning = false;
-            const ceresWin = success && (landedCeres || level === 5);
-            const final = Math.floor(score + (success ? 2500 : 0) + (ceresWin ? 1800 : 0) + (nsAccuracy * 18) + (kills * 120));
+            const ceresWin = !!(success && (landedCeres || level === 5));
+            const text = showLiveScore(overallScore(success));
             const title = document.getElementById('final-title');
             const dest = document.getElementById('final-dest');
             if (title) {
-                title.textContent = ceresWin ? 'GELANDET AUF CERES' : (success ? 'ETAPPE GESCHAFFT' : 'ABSTURZ / BLOWUP');
+                title.textContent = ceresWin ? 'GELANDET AUF CERES' : (success ? 'ETAPPE GESCHAFFT' : 'ABSTURZ');
             }
             if (dest) {
                 dest.textContent = ceresWin
                     ? 'Endpunkt: Vinalia Faculae · Occator · ~19,8° N · Neue Erde. Wegpunkt Mars bleibt im Logbuch.'
                     : 'Ziel der Route bleibt Ceres (Neue Erde). Mars ist der Wegpunkt.';
             }
-            document.getElementById('final-score').textContent = final.toString().padStart(5,'0');
+            document.getElementById('final-score').textContent = text;
             document.getElementById('final-kills').textContent = kills;
-            document.getElementById('final-ns').textContent = Math.floor(nsAccuracy);
+            document.getElementById('final-ns').textContent = publishNs();
             document.getElementById('final-eff').textContent = Math.floor(fuel) + '%';
-            document.getElementById('final-overall').textContent = final;
+            document.getElementById('final-overall').textContent = text;
             document.getElementById('game-over').classList.remove('hidden');
-            document.getElementById('player-name').value = document.getElementById('rank-player').value || 'Commander';
+            const fromRank = sanitizeCallsign(document.getElementById('rank-player').value);
+            if (fromRank) document.getElementById('player-name').value = fromRank;
         }
 
         function resetGame() {
@@ -800,11 +912,11 @@
         }
 
         function simulateOriginal(type) {
-            alert(`Modul ${type.toUpperCase()}: der Ceres-Lander (Vinalia Faculae) liegt im Hub-Cockpit. Mars bleibt der Wegpunkt.`);
-            // In real integration this would toggle visibility of original sections or embed.
-            if (type === 'warp') {
-                document.getElementById('ns-status').textContent = 'WARP + NS STABLE';
+            showRankStatus('Modul ' + String(type).toUpperCase() + ': der Ceres-Lander (Vinalia Faculae) liegt im Hub-Cockpit. Mars bleibt der Wegpunkt.', true);
+            if (type === 'warp' && gameRunning) {
+                document.getElementById('ns-status').textContent = 'WARP UND NS STABIL';
                 score += 600;
+                showLiveScore(score);
             }
         }
 
@@ -813,9 +925,7 @@
         }
 
         function runSync() {
-            alert('Running grok-sync.ps1 (simulated in browser). In real terminal: powershell -File .../grok-sync.ps1\nMemory mirrored, artifacts updated, leaderboard synced across PCs.');
-            // In real: would call terminal tool, but here simulation.
-            console.log('%c[GrokSyncMaster] Sync triggered from Blizzwar game UI', 'color:#0ff');
+            showRankStatus('Die Rangliste bleibt lokal in diesem Browser. Eine gemeinsame Online-Liste ist noch nicht angebunden.', true);
         }
 
         // Boot
@@ -839,7 +949,12 @@
             setTimeout(() => {
                 const hint = document.createElement('div');
                 hint.style.cssText = 'position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font-size:10px;opacity:0.6';
-                hint.textContent = 'Click NS vortex canvas to apply 2026 Singularity Proof • Shift for boost';
+                hint.textContent = 'Klick in den NS-Wirbel für den Beweis von 2026. Umschalt gibt den Boost.';
+                hint.style.background = '#020617';
+                hint.style.padding = '4px 8px';
+                hint.style.border = '1px solid #155e75';
+                hint.style.zIndex = '20';
+                hint.style.pointerEvents = 'none';
                 document.body.appendChild(hint);
                 setTimeout(() => hint.remove(), 6500);
             }, 8000);
