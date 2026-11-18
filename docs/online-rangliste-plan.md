@@ -60,4 +60,6 @@ Gering und lokal begrenzt: eine Serverless-Route, ein kostenloser Speicher, der 
 
 Option A. Vercel Function auf Hobby plus Upstash Redis im kostenlosen Tarif, Region Frankfurt. 0 €, solange die Freimengen gelten und der Tarif nicht auf Pay-as-you-go wechselt. Redis sortiert die Liste, die Function bleibt klein, Neon bleibt die Alternative, falls später SQL nötig wird. Global Config scheidet wegen der Schreibgrenze aus. GitHub bleibt der Ersatz ohne zweiten Anbieter.
 
-Nicht umgesetzt: keine Function, kein Redis, kein Neon, kein Token, keine Vercel-Einstellung.
+## Stand nach der Freigabe
+
+Die gemeinsame Liste ist nicht angelegt. Am Vercel-Konto hängt keine Marketplace-Integration. Upstash Redis lässt sich nur über die Marketplace-Anmeldung verbinden (`vercel install upstash` bzw. die Installationsseite). Das ist eine Registrierung bei einem zweiten Anbieter. Ohne diese Anmeldung gibt es keine kostenlose Datenbank und keine Zugangsdaten. Eine Kreditkarte wurde nicht hinterlegt, und es wurde kein Bezahlplan gewählt. Die Function `/api/scores` gibt es deshalb nicht. Die Rangliste im Spiel bleibt lokal. Beispielnamen werden nicht mehr eingetragen.
