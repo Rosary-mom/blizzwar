@@ -80,7 +80,7 @@
                             <option value="5">5. Ceres-Anflug und Landung (Neue Erde, Vakuum)</option>
                         </select>
                     </div>
-                    <p id="stage-label" class="text-xs mt-3 text-amber-200">Route: Erde → Mars (Wegpunkt) → Ceres · Vinalia Faculae, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre</p>
+                    <p id="stage-label" class="text-xs mt-3 text-amber-200">Route: Erde → Mars (Wegpunkt) → Ceres · Vanilla F*c <span class="text-[10px] opacity-80">(Vinalia Faculae)</span>, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre</p>
                     <p id="ceres-telem" class="text-xs mt-1 text-amber-100 min-h-[1rem]"></p>
                     <p class="text-xs mt-2 leading-relaxed text-cyan-200">Steuerung: WASD oder Pfeile = Schub. Leertaste = Feuer. Umschalt = Singularitäts-Boost. Stufe 5: erst fallen lassen, bei „JETZT BREMSEN“ die Pfeiltaste nach oben bis zum Aufsetzen halten. Links und rechts nur zur Seitenkorrektur. Keine Luftturbulenz.</p>
                 </div>
@@ -451,8 +451,8 @@
             const stageLabel = document.getElementById('stage-label');
             if (stageLabel) {
                 stageLabel.textContent = level === 5
-                    ? 'Endstufe: Ceres-Anflug · Vinalia Faculae · g = 0,28 m/s² · Vakuum · 2,77 AE'
-                    : 'Route: Erde → Mars (Wegpunkt) → Ceres · Vinalia Faculae, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre';
+                    ? 'Endstufe: Ceres-Anflug · Vanilla F*c (Vinalia Faculae) · g = 0,28 m/s² · Vakuum · 2,77 AE'
+                    : 'Route: Erde → Mars (Wegpunkt) → Ceres · Vanilla F*c (Vinalia Faculae), Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre';
             }
         }
 
@@ -482,7 +482,7 @@
             ship.y = CERES_PAD.y - ceresFlight.alt / CERES_M_PER_PX;
             ship.angle = -Math.PI / 2;
             fuel = Math.max(fuel, 100);
-            noteStage('CERES-ANFLUG · Neue Erde · Vinalia Faculae · bei „JETZT BREMSEN“ oben halten');
+            noteStage('CERES-ANFLUG · Neue Erde · Vanilla F*c (Vinalia Faculae) · bei „JETZT BREMSEN“ oben halten');
         }
 
         function maybeAdvanceLevel() {
@@ -610,12 +610,12 @@
                 const onPad = ship.x >= CERES_PAD.x0 && ship.x <= CERES_PAD.x1;
                 const soft = vyMs <= CERES_TOUCH_VY && vyMs >= -1.2 && Math.abs(vxMs) <= 2;
                 landedCeres = onPad && soft;
-                ceresFlight.status = landedCeres ? 'GELANDET · VINALIA FACULAE' : 'ZU HART — AUFGESCHLAGEN';
+                ceresFlight.status = landedCeres ? 'GELANDET · Vanilla F*c' : 'ZU HART — AUFGESCHLAGEN';
                 const telemNow = document.getElementById('ceres-telem');
                 if (telemNow) {
                     telemNow.textContent = landedCeres
-                        ? 'Gelandet · Vinalia Faculae · Occator · 19,8° N'
-                        : 'Zu hart aufgesetzt · neuer Anflug über Mission starten';
+                        ? 'Gelandet · Vanilla F*c (Vinalia Faculae, Occator, ~19,8° N)'
+                        : 'Zu hart aufgesetzt auf Vanilla F*c (Vinalia Faculae) · neuer Anflug über Mission starten';
                 }
                 endGame(landedCeres);
                 drawGame();
@@ -756,8 +756,10 @@
                 ctx.fillStyle = '#f4efe0';
                 ctx.fillRect(CERES_PAD.x0, CERES_PAD.y - 4, CERES_PAD.x1 - CERES_PAD.x0, 8);
                 ctx.fillStyle = '#f6f1df';
-                ctx.font = '12px monospace';
-                ctx.fillText('VINALIA FACULAE  19,8° N', CERES_PAD.x0 + 8, CERES_PAD.y - 10);
+                ctx.font = '14px monospace';
+                ctx.fillText('Vanilla F*c', CERES_PAD.x0 + 8, CERES_PAD.y - 22);
+                ctx.font = '10px monospace';
+                ctx.fillText('Vinalia Faculae · 19,8° N', CERES_PAD.x0 + 8, CERES_PAD.y - 8);
                 const vyMs = ceresFlight ? ceresFlight.vy : 0;
                 const vxMs = ship.vx * 60 * CERES_M_PER_PX;
                 ctx.fillStyle = '#f3ead0';
@@ -890,7 +892,7 @@
             }
             if (dest) {
                 dest.textContent = ceresWin
-                    ? 'Endpunkt: Vinalia Faculae · Occator · ~19,8° N · Neue Erde. Wegpunkt Mars bleibt im Logbuch.'
+                    ? 'GELANDET · Vanilla F*c (Vinalia Faculae, Occator, ~19,8° N). Wegpunkt Mars bleibt im Logbuch.'
                     : 'Ziel der Route bleibt Ceres (Neue Erde). Mars ist der Wegpunkt.';
             }
             document.getElementById('final-score').textContent = text;
@@ -912,7 +914,7 @@
         }
 
         function simulateOriginal(type) {
-            showRankStatus('Modul ' + String(type).toUpperCase() + ': der Ceres-Lander (Vinalia Faculae) liegt im Hub-Cockpit. Mars bleibt der Wegpunkt.', true);
+            showRankStatus('Modul ' + String(type).toUpperCase() + ': der Ceres-Lander Vanilla F*c (Vinalia Faculae) liegt im Hub-Cockpit. Mars bleibt der Wegpunkt.', true);
             if (type === 'warp' && gameRunning) {
                 document.getElementById('ns-status').textContent = 'WARP UND NS STABIL';
                 score += 600;

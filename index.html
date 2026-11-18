@@ -234,7 +234,7 @@
                         <h3 class="text-xl font-orbitron text-center text-cyan-400">DWARF Engine: Ceres-Lander · Neue Erde</h3>
                         <canvas id="lander-canvas" width="480" height="300" class="mx-auto block mt-2 border border-cyan-500"></canvas>
                         <p id="lander-readout" class="lander-readout text-center mt-2 text-sm text-cyan-200">Bereit zur Landung.</p>
-                        <p id="ceres-info" class="text-center mt-1 text-xs text-amber-100/90 leading-relaxed">Ceres · Neue Erde · g ≈ 0,28 m/s² · keine Atmosphäre · 2,77 AE · Ziel: Vinalia Faculae im Occator-Krater (~19,8° N), helle Salzablagerungen.</p>
+                        <p id="ceres-info" class="text-center mt-1 text-xs text-amber-100/90 leading-relaxed">Ceres · Neue Erde · g ≈ 0,28 m/s² · keine Atmosphäre · 2,77 AE · Ziel: Vanilla F*c <span class="text-[10px] opacity-80">(Vinalia Faculae)</span> im Occator-Krater (~19,8° N), helle Salzablagerungen.</p>
                         <p class="text-center mt-1 text-sm text-gray-300">Pfeil hoch (↑) = Schub. Sobald „JETZT BREMSEN“ erscheint, ↑ bis zum Aufsetzen halten. Vorher nicht schieben. Links / Rechts nur zur Seitenkorrektur.</p>
                         <div class="flex gap-2 justify-center mt-2">
                             <button type="button" id="lander-left" class="action-button">←</button>
@@ -864,14 +864,14 @@
                     lander.brakeArmed = false;
                     lander.vy = 0;
                     lander.vx = 0;
-                    lander.message = 'GELANDET · Vinalia Faculae · Occator · 19,8° N';
-                    addLog('Ceres-Landung gelungen: Vinalia Faculae (Occator-Krater, ~19,8° N). Neue Erde erreicht.');
+                    lander.message = 'GELANDET · Vanilla F*c (Vinalia Faculae, Occator, ~19,8° N)';
+                    addLog('Ceres-Landung gelungen: Vanilla F*c (Vinalia Faculae, Occator-Krater, ~19,8° N). Neue Erde erreicht.');
                     gameState.settlementProgress = Math.min(100, gameState.settlementProgress + 18);
                     updateResources();
                 } else {
                     lander.phase = 'crashed';
                     lander.brakeArmed = false;
-                    lander.message = onPad ? 'ZU HART — Aufschlag auf Vinalia Faculae' : 'NEBEN DEM ZIEL — Salzfeld verfehlt';
+                    lander.message = onPad ? 'ZU HART — Aufschlag auf Vanilla F*c (Vinalia Faculae)' : 'NEBEN DEM ZIEL — Salzfeld verfehlt';
                     addLog('Ceres-Lander: ' + lander.message);
                 }
             }
@@ -914,8 +914,12 @@
             ctx.lineWidth = 2;
             ctx.strokeRect(padX - 26, groundY - 3, 52, 7);
             ctx.fillStyle = '#2a2416';
-            ctx.font = '10px monospace';
-            ctx.fillText('VINALIA', padX - 24, groundY + 18);
+            ctx.textAlign = 'center';
+            ctx.font = '11px monospace';
+            ctx.fillText('Vanilla F*c', padX, groundY + 16);
+            ctx.font = '8px monospace';
+            ctx.fillText('Vinalia Faculae', padX, groundY + 26);
+            ctx.textAlign = 'left';
 
             const thrusting = lander.phase === 'flight' && (landerKeys.has('ArrowUp') || lander.thrust) && lander.fuel > 0;
             ctx.save();
@@ -955,7 +959,7 @@
             ctx.font = '12px monospace';
             ctx.fillStyle = settled ? (lander.phase === 'landed' ? '#b6ffcf' : '#ffd0c4') : (lander.vy > 4 && lander.alt < 50 ? '#ffb4a2' : '#d7fff8');
             ctx.fillText(settled
-                ? (lander.phase === 'landed' ? 'GELANDET · VINALIA FACULAE' : lander.message)
+                ? (lander.phase === 'landed' ? 'GELANDET · Vanilla F*c' : lander.message)
                 : `H ${lander.alt.toFixed(0)} m   Vy ${lander.vy.toFixed(1)}   Vx ${lander.vx.toFixed(1)}   Treibstoff ${lander.fuel.toFixed(0)}%`, 8, 15);
             if (brakeNow) {
                 ctx.fillStyle = '#ffd166';
@@ -973,9 +977,12 @@
                 ctx.fillStyle = lander.phase === 'landed' ? '#b6ffcf' : '#ffd0c4';
                 ctx.font = '13px monospace';
                 const lines = lander.phase === 'landed'
-                    ? ['GELANDET · Vinalia Faculae', 'Occator · 19,8° N · Neue Erde', '↑ startet einen neuen Anflug']
+                    ? ['GELANDET · Vanilla F*c', '(Vinalia Faculae, Occator, ~19,8° N)', 'Neue Erde · ↑ neuer Anflug']
                     : [lander.message, '↑ startet einen neuen Anflug'];
-                lines.forEach((line, i) => ctx.fillText(line, 40, 130 + i * 16));
+                lines.forEach((line, i) => {
+                    ctx.font = (lander.phase === 'landed' && i === 1) ? '11px monospace' : '13px monospace';
+                    ctx.fillText(line, 40, 128 + i * 16);
+                });
             }
         }
 
@@ -983,7 +990,7 @@
             const el = document.getElementById('lander-readout');
             if (!el) return;
             if (lander.phase === 'landed') {
-                el.textContent = 'Aufgesetzt auf Ceres · Vinalia Faculae · Neue Erde.';
+                el.textContent = 'Aufgesetzt auf Ceres · Vanilla F*c (Vinalia Faculae) · Neue Erde.';
             } else if (lander.phase === 'crashed') {
                 el.textContent = lander.message;
             } else if (lander.phase === 'flight') {
@@ -1052,7 +1059,7 @@
             resetLander(true);
             const sec = document.getElementById('cockpit-section');
             if (sec.classList.contains('hidden')) sec.classList.remove('hidden');
-            addLog('DWARF-Engine aktiv: Ceres-Lander, Ziel Vinalia Faculae. g = 0,28 m/s², keine Atmosphäre.');
+            addLog('DWARF-Engine aktiv: Ceres-Lander, Ziel Vanilla F*c (Vinalia Faculae). g = 0,28 m/s², keine Atmosphäre.');
         });
 
         requestAnimationFrame(landerFrame);
@@ -1062,7 +1069,7 @@
 
         // Optional: Warp-Status beim Start loggen
         addLog('Warp Drive Technologie verfügbar. 🌀');
-        addLog('Kurs: Erde → Mars (Wegpunkt) → Ceres, Neue Erde. Landung Vinalia Faculae.');
+        addLog('Kurs: Erde → Mars (Wegpunkt) → Ceres, Neue Erde. Landung Vanilla F*c (Vinalia Faculae).');
     </script>
 </body>
 </html>
