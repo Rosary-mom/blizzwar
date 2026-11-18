@@ -25,7 +25,7 @@
         <header class="flex justify-between items-center mb-6 border-b border-cyan-500 pb-4">
             <div>
                 <h1 class="text-4xl font-orbitron text-cyan-400">⚡ BLIZZWAR</h1>
-                <p class="text-sm text-cyan-300">PROJECT CHIMERA: Logbuch der Menschheiten • Mars Mission 2026</p>
+                <p class="text-sm text-cyan-300">PROJEKT CHIMERA: Logbuch der Menschheiten • Wegpunkt Mars • Endpunkt Ceres (Neue Erde)</p>
                 <div class="text-xs mt-1 px-2 py-0.5 inline-block bg-emerald-900/60 border border-emerald-400 rounded text-emerald-300">NAVIER-STOKES MILLENNIUM RÄTSEL — SOLVED 2026 (OpenAI Swarm Singularity Proof)</div>
             </div>
             <div class="text-right text-sm">
@@ -73,9 +73,12 @@
                             <option value="2">2. Mars Entry (NS Turbulence)</option>
                             <option value="3">3. Singularity Challenge (Solved Rätsel)</option>
                             <option value="4">4. Deep Space Combat</option>
+                            <option value="5">5. Ceres-Anflug + Landung (Neue Erde, Vakuum)</option>
                         </select>
                     </div>
-                    <div class="text-[10px] mt-1 text-cyan-300">Controls: WASD / Arrows = Move + Thrust | SPACE = Fire | SHIFT = Singularity Boost (risky!) | Click NS Canvas to stabilize vortex.</div>
+                    <p id="stage-label" class="text-xs mt-2 text-amber-200">Route: Erde → Mars (Wegpunkt) → Ceres · Vinalia Faculae, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre</p>
+                    <p id="ceres-telem" class="text-xs mt-1 text-amber-100 min-h-[1rem]"></p>
+                    <div class="text-[10px] mt-1 text-cyan-300">Steuerung: WASD / Pfeile = Schub | LEERTASTE = Feuer | UMSCHALT = Singularitäts-Boost | Stufe 5: ↑ bremst die 0,28 m/s², ← → seitlich, keine Luftturbulenz.</div>
                 </div>
 
                 <!-- NS RÄTSEL + STATS -->
@@ -98,7 +101,8 @@
 
             <!-- End game summary -->
             <div id="game-over" class="hidden mt-4 panel p-4 bg-black/70">
-                <h3 class="font-orbitron text-2xl text-yellow-300">MISSION COMPLETE / BLOWUP</h3>
+                <h3 id="final-title" class="font-orbitron text-2xl text-yellow-300">MISSION COMPLETE / BLOWUP</h3>
+                <div id="final-dest" class="text-sm text-amber-200 mb-1">Endpunkt: Ceres · Neue Erde</div>
                 <div id="final-score" class="score text-4xl my-2">00000</div>
                 <div class="grid grid-cols-2 gap-2 text-sm mb-3">
                     <div>Kills: <span id="final-kills"></span></div>
@@ -155,6 +159,13 @@
         let nsParticles = [], nsTimer = 0, nsSolved = false;
         let keys = {};
         let lastTime = Date.now();
+        let stageNote = '';
+        let stageNoteUntil = 0;
+        let ceresArmed = false;
+        let landedCeres = false;
+        const CERES_G = 0.28;
+        const CERES_M_PER_PX = 0.45;
+        const CERES_PAD = { x0: 330, x1: 500, y: 468 };
 
         // Leaderboard
         let leaderboard = JSON.parse(localStorage.getItem('blizzwar_leaderboard') || '[]');
@@ -365,12 +376,63 @@
             document.getElementById('level').textContent = level;
             document.getElementById('ns-bonus').textContent = '0';
             document.getElementById('game-over').classList.add('hidden');
+            ceresArmed = false;
+            landedCeres = false;
+            stageNote = '';
             
-            // Spawn initial enemies / obstacles
+            // Spawn initial enemies / obstacles. Stufe 5 ist der Landeanflug, ohne Gegner.
             enemies = [];
-            for (let i=0; i<5; i++) {
-                enemies.push({x: 300 + Math.random()*400, y: Math.random()*400, vx: -0.8 - Math.random(), vy: (Math.random()-0.5)*1.2, size: 8 + Math.random()*6, type: level > 2 ? 'anomaly' : 'asteroid'});
+            if (level === 5) {
+                beginCeresApproach();
+            } else {
+                for (let i=0; i<5; i++) {
+                    enemies.push({x: 300 + Math.random()*400, y: Math.random()*400, vx: -0.8 - Math.random(), vy: (Math.random()-0.5)*1.2, size: 8 + Math.random()*6, type: level > 2 ? 'anomaly' : 'asteroid'});
+                }
             }
+            const stageLabel = document.getElementById('stage-label');
+            if (stageLabel) {
+                stageLabel.textContent = level === 5
+                    ? 'Endstufe: Ceres-Anflug · Vinalia Faculae · g = 0,28 m/s² · Vakuum · 2,77 AE'
+                    : 'Route: Erde → Mars (Wegpunkt) → Ceres · Vinalia Faculae, Occator ~19,8° N · g ≈ 0,28 m/s² · 2,77 AE · keine Atmosphäre';
+            }
+        }
+
+        function noteStage(text) {
+            stageNote = text;
+            stageNoteUntil = Date.now() + 4200;
+            const stageLabel = document.getElementById('stage-label');
+            if (stageLabel) stageLabel.textContent = text;
+        }
+
+        function beginCeresApproach() {
+            if (ceresArmed) return;
+            ceresArmed = true;
+            enemies = [];
+            ship.x = 415;
+            ship.y = 120;
+            ship.vx = 0;
+            ship.vy = 0.55;
+            ship.angle = -Math.PI / 2;
+            fuel = Math.max(fuel, 100);
+            noteStage('CERES-ANFLUG · Neue Erde · Vinalia Faculae · Vakuum, keine Turbulenz');
+        }
+
+        function maybeAdvanceLevel() {
+            if (level >= 5) return;
+            let next = 1;
+            if (distance >= 700) next = 2;
+            if (distance >= 1500) next = 3;
+            if (distance >= 2300) next = 4;
+            if (distance >= 3100) next = 5;
+            if (next <= level) return;
+            const prev = level;
+            level = next;
+            document.getElementById('level').textContent = level;
+            document.getElementById('level-select').value = String(level);
+            if (level === 5) beginCeresApproach();
+            else if (prev < 2 && level === 2) noteStage('MARS-EINTRITT · Wegpunkt · NS-Turbulenz');
+            else if (level === 3) noteStage('SINGULARITÄT · der Kurs läuft weiter nach Ceres');
+            else if (level === 4) noteStage('TIEFER RAUM · Ziel bleibt Ceres');
         }
 
         function changeLevel() {
@@ -394,9 +456,20 @@
             const dt = Math.min((now - lastTime) / 16, 2);
             lastTime = now;
             
-            // Ship controls (realistic momentum)
+            // Ship controls. Stufe 5 ist ein Vakuum-Lander: ↑ gegen die Ceres-Gravitation, keine Luftreibung.
             const thrust = 0.35;
-            if (keys['w'] || keys['arrowup']) {
+            if (level === 5) {
+                const thrustA = (1.0 / CERES_M_PER_PX) / 3600;
+                const latA = thrustA * 0.7;
+                ship.angle = -Math.PI / 2;
+                if ((keys['w'] || keys['arrowup']) && fuel > 0) {
+                    ship.vy -= thrustA * dt;
+                    fuel = Math.max(0, fuel - 0.045 * dt);
+                    spawnParticle(ship.x, ship.y + 16, (Math.random()-0.5)*0.2, 0.4, '#ffcc66');
+                }
+                if (keys['a'] || keys['arrowleft']) ship.vx -= latA * dt;
+                if (keys['d'] || keys['arrowright']) ship.vx += latA * dt;
+            } else if (keys['w'] || keys['arrowup']) {
                 if (fuel > 0) {
                     ship.vx += Math.cos(ship.angle) * thrust;
                     ship.vy += Math.sin(ship.angle) * thrust;
@@ -404,14 +477,16 @@
                     for (let i=0; i<2; i++) spawnParticle(ship.x - Math.cos(ship.angle)*8, ship.y - Math.sin(ship.angle)*8, -ship.vx*0.3 + (Math.random()-0.5), -ship.vy*0.3 + (Math.random()-0.5), '#ffaa00');
                 }
             }
-            if (keys['a'] || keys['arrowleft']) ship.angle -= 0.08;
-            if (keys['d'] || keys['arrowright']) ship.angle += 0.08;
-            if (keys['s'] || keys['arrowdown']) {
-                ship.vx *= 0.92; ship.vy *= 0.92;
+            if (level !== 5) {
+                if (keys['a'] || keys['arrowleft']) ship.angle -= 0.08;
+                if (keys['d'] || keys['arrowright']) ship.angle += 0.08;
+                if (keys['s'] || keys['arrowdown']) {
+                    ship.vx *= 0.92; ship.vy *= 0.92;
+                }
             }
             
-            // Singularity Boost (NS solved tech)
-            if (keys['shift'] && nsAccuracy > 50 && fuel > 10) {
+            // Singularity Boost (NS solved tech) — nicht im Vakuum-Anflug
+            if (level !== 5 && keys['shift'] && nsAccuracy > 50 && fuel > 10) {
                 ship.vx += Math.cos(ship.angle) * 1.8;
                 ship.vy += Math.sin(ship.angle) * 1.8;
                 fuel -= 1.8;
@@ -423,7 +498,7 @@
                 }
             }
             
-            // Apply NS turbulence / fluid drag per level
+            // Apply NS turbulence / fluid drag per level. Ceres hat keine Atmosphäre.
             let drag = 0.985;
             let turb = 0;
             if (level === 2) { // Mars Entry - strong NS turbulence
@@ -432,22 +507,38 @@
             } else if (level === 3) { // Singularity level
                 turb = 1.1;
                 drag = 0.94;
+            } else if (level === 5) {
+                turb = 0;
+                drag = 1;
+                ship.vy += ((CERES_G / CERES_M_PER_PX) / 3600) * dt;
             }
             
             ship.vx *= drag;
             ship.vy *= drag;
-            ship.vx += (Math.random() - 0.5) * turb * 0.3; // fluid perturbation
-            ship.vy += (Math.random() - 0.5) * turb * 0.3;
+            if (level !== 5) {
+                ship.vx += (Math.random() - 0.5) * turb * 0.3; // fluid perturbation
+                ship.vy += (Math.random() - 0.5) * turb * 0.3;
+            }
             
             ship.x += ship.vx * dt;
             ship.y += ship.vy * dt;
             distance += Math.abs(ship.vx) + Math.abs(ship.vy) * 0.1;
             
-            // Boundaries
+            // Boundaries. Auf Ceres ersetzt der Boden den unteren Abprall.
             if (ship.x < 20) { ship.x = 20; ship.vx = Math.abs(ship.vx)*0.6; }
             if (ship.x > 780) { ship.x = 780; ship.vx = -Math.abs(ship.vx)*0.6; }
             if (ship.y < 20) { ship.y = 20; ship.vy = Math.abs(ship.vy)*0.6; }
-            if (ship.y > 480) { ship.y = 480; ship.vy = -Math.abs(ship.vy)*0.6; }
+            if (level !== 5 && ship.y > 480) { ship.y = 480; ship.vy = -Math.abs(ship.vy)*0.6; }
+            if (level === 5 && ship.y >= CERES_PAD.y) {
+                const vyMs = ship.vy * 60 * CERES_M_PER_PX;
+                const vxMs = ship.vx * 60 * CERES_M_PER_PX;
+                const onPad = ship.x >= CERES_PAD.x0 && ship.x <= CERES_PAD.x1;
+                const soft = vyMs <= 2.1 && vyMs >= -0.8 && Math.abs(vxMs) <= 1.4;
+                ship.y = CERES_PAD.y;
+                landedCeres = onPad && soft;
+                endGame(landedCeres);
+                return;
+            }
             
             // Shoot
             if (keys[' '] && bullets.length < 6) {
@@ -469,8 +560,8 @@
                 e.x += e.vx;
                 e.y += e.vy;
                 
-                // NS fluid effect on enemies too
-                if (level >= 2) {
+                // NS fluid effect on enemies too. Ceres-Anflug bleibt laminar (Vakuum).
+                if (level >= 2 && level < 5) {
                     e.vx += (Math.random()-0.5) * 0.4;
                     e.vy += (Math.random()-0.5) * 0.4;
                 }
@@ -515,14 +606,14 @@
                 }
             }
             
-            // Spawn more enemies
-            if (enemies.length < (level === 4 ? 8 : 4) && Math.random() < 0.06) {
+            // Spawn more enemies. Der Endanflug auf Ceres ist eine Landung, kein Gefecht.
+            if (level < 5 && enemies.length < (level === 4 ? 8 : 4) && Math.random() < 0.06) {
                 enemies.push({x: 820, y: Math.random()*480, vx: -1.1 - level*0.3, vy: (Math.random()-0.5)*1.5, size: 7 + Math.random()*5, type: level>2 ? 'anomaly' : 'asteroid'});
             }
             
-            // Fuel drain + NS fluid consumption
-            if (fuel > 0) fuel = Math.max(0, fuel - 0.04 * (level > 1 ? 1.6 : 1));
-            if (fuel <= 0 && Math.random() < 0.02) endGame(false);
+            // Fuel drain + NS fluid consumption. Auf Ceres nur der Schub verbraucht Treibstoff.
+            if (level !== 5 && fuel > 0) fuel = Math.max(0, fuel - 0.04 * (level > 1 ? 1.6 : 1));
+            if (level !== 5 && fuel <= 0 && Math.random() < 0.02) endGame(false);
             
             // Score tick
             score += 1 + Math.floor(distance / 40);
@@ -534,21 +625,27 @@
             document.getElementById('fuel').textContent = Math.floor(fuel);
             document.getElementById('distance').textContent = Math.floor(distance);
             document.getElementById('level').textContent = level;
+            const telem = document.getElementById('ceres-telem');
+            if (telem) {
+                if (level === 5) {
+                    const vyMs = ship.vy * 60 * CERES_M_PER_PX;
+                    const vxMs = ship.vx * 60 * CERES_M_PER_PX;
+                    const altM = Math.max(0, (CERES_PAD.y - ship.y) * CERES_M_PER_PX);
+                    telem.textContent = `Ceres-Anflug · Höhe ${altM.toFixed(0)} m · Vy ${vyMs.toFixed(1)} m/s · Vx ${vxMs.toFixed(1)} m/s · Treibstoff ${Math.floor(fuel)}`;
+                } else if (!telem.textContent.startsWith('Ceres-Anflug')) {
+                    telem.textContent = '';
+                }
+            }
             
             // NS bonus live
             if (nsSolved) document.getElementById('ns-bonus').textContent = Math.floor(score * 0.1) + ' (Singularity)';
             
-            // Level specific win condition
-            if (level === 3 && nsAccuracy > 92 && distance > 1200) {
-                endGame(true);
+            // Singularität bleibt eine Etappe. Gewonnen wird erst mit der Ceres-Landung.
+            if (level === 3 && nsAccuracy > 92 && distance > 1200 && !stageNote.includes('Singularität stabil')) {
+                score += 900;
+                noteStage('Singularität stabil · weiter nach Ceres');
             }
-            if (distance > 2800 && level < 4) {
-                level++;
-                document.getElementById('level').textContent = level;
-                document.getElementById('level-select').value = level;
-                // spawn harder
-            }
-            if (distance > 4500) endGame(true);
+            maybeAdvanceLevel();
             
             drawGame();
             requestAnimationFrame(updateGame);
@@ -564,8 +661,27 @@
                 ctx.fillRect((i*37 % 800), (i*19 % 500), 1,1);
             }
             
-            // Draw NS turbulence particles (background field for levels 2+)
-            if (level >= 2) {
+            if (level === 5) {
+                ctx.fillStyle = '#6a635b';
+                ctx.fillRect(0, CERES_PAD.y, 800, 500 - CERES_PAD.y);
+                ctx.fillStyle = '#4e4943';
+                ctx.beginPath();
+                ctx.ellipse(415, CERES_PAD.y + 8, 160, 28, 0, Math.PI, 0, true);
+                ctx.fill();
+                ctx.fillStyle = '#f4efe0';
+                ctx.fillRect(CERES_PAD.x0, CERES_PAD.y - 4, CERES_PAD.x1 - CERES_PAD.x0, 8);
+                ctx.fillStyle = '#f6f1df';
+                ctx.font = '12px monospace';
+                ctx.fillText('VINALIA FACULAE  19,8° N', CERES_PAD.x0 + 8, CERES_PAD.y - 10);
+                const vyMs = ship.vy * 60 * CERES_M_PER_PX;
+                const vxMs = ship.vx * 60 * CERES_M_PER_PX;
+                ctx.fillStyle = '#f3ead0';
+                ctx.fillText(`CERES g=0,28 m/s²  VAKUUM  Vy ${vyMs.toFixed(1)} m/s  Vx ${vxMs.toFixed(1)} m/s`, 10, 46);
+                if (vyMs > 3 && ship.y > 380) ctx.fillText('JETZT BREMSEN ↑', 10, 64);
+            }
+
+            // Draw NS turbulence particles (background field for levels 2–4, nicht auf Ceres)
+            if (level >= 2 && level < 5) {
                 ctx.fillStyle = level === 3 ? 'rgba(255,0,170,0.25)' : 'rgba(0,240,255,0.15)';
                 particles.forEach(p => {
                     ctx.fillRect(p.x, p.y, 2, 2);
@@ -627,7 +743,12 @@
             ctx.fillRect(0,0,800,30);
             ctx.fillStyle = '#00f0ff';
             ctx.font = '12px monospace';
-            ctx.fillText(`LEVEL ${level}  |  DIST ${Math.floor(distance)}  |  NS ${Math.floor(nsAccuracy)}%`, 10, 20);
+            const routeTag = level === 5 ? 'CERES LANDUNG' : (level === 2 ? 'MARS WEGPUNKT' : 'KURS CERES');
+            ctx.fillText(`LEVEL ${level}  ${routeTag}  |  DIST ${Math.floor(distance)}  |  NS ${Math.floor(nsAccuracy)}%`, 10, 20);
+            if (stageNote && Date.now() < stageNoteUntil) {
+                ctx.fillStyle = '#f8f4d8';
+                ctx.fillText(stageNote, 10, level === 5 ? 64 : 44);
+            }
         }
 
         function startGame() {
@@ -649,7 +770,18 @@
 
         function endGame(success) {
             gameRunning = false;
-            const final = Math.floor(score + (success ? 2500 : 0) + (nsAccuracy * 18) + (kills * 120));
+            const ceresWin = success && (landedCeres || level === 5);
+            const final = Math.floor(score + (success ? 2500 : 0) + (ceresWin ? 1800 : 0) + (nsAccuracy * 18) + (kills * 120));
+            const title = document.getElementById('final-title');
+            const dest = document.getElementById('final-dest');
+            if (title) {
+                title.textContent = ceresWin ? 'GELANDET AUF CERES' : (success ? 'ETAPPE GESCHAFFT' : 'ABSTURZ / BLOWUP');
+            }
+            if (dest) {
+                dest.textContent = ceresWin
+                    ? 'Endpunkt: Vinalia Faculae · Occator · ~19,8° N · Neue Erde. Wegpunkt Mars bleibt im Logbuch.'
+                    : 'Ziel der Route bleibt Ceres (Neue Erde). Mars ist der Wegpunkt.';
+            }
             document.getElementById('final-score').textContent = final.toString().padStart(5,'0');
             document.getElementById('final-kills').textContent = kills;
             document.getElementById('final-ns').textContent = Math.floor(nsAccuracy);
@@ -668,7 +800,7 @@
         }
 
         function simulateOriginal(type) {
-            alert(`Launching original Blizzwar module: ${type.toUpperCase()}. (In full app this would switch sections or open modal. Scores sync to main ranking.)`);
+            alert(`Modul ${type.toUpperCase()}: der Ceres-Lander (Vinalia Faculae) liegt im Hub-Cockpit. Mars bleibt der Wegpunkt.`);
             // In real integration this would toggle visibility of original sections or embed.
             if (type === 'warp') {
                 document.getElementById('ns-status').textContent = 'WARP + NS STABLE';

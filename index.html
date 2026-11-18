@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLIZZWAR · Mars Mission 2026 | ROSARY PRIME</title>
-    <meta property="description" content="BLIZZWAR: Mars-Kolonie-Cockpit mit 1977-Grain-Cutscenes und numerischem NS-Playfield. Imagine-Stills, CFL-Clamp, kein Clay-Beweis." />
-    <meta property="og:title" content="BLIZZWAR · Mars Mission 2026">
+    <title>BLIZZWAR · Ceres, Neue Erde | Projekt Chimera</title>
+    <meta property="description" content="BLIZZWAR: Endpunkt Ceres (Neue Erde), Wegpunkt Mars. DWARF-Lander, Alcubierre-Flugrechnung, 1977-Grain-Cutscenes, numerisches NS-Playfield." />
+    <meta property="og:title" content="BLIZZWAR · Ceres, Neue Erde">
     <meta property="og:description" content="Projekt Chimera: Hub, Imagine-Cutscenes (Kolonie, Cockpit, Vortex) und Power-Action 3D mit viskosem NS-Stepper." />
     <meta property="og:image" content="https://blizzwar.vercel.app/cutscenes/01-colony.jpg">
     <meta property="og:url" content="https://blizzwar.vercel.app/">
@@ -15,7 +15,7 @@
     <meta property="twitter:image" content="https://blizzwar.vercel.app/cutscenes/01-colony.jpg">
     <meta property="twitter:description" content="BLIZZWAR live: 1977-Grain-Cutscenes + numerical NS playfield. Not a Clay proof.">
     <meta name="twitter:site" content="@RosaryParish">
-    <meta name="twitter:title" content="BLIZZWAR · Mars Mission 2026">
+    <meta name="twitter:title" content="BLIZZWAR · Ceres, Neue Erde">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -123,13 +123,22 @@
             border-radius: 6px;
             border: 1px solid #00ffff;
         }
+        #lander-canvas {
+            background: #07080e;
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+            touch-action: none;
+        }
+        .lander-readout { font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
         <header class="text-center mb-8 p-4 bg-gray-900/70 rounded-lg border border-cyan-500/50">
             <h1 class="text-4xl md:text-5xl font-orbitron text-white">PROJEKT CHIMERA: Logbuch der Menschheiten</h1>
-            <p class="text-xl mt-2 text-cyan-400">Operation: Das Goldene Zeitalter // RUNDE: <span id="round-counter">1</span></p>
+            <p class="text-xl mt-2 text-cyan-400">Operation: Neue Erde — Ceres // Wegpunkt Mars // RUNDE: <span id="round-counter">1</span></p>
+            <p class="text-sm mt-2 text-amber-200/90">Endpunkt von Lander und Flugsimulation: Ceres (Neue Erde). Mars bleibt der Wegpunkt.</p>
         </header>
 
         <div class="mb-8">
@@ -148,7 +157,7 @@
         <div class="flex justify-center mb-8 flex-wrap gap-4">
             <button onclick="window.location.href='blitzkrieg.html'" class="action-button bg-purple-700 hover:bg-purple-500 font-bold border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.5)]">⚡ BLITZKRIEG MODUS</button>
             <button id="start-gambit" class="action-button bg-green-700/60">Start Gambit 🎲</button>
-            <button id="enter-cockpit" class="action-button">Enter Mars Mission Cockpit 🛰️</button>
+            <button id="enter-cockpit" class="action-button">Cockpit öffnen · Kurs Ceres 🛰️</button>
             <button id="open-manhunt" class="action-button bg-red-500/60">Start Manhunt 👑</button>
             <button id="open-avatar-creator" class="action-button bg-yellow-600/60">3D Avatar erstellen 👤</button>
             <button id="sos-button" class="action-button bg-red-700/60">Send SOS Signal 🆘</button>
@@ -193,7 +202,7 @@
         
         <!-- Mars Mission Cockpit (unverändert) -->
         <div id="cockpit-section" class="cockpit-card mb-8 hidden">
-            <h2 class="text-3xl font-orbitron mb-6 text-center text-red-500">Mars Mission Cockpit: DWARF Engine Kontrollzentrum</h2>
+            <h2 class="text-3xl font-orbitron mb-6 text-center text-red-500">DWARF-Kontrollzentrum · Endpunkt Ceres</h2>
             <div class="starlink-simulation mb-4 text-center">
                 <h3 class="text-xl font-orbitron text-cyan-400">Starlink SSA Simulation for SOS Signaling 🌟</h3>
                 <blockquote class="twitter-tweet">
@@ -221,10 +230,17 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <h3 class="text-xl font-orbitron text-center text-cyan-400">DWARF Engine: Mars Lander Simulation 🚀</h3>
-                        <canvas id="lander-canvas" width="400" height="200" class="mx-auto block mt-2 border-cyan-500"></canvas>
-                        <p class="text-center mt-2 text-sm text-gray-400">Use Arrow-Up (↑) to activate thrust and land safely!</p>
-                        <button id="dwarf-engine" class="action-button w-full mt-4 bg-purple-700/60">Activate DWARF Engine</button>
+                        <h3 class="text-xl font-orbitron text-center text-cyan-400">DWARF Engine: Ceres-Lander · Neue Erde</h3>
+                        <canvas id="lander-canvas" width="480" height="300" class="mx-auto block mt-2 border border-cyan-500"></canvas>
+                        <p id="lander-readout" class="lander-readout text-center mt-2 text-sm text-cyan-200">Bereit zur Landung.</p>
+                        <p id="ceres-info" class="text-center mt-1 text-xs text-amber-100/90 leading-relaxed">Ceres · Neue Erde · g ≈ 0,28 m/s² · keine Atmosphäre · 2,77 AE · Ziel: Vinalia Faculae im Occator-Krater (~19,8° N), helle Salzablagerungen.</p>
+                        <p class="text-center mt-1 text-sm text-gray-300">Pfeil hoch (↑) = Schub. Sobald „JETZT BREMSEN“ erscheint, ↑ bis zum Aufsetzen halten. Vorher nicht schieben. Links / Rechts nur zur Seitenkorrektur.</p>
+                        <div class="flex gap-2 justify-center mt-2">
+                            <button type="button" id="lander-left" class="action-button">←</button>
+                            <button type="button" id="lander-thrust" class="action-button bg-amber-700/70">↑ Schub</button>
+                            <button type="button" id="lander-right" class="action-button">→</button>
+                        </div>
+                        <button id="dwarf-engine" class="action-button w-full mt-4 bg-purple-700/60">DWARF-Engine starten</button>
                     </div>
                 </div>
             </div>
@@ -233,7 +249,7 @@
         <!-- WARP DRIVE SECTION (NEU) -->
         <div id="warp-section" class="warp-card mb-8 hidden">
             <h2 class="text-3xl font-orbitron mb-4 text-center text-cyan-400">🌀 ALCUBIERRE WARP DRIVE SIMULATOR</h2>
-            <p class="text-center text-sm mb-4">Simuliere den Warp-Bubble mit realer Physik (Alcubierre-Metrik). Erfolgreiche Aktivierung beschleunigt die Mars-Kolonisation dramatisch.</p>
+            <p class="text-center text-sm mb-4">Warp-Blase nach der Alcubierre-Metrik. Der Multiplikator verkürzt die Reise. Wegpunkt bleibt Mars, Endpunkt ist Ceres — die Neue Erde.</p>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Status -->
@@ -242,7 +258,9 @@
                     <div class="warp-result text-sm">
                         <div>Warp-Level: <span id="warp-level" class="font-bold text-lg">0</span></div>
                         <div>Reise-Multiplikator: <span id="warp-multiplier" class="font-bold text-lg">1.00</span>x</div>
-                        <div class="mt-2 text-xs">Niedriger Multiplikator = schnellere Mars-Reise</div>
+                        <div class="mt-2 text-xs">Route: Erde → Mars (Wegpunkt, 1,52 AE) → Ceres (2,77 AE)</div>
+                        <div class="text-xs mt-1">Nominal: <span id="route-nominal">—</span> · mit Warp: <span id="route-warped">—</span></div>
+                        <div class="mt-2 text-xs">Niedriger Multiplikator = schnellere Reise zum Endpunkt Ceres</div>
                     </div>
                     
                     <button id="warp-activate-btn" 
@@ -468,6 +486,24 @@
             const warpMultiEl = document.getElementById('warp-multiplier');
             if (warpLevelEl) warpLevelEl.textContent = gameState.warpLevel;
             if (warpMultiEl) warpMultiEl.textContent = gameState.warpTravelMultiplier.toFixed(2);
+            const eta = routeDays(gameState.warpTravelMultiplier);
+            const nominalEl = document.getElementById('route-nominal');
+            const warpedEl = document.getElementById('route-warped');
+            if (nominalEl) nominalEl.textContent = `${Math.round(eta.nominal)} Tage`;
+            if (warpedEl) warpedEl.textContent = `${Math.round(eta.warped)} Tage bis Ceres`;
+        }
+
+        // Erde → Mars (Wegpunkt) → Ceres (Endpunkt). Hohmann-Halbperiode in Tagen.
+        function hohmannDays(au1, au2) {
+            const a = (au1 + au2) / 2;
+            return 0.5 * Math.pow(a, 1.5) * 365.25;
+        }
+        function routeDays(multiplier) {
+            const marsLeg = hohmannDays(1, 1.524);
+            const ceresLeg = hohmannDays(1.524, 2.77);
+            const nominal = marsLeg + ceresLeg;
+            const m = Math.max(0.25, multiplier || 1);
+            return { marsLeg, ceresLeg, nominal, warped: nominal * m };
         }
 
         const addLog = (message) => {
@@ -585,12 +621,17 @@
                 const energy = computeEnergyDensity(vsv, sigmav, Rv);
                 const success = Math.min(94, Math.floor(58 + sigmav * 1.1));
 
+                const previewMul = Math.max(0.25, gameState.warpTravelMultiplier - Math.min(0.65, vsv * 0.18));
+                const etaNow = routeDays(gameState.warpTravelMultiplier);
+                const etaNext = routeDays(previewMul);
                 resultsDiv.innerHTML = `
                     f(0) = ${f.toFixed(4)} &nbsp;&nbsp; | &nbsp;&nbsp; 
                     York Time θ ≈ ${york.toFixed(3)}<br>
                     Energie-Dichte ρ ≈ ${energy.toFixed(3)} <span class="text-red-400">(negativ)</span><br>
                     Geschätzte Reisezeit-Reduktion: ${(vsv * 0.22).toFixed(2)}x<br>
-                    Erfolgswahrscheinlichkeit: ${success}%
+                    Erfolgswahrscheinlichkeit: ${success}%<br>
+                    Endpunkt Ceres (via Mars): ${Math.round(etaNow.warped)} Tage
+                    → bei Erfolg ca. ${Math.round(etaNext.warped)} Tage
                 `;
             }
 
@@ -630,8 +671,9 @@
                 gameState.settlementProgress = Math.min(100, gameState.settlementProgress + 12);
                 gameState.legitimacy = Math.min(100, gameState.legitimacy + 7);
 
-                logMsg = `✅ WARP ERFOLGREICH! v=${vs}c | Multiplikator jetzt ${gameState.warpTravelMultiplier.toFixed(2)}x | Level ${gameState.warpLevel}`;
-                document.getElementById('warp-last-action').innerHTML = `Erfolg! Reisezeit stark reduziert.<br>Multiplikator: ${gameState.warpTravelMultiplier.toFixed(2)}x`;
+                const eta = routeDays(gameState.warpTravelMultiplier);
+                logMsg = `✅ WARP ERFOLGREICH! v=${vs}c | Multiplikator jetzt ${gameState.warpTravelMultiplier.toFixed(2)}x | Level ${gameState.warpLevel} | Ceres in ca. ${Math.round(eta.warped)} Tagen`;
+                document.getElementById('warp-last-action').innerHTML = `Erfolg! Kurs Erde → Mars → Ceres verkürzt.<br>Multiplikator: ${gameState.warpTravelMultiplier.toFixed(2)}x · Ankunft Ceres ca. ${Math.round(eta.warped)} Tage<br>Mars-Etappe ${Math.round(eta.marsLeg * gameState.warpTravelMultiplier)} T · Ceres-Etappe ${Math.round(eta.ceresLeg * gameState.warpTravelMultiplier)} T`;
             } else {
                 gameState.legitimacy = Math.max(25, gameState.legitimacy - 6);
                 logMsg = `⚠️ WARP FEHLGESCHLAGEN! Negative Energie destabilisiert. Ressourcen verloren.`;
@@ -687,11 +729,15 @@
         document.getElementById('reset-button').addEventListener('click', () => {
             gameState = {...initialState};
             document.getElementById('log-list').innerHTML = '<li>Runde 1 initialisiert: Mars-Kolonie etabliert. 🚀</li>';
-            updateResources(); alert('Spiel zurückgesetzt.');
+            updateResources();
+            resetLander(false);
+            alert('Spiel zurückgesetzt.');
         });
 
         document.getElementById('enter-cockpit').addEventListener('click', () => {
-            document.getElementById('cockpit-section').classList.toggle('hidden');
+            const sec = document.getElementById('cockpit-section');
+            sec.classList.toggle('hidden');
+            if (!sec.classList.contains('hidden') && lander.phase === 'idle') startLander();
         });
 
         document.getElementById('open-avatar-creator').addEventListener('click', () => {
@@ -709,11 +755,279 @@
             document.getElementById('old-earth-section').classList.toggle('hidden');
         });
 
+        // ==================== CERES LANDER ====================
+        // Oberfläche: g = 0,28 m/s², keine Atmosphäre (kein Luftwiderstand).
+        // Zielpad bei x = 0 m: Vinalia Faculae, Occator, ~19,8° N.
+        const CERES_G = 0.28;
+        const CERES_THRUST = 0.52;
+        const CERES_LAT = 0.42;
+        const lander = {
+            phase: 'idle',
+            alt: 58,
+            x: -6,
+            vy: 3.0,
+            vx: 0.25,
+            fuel: 100,
+            thrust: false,
+            left: false,
+            right: false,
+            message: '',
+            brakeArmed: false
+        };
+        const landerCanvas = document.getElementById('lander-canvas');
+        const landerCtx = landerCanvas.getContext('2d');
+        const landerKeys = new Set();
+        const LANDER_STARS = Array.from({ length: 48 }, () => ({
+            x: Math.random() * 480,
+            y: Math.random() * 200,
+            s: Math.random() < 0.8 ? 1 : 2,
+            a: 0.35 + Math.random() * 0.65
+        }));
+
+        function resetLander(fly) {
+            lander.alt = 58;
+            lander.x = -6;
+            lander.vy = 3.0;
+            lander.vx = 0.25;
+            lander.fuel = 100;
+            lander.message = '';
+            lander.brakeArmed = false;
+            lander.phase = fly ? 'flight' : 'idle';
+        }
+
+        function startLander() {
+            if (lander.phase !== 'flight') resetLander(true);
+        }
+
+        function landerWorldToCanvas() {
+            const groundY = 258;
+            const py = (groundY - 14) - lander.alt / 0.72;
+            const px = 240 + lander.x / 0.62;
+            return { px, py, groundY };
+        }
+
+        function stepLander(dt) {
+            if (lander.phase !== 'flight') return;
+            dt = Math.min(dt, 0.05);
+            const up = landerKeys.has('ArrowUp') || lander.thrust;
+            const left = landerKeys.has('ArrowLeft') || lander.left;
+            const right = landerKeys.has('ArrowRight') || lander.right;
+            lander.vy += CERES_G * dt;
+            if (up && lander.fuel > 0) {
+                lander.vy -= CERES_THRUST * dt;
+                lander.fuel = Math.max(0, lander.fuel - 2.4 * dt);
+            }
+            if (left && lander.fuel > 0) {
+                lander.vx -= CERES_LAT * dt;
+                lander.fuel = Math.max(0, lander.fuel - 1.2 * dt);
+            }
+            if (right && lander.fuel > 0) {
+                lander.vx += CERES_LAT * dt;
+                lander.fuel = Math.max(0, lander.fuel - 1.2 * dt);
+            }
+            lander.alt -= lander.vy * dt;
+            lander.x += lander.vx * dt;
+            if (!lander.brakeArmed && lander.vy > 0.5) {
+                const stopDist = (lander.vy * lander.vy) / (2 * (CERES_THRUST - CERES_G));
+                if (lander.alt <= stopDist) lander.brakeArmed = true;
+            }
+            if (lander.alt <= 0) {
+                lander.alt = 0;
+                const onPad = Math.abs(lander.x) <= 18;
+                const soft = lander.vy <= 2.8 && lander.vy >= -1.0 && Math.abs(lander.vx) <= 1.6;
+                if (onPad && soft) {
+                    lander.phase = 'landed';
+                    lander.vy = 0;
+                    lander.vx = 0;
+                    lander.message = 'GELANDET · Vinalia Faculae · Occator · 19,8° N';
+                    addLog('Ceres-Landung gelungen: Vinalia Faculae (Occator-Krater, ~19,8° N). Neue Erde erreicht.');
+                    gameState.settlementProgress = Math.min(100, gameState.settlementProgress + 18);
+                    updateResources();
+                } else {
+                    lander.phase = 'crashed';
+                    lander.message = onPad ? 'ZU HART — Aufschlag auf Vinalia Faculae' : 'NEBEN DEM ZIEL — Salzfeld verfehlt';
+                    addLog('Ceres-Lander: ' + lander.message);
+                }
+            }
+        }
+
+        function drawLander() {
+            const ctx = landerCtx;
+            const W = landerCanvas.width;
+            const H = landerCanvas.height;
+            const { px, py, groundY } = landerWorldToCanvas();
+            const sky = ctx.createLinearGradient(0, 0, 0, H);
+            sky.addColorStop(0, '#05060c');
+            sky.addColorStop(1, '#1a1814');
+            ctx.fillStyle = sky;
+            ctx.fillRect(0, 0, W, H);
+            LANDER_STARS.forEach((s) => {
+                ctx.globalAlpha = s.a;
+                ctx.fillStyle = '#e7eefc';
+                ctx.fillRect(s.x, s.y, s.s, s.s);
+            });
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#6a635b';
+            ctx.fillRect(0, groundY, W, H - groundY);
+            ctx.fillStyle = '#4d4842';
+            ctx.beginPath();
+            ctx.ellipse(240, groundY + 16, 210, 42, 0, Math.PI, 0, true);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(236, 230, 206, 0.45)';
+            [[150, groundY + 4, 28, 8], [360, groundY + 8, 20, 6], [80, groundY + 10, 16, 5]].forEach(([x, y, rx, ry]) => {
+                ctx.beginPath();
+                ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            const padX = 240;
+            ctx.fillStyle = '#f6f1df';
+            ctx.beginPath();
+            ctx.ellipse(padX, groundY + 1, 52, 13, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffe08a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(padX - 26, groundY - 3, 52, 7);
+            ctx.fillStyle = '#2a2416';
+            ctx.font = '10px monospace';
+            ctx.fillText('VINALIA', padX - 24, groundY + 18);
+
+            const thrusting = lander.phase === 'flight' && (landerKeys.has('ArrowUp') || lander.thrust) && lander.fuel > 0;
+            ctx.save();
+            ctx.translate(px, py);
+            ctx.strokeStyle = '#d5dee8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-6, 2); ctx.lineTo(-12, 14);
+            ctx.moveTo(6, 2); ctx.lineTo(12, 14);
+            ctx.moveTo(-12, 14); ctx.lineTo(-16, 14);
+            ctx.moveTo(12, 14); ctx.lineTo(16, 14);
+            ctx.stroke();
+            ctx.fillStyle = '#d7e6f2';
+            ctx.beginPath();
+            ctx.moveTo(0, -16); ctx.lineTo(11, 4); ctx.lineTo(-11, 4); ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#17324a';
+            ctx.fillRect(-5, -8, 10, 5);
+            ctx.fillStyle = '#8fe3ff';
+            ctx.fillRect(-3, -7, 6, 3);
+            if (thrusting) {
+                const len = 12 + Math.random() * 10;
+                const flame = ctx.createLinearGradient(0, 4, 0, 4 + len);
+                flame.addColorStop(0, 'rgba(255,248,220,0.95)');
+                flame.addColorStop(0.45, 'rgba(255,150,40,0.8)');
+                flame.addColorStop(1, 'rgba(255,80,0,0)');
+                ctx.fillStyle = flame;
+                ctx.beginPath();
+                ctx.moveTo(-5, 4); ctx.lineTo(5, 4); ctx.lineTo(0, 4 + len); ctx.fill();
+            }
+            ctx.restore();
+
+            ctx.fillStyle = 'rgba(0,0,0,0.45)';
+            ctx.fillRect(0, 0, W, 36);
+            ctx.fillStyle = lander.vy > 4 && lander.alt < 50 ? '#ffb4a2' : '#d7fff8';
+            ctx.font = '12px monospace';
+            const brakeNow = lander.phase === 'flight' && lander.brakeArmed;
+            const warn = brakeNow ? '   JETZT BREMSEN — HALTEN' : '';
+            ctx.fillText(`H ${lander.alt.toFixed(0)} m   Vy ${lander.vy.toFixed(1)}   Vx ${lander.vx.toFixed(1)}   Treibstoff ${lander.fuel.toFixed(0)}%${warn}`, 8, 15);
+            ctx.fillStyle = '#f3ead0';
+            ctx.fillText('CERES  g=0,28 m/s²  VAKUUM  2,77 AE  OCCATOR', 8, 30);
+
+            if (lander.phase === 'landed' || lander.phase === 'crashed') {
+                ctx.fillStyle = lander.phase === 'landed' ? 'rgba(8,40,24,0.82)' : 'rgba(60,12,8,0.82)';
+                ctx.fillRect(24, 108, 432, 72);
+                ctx.fillStyle = lander.phase === 'landed' ? '#b6ffcf' : '#ffd0c4';
+                ctx.font = '13px monospace';
+                const lines = lander.phase === 'landed'
+                    ? ['GELANDET · Vinalia Faculae', 'Occator · 19,8° N · Neue Erde', '↑ startet einen neuen Anflug']
+                    : [lander.message, '↑ startet einen neuen Anflug'];
+                lines.forEach((line, i) => ctx.fillText(line, 40, 130 + i * 16));
+            }
+        }
+
+        function updateLanderReadout() {
+            const el = document.getElementById('lander-readout');
+            if (!el) return;
+            if (lander.phase === 'landed') {
+                el.textContent = 'Aufgesetzt auf Ceres · Vinalia Faculae · Neue Erde.';
+            } else if (lander.phase === 'crashed') {
+                el.textContent = lander.message;
+            } else if (lander.phase === 'flight') {
+                const brakeNow = lander.brakeArmed;
+                el.textContent = `Höhe ${lander.alt.toFixed(0)} m · x ${lander.x.toFixed(1)} m · Vy ${lander.vy.toFixed(1)} m/s · Vx ${lander.vx.toFixed(1)} m/s · Treibstoff ${lander.fuel.toFixed(0)}%${brakeNow ? ' · JETZT BREMSEN HALTEN' : ''}`;
+            } else {
+                el.textContent = 'Anflug bereit. ↑ gibt Schub, die DWARF-Engine startet den Abstieg.';
+            }
+        }
+
+        let landerLast = performance.now();
+        function landerFrame(now) {
+            const dt = (now - landerLast) / 1000;
+            landerLast = now;
+            const cockpit = document.getElementById('cockpit-section');
+            const visible = cockpit && !cockpit.classList.contains('hidden');
+            if (visible) stepLander(dt);
+            drawLander();
+            updateLanderReadout();
+            requestAnimationFrame(landerFrame);
+        }
+
+        function typingTarget(event) {
+            const tag = event.target && event.target.tagName;
+            return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+        }
+
+        window.addEventListener('keydown', (event) => {
+            if (typingTarget(event)) return;
+            const cockpit = document.getElementById('cockpit-section');
+            if (!cockpit || cockpit.classList.contains('hidden')) return;
+            if (!['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) return;
+            event.preventDefault();
+            if ((lander.phase === 'landed' || lander.phase === 'crashed') && event.key === 'ArrowUp' && !event.repeat) {
+                resetLander(true);
+                return;
+            }
+            landerKeys.add(event.key);
+            if (lander.phase === 'idle') startLander();
+        });
+        window.addEventListener('keyup', (event) => {
+            landerKeys.delete(event.key);
+        });
+
+        function bindHold(id, flag) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('pointerdown', (event) => {
+                event.preventDefault();
+                if ((lander.phase === 'landed' || lander.phase === 'crashed') && flag === 'thrust') {
+                    resetLander(true);
+                    return;
+                }
+                lander[flag] = true;
+                if (lander.phase === 'idle') startLander();
+            });
+            const release = () => { lander[flag] = false; };
+            window.addEventListener('pointerup', release);
+            window.addEventListener('pointercancel', release);
+        }
+        bindHold('lander-thrust', 'thrust');
+        bindHold('lander-left', 'left');
+        bindHold('lander-right', 'right');
+
+        document.getElementById('dwarf-engine').addEventListener('click', () => {
+            resetLander(true);
+            const sec = document.getElementById('cockpit-section');
+            if (sec.classList.contains('hidden')) sec.classList.remove('hidden');
+            addLog('DWARF-Engine aktiv: Ceres-Lander, Ziel Vinalia Faculae. g = 0,28 m/s², keine Atmosphäre.');
+        });
+
+        requestAnimationFrame(landerFrame);
+
         // Initialisierung
         updateResources();
 
         // Optional: Warp-Status beim Start loggen
         addLog('Warp Drive Technologie verfügbar. 🌀');
+        addLog('Kurs: Erde → Mars (Wegpunkt) → Ceres, Neue Erde. Landung Vinalia Faculae.');
     </script>
 </body>
 </html>

@@ -40,7 +40,7 @@
         <div class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-4xl title tracking-[3px]">BLIZZWAR</h1>
-                <p class="text-sm text-[#00f0ff99]">POWER-ACTION • NUMERICAL NS PLAYFIELD • 1977 GRAIN</p>
+                <p class="text-sm text-[#00f0ff99]">POWER-ACTION • KURS CERES (NEUE ERDE) • WEGPUNKT MARS • 1977 GRAIN</p>
                 <p class="text-xs text-[#ff00aa]">Imagine-look in-engine • physics-precise drag/CFL • not a Clay proof</p>
             </div>
             <div class="text-right text-xs">
@@ -62,6 +62,7 @@
                         <div>ν / TURB: <span id="turb" class="font-bold navier">42%</span></div>
                         <div>E: <span id="hud-e">0</span> · Ω: <span id="hud-om">0</span></div>
                         <div>WATCH: <span id="hud-watch" class="navier">regular_so_far</span></div>
+                        <div id="hud-dest">ZIEL: CERES · NEUE ERDE · WEGPUNKT MARS</div>
                     </div>
                     <div id="cutscene" class="absolute inset-0 z-20 bg-black flex items-end justify-between overflow-hidden">
                         <img id="cutscene-img" alt="" class="absolute inset-0 w-full h-full object-cover kenburns">
@@ -122,6 +123,7 @@
         let scene, camera, renderer, ship;
         let enemies = [], projs = [], fluids = [];
         let score = 0, power = 100, turb = 42, level = 3;
+        let ceresReached = false;
         let keys = {}, mouseX = 0, mouseY = 0;
         let running = true;
         let lastTime = Date.now();
@@ -192,6 +194,27 @@
             const dl = new THREE.DirectionalLight(0xffffff, 0.9);
             dl.position.set(18, 35, 8); scene.add(dl);
             scene.add(new THREE.PointLight(0xff00aa, 1.3, 85));
+
+            // Wegpunkt Mars und Endpunkt Ceres, gezeichnet, ohne Fremdbilder.
+            const marsBody = new THREE.Mesh(
+                new THREE.SphereGeometry(5.5, 28, 18),
+                new THREE.MeshPhongMaterial({ color: 0xc1440e, emissive: 0x3a1206, shininess: 6 })
+            );
+            marsBody.position.set(-46, 16, -90);
+            scene.add(marsBody);
+            const ceresBody = new THREE.Mesh(
+                new THREE.SphereGeometry(8.2, 32, 22),
+                new THREE.MeshPhongMaterial({ color: 0xb7b1a8, emissive: 0x2c2a28, shininess: 4 })
+            );
+            ceresBody.position.set(24, 12, -150);
+            const facula = new THREE.Mesh(
+                new THREE.SphereGeometry(2.1, 12, 10),
+                new THREE.MeshBasicMaterial({ color: 0xf7f3e6 })
+            );
+            facula.position.set(4.2, 2.4, 6.4);
+            ceresBody.add(facula);
+            scene.add(ceresBody);
+            window.ceresBody = ceresBody;
 
             createFluid(window.innerWidth < 800 ? 90 : 180);
 
@@ -415,6 +438,11 @@
                 level++; turb = Math.min(90, turb + 8);
                 for (let i = 0; i < 2; i++) spawnEnemy();
             }
+            if (!ceresReached && level >= 6) {
+                ceresReached = true;
+                reachCeres();
+                return;
+            }
 
             // Cinematic camera
             camera.position.x = ship.position.x * 0.52;
@@ -450,6 +478,12 @@
             if (he) he.textContent = nsE.toFixed(3);
             if (ho) ho.textContent = nsOm.toFixed(1);
             if (hw) hw.textContent = nsWatch;
+            const dest = document.getElementById('hud-dest');
+            if (dest) {
+                dest.textContent = level >= 6
+                    ? 'ENDPHASE: CERES · VINALIA FACULAE · NEUE ERDE'
+                    : 'ZIEL: CERES · NEUE ERDE · WEGPUNKT MARS';
+            }
         }
 
         function animate() {
@@ -462,10 +496,19 @@
             renderer.render(scene, camera);
         }
 
+        function reachCeres() {
+            running = false;
+            const o = document.getElementById('overlay');
+            document.getElementById('overlay-text').innerHTML = 'CERES ERREICHT<br><span class="text-lg">Neue Erde · Vinalia Faculae</span><br><span class="text-xs">Wegpunkt Mars bleibt im Logbuch. Klick zum Weiterfliegen.</span>';
+            o.style.display = 'flex';
+            o.onclick = () => { o.style.display = 'none'; running = true; lastTime = Date.now(); animate(); };
+        }
+
         function endGame() {
             running = false;
             const o = document.getElementById('overlay');
-            document.getElementById('overlay-text').innerHTML = `RUN ENDED<br><span class="text-lg">SCORE ${Math.floor(score)}</span>`;
+            const where = ceresReached ? 'NACH CERES-ANFLUG' : 'KURS AUF CERES · WEGPUNKT MARS';
+            document.getElementById('overlay-text').innerHTML = `RUN ENDED<br><span class="text-lg">SCORE ${Math.floor(score)}</span><br><span class="text-xs">${where}</span>`;
             o.style.display = 'flex';
             o.onclick = () => location.reload();
         }
@@ -475,7 +518,7 @@
             projs.forEach(p => scene.remove(p));
             enemies = []; projs = [];
             if (ship) { ship.position.set(0,4,6); ship.rotation.set(0,0,0); }
-            score = 0; power = 100; turb = 42; level = 3; running = true;
+            score = 0; power = 100; turb = 42; level = 3; running = true; ceresReached = false;
             nsE = 0; nsOm = 0; nsWatch = 'regular_so_far';
             for (let i=0; i<6; i++) spawnEnemy();
             createFluid(window.innerWidth < 800 ? 90 : 180);
