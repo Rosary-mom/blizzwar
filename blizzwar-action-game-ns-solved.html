@@ -317,7 +317,7 @@
             });
             
             nsAccuracy = Math.min(100, nsAccuracy + stabilized * 3);
-            document.getElementById('ns-accuracy').textContent = Math.floor(nsAccuracy);
+            publishNs();
             document.getElementById('ns-status').textContent = nsAccuracy > 75 ? 'KONTROLLIERTE SINGULARITÄT' : 'STABILISIERT';
             
             if (nsAccuracy > 85 && !nsSolved && gameRunning) {
@@ -429,7 +429,7 @@
             document.getElementById('kills').textContent = '0';
             document.getElementById('fuel').textContent = fuel;
             document.getElementById('distance').textContent = '0';
-            document.getElementById('ns-accuracy').textContent = Math.floor(nsAccuracy);
+            publishNs();
             document.getElementById('ns-status').textContent = 'STABIL';
             document.getElementById('level').textContent = level;
             document.getElementById('ns-bonus').textContent = '0';
@@ -603,12 +603,20 @@
             if (level !== 5 && ship.y > 480) { ship.y = 480; ship.vy = -Math.abs(ship.vy)*0.6; }
             if (level === 5 && ceresFlight && ceresFlight.alt <= 0) {
                 ceresFlight.alt = 0;
+                ceresFlight.brake = false;
                 ship.y = CERES_PAD.y;
                 const vyMs = ceresFlight.vy;
                 const vxMs = ship.vx * 60 * CERES_M_PER_PX;
                 const onPad = ship.x >= CERES_PAD.x0 && ship.x <= CERES_PAD.x1;
                 const soft = vyMs <= CERES_TOUCH_VY && vyMs >= -1.2 && Math.abs(vxMs) <= 2;
                 landedCeres = onPad && soft;
+                ceresFlight.status = landedCeres ? 'GELANDET · VINALIA FACULAE' : 'ZU HART — AUFGESCHLAGEN';
+                const telemNow = document.getElementById('ceres-telem');
+                if (telemNow) {
+                    telemNow.textContent = landedCeres
+                        ? 'Gelandet · Vinalia Faculae · Occator · 19,8° N'
+                        : 'Zu hart aufgesetzt · neuer Anflug über Mission starten';
+                }
                 endGame(landedCeres);
                 drawGame();
                 return;
@@ -699,16 +707,17 @@
             
             // Update UI
             showLiveScore(score);
+            publishNs();
             document.getElementById('kills').textContent = kills;
             document.getElementById('fuel').textContent = Math.floor(fuel);
             document.getElementById('distance').textContent = Math.floor(distance);
             document.getElementById('level').textContent = level;
             const telem = document.getElementById('ceres-telem');
             if (telem) {
-                if (level === 5 && ceresFlight) {
+                if (level === 5 && ceresFlight && ceresFlight.alt > 0) {
                     const vxMs = ship.vx * 60 * CERES_M_PER_PX;
                     telem.textContent = `Ceres-Anflug · Höhe ${Math.max(0, ceresFlight.alt).toFixed(0)} m · Vy ${ceresFlight.vy.toFixed(1)} m/s · Vx ${vxMs.toFixed(1)} m/s · Treibstoff ${Math.floor(fuel)}${ceresFlight.brake ? ' · JETZT BREMSEN HALTEN' : ''}`;
-                } else if (!telem.textContent.startsWith('Ceres-Anflug')) {
+                } else if (level !== 5) {
                     telem.textContent = '';
                 }
             }
@@ -753,7 +762,12 @@
                 const vxMs = ship.vx * 60 * CERES_M_PER_PX;
                 ctx.fillStyle = '#f3ead0';
                 ctx.fillText(`CERES g=0,28 m/s²  VAKUUM  Vy ${vyMs.toFixed(1)} m/s  Vx ${vxMs.toFixed(1)} m/s`, 10, 46);
-                if (ceresFlight && ceresFlight.brake) ctx.fillText('JETZT BREMSEN — HALTEN', 10, 78);
+                if (ceresFlight && ceresFlight.status) {
+                    ctx.fillStyle = landedCeres ? '#b6ffcf' : '#ffd0c4';
+                    ctx.fillText(ceresFlight.status, 10, 78);
+                } else if (ceresFlight && ceresFlight.brake && gameRunning) {
+                    ctx.fillText('JETZT BREMSEN — HALTEN', 10, 78);
+                }
             }
 
             // Draw NS turbulence particles (background field for levels 2–4, nicht auf Ceres)
@@ -844,6 +858,15 @@
             }
         }
 
+        function publishNs() {
+            const text = String(Math.floor(nsAccuracy));
+            const header = document.getElementById('ns-solve');
+            const side = document.getElementById('ns-accuracy');
+            if (header) header.textContent = text;
+            if (side) side.textContent = text;
+            return text;
+        }
+
         function showLiveScore(value) {
             const text = Math.max(0, Math.floor(value)).toString().padStart(5, '0');
             const live = document.getElementById('live-score');
@@ -872,7 +895,7 @@
             }
             document.getElementById('final-score').textContent = text;
             document.getElementById('final-kills').textContent = kills;
-            document.getElementById('final-ns').textContent = Math.floor(nsAccuracy);
+            document.getElementById('final-ns').textContent = publishNs();
             document.getElementById('final-eff').textContent = Math.floor(fuel) + '%';
             document.getElementById('final-overall').textContent = text;
             document.getElementById('game-over').classList.remove('hidden');

@@ -861,6 +861,7 @@
                 const soft = lander.vy <= CERES_TOUCH_VY && lander.vy >= -1.2 && Math.abs(lander.vx) <= 2.0;
                 if (onPad && soft) {
                     lander.phase = 'landed';
+                    lander.brakeArmed = false;
                     lander.vy = 0;
                     lander.vx = 0;
                     lander.message = 'GELANDET · Vinalia Faculae · Occator · 19,8° N';
@@ -869,6 +870,7 @@
                     updateResources();
                 } else {
                     lander.phase = 'crashed';
+                    lander.brakeArmed = false;
                     lander.message = onPad ? 'ZU HART — Aufschlag auf Vinalia Faculae' : 'NEBEN DEM ZIEL — Salzfeld verfehlt';
                     addLog('Ceres-Lander: ' + lander.message);
                 }
@@ -947,11 +949,14 @@
             ctx.restore();
 
             const brakeNow = lander.phase === 'flight' && lander.brakeArmed;
+            const settled = lander.phase === 'landed' || lander.phase === 'crashed';
             ctx.fillStyle = 'rgba(0,0,0,0.45)';
             ctx.fillRect(0, 0, W, brakeNow ? 48 : 36);
             ctx.font = '12px monospace';
-            ctx.fillStyle = lander.vy > 4 && lander.alt < 50 ? '#ffb4a2' : '#d7fff8';
-            ctx.fillText(`H ${lander.alt.toFixed(0)} m   Vy ${lander.vy.toFixed(1)}   Vx ${lander.vx.toFixed(1)}   Treibstoff ${lander.fuel.toFixed(0)}%`, 8, 15);
+            ctx.fillStyle = settled ? (lander.phase === 'landed' ? '#b6ffcf' : '#ffd0c4') : (lander.vy > 4 && lander.alt < 50 ? '#ffb4a2' : '#d7fff8');
+            ctx.fillText(settled
+                ? (lander.phase === 'landed' ? 'GELANDET · VINALIA FACULAE' : lander.message)
+                : `H ${lander.alt.toFixed(0)} m   Vy ${lander.vy.toFixed(1)}   Vx ${lander.vx.toFixed(1)}   Treibstoff ${lander.fuel.toFixed(0)}%`, 8, 15);
             if (brakeNow) {
                 ctx.fillStyle = '#ffd166';
                 ctx.fillText('JETZT BREMSEN — HALTEN', 8, 32);
