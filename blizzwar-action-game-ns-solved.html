@@ -139,7 +139,7 @@
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
             </table>
-            <p class="text-[10px] mt-1 text-cyan-400">Lokal im Browser gespeichert. Die Rangliste enthält nur Rufname und Punktestand.</p>
+            <p class="text-[10px] mt-1 text-cyan-400">Öffentliche Liste: nur Rufname (höchstens 16 Zeichen) und Punkte. Kein Klarname. Die IP wird nur als kurzlebiger Hash für die Begrenzung genutzt und nicht in der Liste gespeichert. Ist die Liste nicht erreichbar, bleibt der Eintrag in diesem Browser.</p>
         </div>
 
         <!-- QUICK INTEGRATION LINKS (existing Blizzwar features) -->
@@ -193,7 +193,46 @@
                 .replace(/[<>&"'`]/g, '')
                 .replace(/\s+/g, ' ')
                 .trim()
-                .slice(0, 32);
+                .slice(0, 16);
+        }
+
+        function renderRows(entries) {
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.replaceChildren();
+            if (!entries.length) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 6;
+                td.className = 'text-center text-xs';
+                td.textContent = 'Noch keine Einträge. Spielen und eintragen.';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                return;
+            }
+            entries.forEach((entry, i) => {
+                const tr = document.createElement('tr');
+                [String(i + 1), entry.name, String(entry.score), entry.ns == null ? '—' : `${entry.ns}%`, entry.kills == null ? '—' : String(entry.kills), entry.date || '—'].forEach((val, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 2) td.className = 'score';
+                    td.textContent = val == null ? '' : String(val);
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLeaderboard() {
+            const sorted = [...leaderboard].sort((a, b) => b.score - a.score).slice(0, 20);
+            renderRows(sorted);
+        }
+
+        async function refreshOnlineLeaderboard() {
+            const response = await fetch('/api/scores', { cache: 'no-store' });
+            if (!response.ok) throw new Error('scores');
+            const data = await response.json();
+            const scores = Array.isArray(data.scores) ? data.scores : [];
+            renderRows(scores.slice(0, 20).map((row) => ({ name: row.name, score: row.score })));
+            return true;
         }
 
         function showRankStatus(text, ok) {
@@ -206,36 +245,10 @@
             });
         }
 
-        function renderLeaderboard() {
-            const tbody = document.getElementById('leaderboard-body');
-            tbody.replaceChildren();
-            const sorted = [...leaderboard].sort((a,b) => b.score - a.score).slice(0,15);
-            if (sorted.length === 0) {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                td.colSpan = 6;
-                td.className = 'text-center text-xs';
-                td.textContent = 'Noch keine Einträge. Spielen und eintragen.';
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                return;
-            }
-            sorted.forEach((entry, i) => {
-                const tr = document.createElement('tr');
-                [String(i + 1), entry.name, String(entry.score), `${entry.ns || 0}%`, String(entry.kills || 0), entry.date].forEach((val, idx) => {
-                    const td = document.createElement('td');
-                    if (idx === 2) td.className = 'score';
-                    td.textContent = val == null ? '' : String(val);
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-        }
-
-        function submitScore() {
+        async function submitScore() {
             const name = sanitizeCallsign(document.getElementById('player-name').value);
             if (!name) {
-                showRankStatus('Bitte einen Rufnamen eintragen. Leerzeichen bleiben erhalten.', false);
+                showRankStatus('Bitte einen Rufnamen eintragen. Höchstens 16 Zeichen, Leerzeichen bleiben erhalten.', false);
                 return;
             }
             const finalScore = parseInt(document.getElementById('final-score').textContent, 10);
@@ -248,12 +261,23 @@
             };
             leaderboard.push(entry);
             saveLeaderboard();
-            renderLeaderboard();
             document.getElementById('player-name').value = name;
             document.getElementById('rank-player').value = name;
-            showRankStatus('Gespeichert: ' + name + ' · ' + entry.score + ' Punkte in der lokalen Rangliste.', true);
-            const board = document.getElementById('rank-status');
-            if (board) board.scrollIntoView({ block: 'nearest' });
+            try {
+                const response = await fetch('/api/scores', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: entry.name, score: entry.score })
+                });
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(payload.error || 'scores');
+                await refreshOnlineLeaderboard();
+                showRankStatus('Gespeichert: ' + name + ' · ' + entry.score + ' Punkte in der öffentlichen Rangliste.', true);
+            } catch (err) {
+                renderLeaderboard();
+                const detail = err && err.message && err.message !== 'scores' ? err.message : 'Die öffentliche Liste ist nicht erreichbar. Der Eintrag liegt lokal in diesem Browser.';
+                showRankStatus(detail, false);
+            }
         }
 
         function addSimPlayer() {
@@ -274,7 +298,7 @@
             if (confirm('Lokale Rangliste leeren?')) {
                 leaderboard = [];
                 saveLeaderboard();
-                renderLeaderboard();
+                refreshOnlineLeaderboard().catch(() => renderLeaderboard());
             }
         }
 
@@ -935,7 +959,7 @@
         }
 
         function runSync() {
-            showRankStatus('Die Rangliste bleibt lokal in diesem Browser. Eine gemeinsame Online-Liste ist noch nicht angebunden.', true);
+            showRankStatus('Die öffentliche Liste speichert nur Rufname und Punkte. Ohne Verbindung bleibt alles in diesem Browser.', true);
         }
 
         // Boot
@@ -949,7 +973,7 @@
                 leaderboard = withoutSamples;
                 saveLeaderboard();
             }
-            renderLeaderboard();
+            refreshOnlineLeaderboard().catch(() => renderLeaderboard());
             
             // Keyboard hint
             setTimeout(() => {
