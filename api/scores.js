@@ -91,11 +91,6 @@ export default async function handler(req, res) {
 
         if (req.method === 'POST') {
             const body = readBody(req);
-            if (body.remove === true && sanitizeName(body.name) === 'Marvin-Test') {
-                await redis(['ZREM', BOARD_KEY, 'Marvin-Test']);
-                res.status(200).json({ ok: true, removed: true });
-                return;
-            }
             const name = sanitizeName(body.name);
             const score = Number(body.score);
             if (!name) {
